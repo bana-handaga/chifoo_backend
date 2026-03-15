@@ -1,0 +1,638 @@
+{
+  "url": "https://pddikti.kemdiktisaintek.go.id/detail-prodi/Sdt5hxljskM-lHF4_xnG94P7ynYoSu8ZrmK5ikNFUM5VrTqiIjO4SzYK-cMjyNZ5WzGEEg==",
+  "profile": {
+    "Kode": "54201",
+    "Biaya Kuliah": "Rp -",
+    "Tanggal Berdiri": "18 Februari 1985",
+    "Akreditasi": "Unggul",
+    "Akreditasi Internasional": "-",
+    "Rasio Dosen : Mahasiswa": "-",
+    "Rasio Diterima : Pendaftar": "-",
+    "SK Selenggara": "13326/D/T/K-VII/2012",
+    "Tanggal SK Selenggara": "22 Oktober 2012",
+    "nama_pt": "Universitas Muhammadiyah Malang",
+    "nama_prodi": "S1 Agribisnis",
+    "Kontak": [
+      "0341-466321"
+    ]
+  },
+  "dosen": {
+    "Genap 2025": [
+      {
+        "No": "1",
+        "Nama": "GUMOYO MUMPUNI NINGSIH",
+        "NIDN": "0016096802",
+        "NUPTK": "9248746647230083",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "ARY BAKHTIAR",
+        "NIDN": "0701019202",
+        "NUPTK": "6433770671130662",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "BAMBANG YUDI ARIADI",
+        "NIDN": "0720026601",
+        "NUPTK": "3552744645110002",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "FITHRI MUFRIANTIE",
+        "NIDN": "0222077605",
+        "NUPTK": "3054754655300023",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "LIVIA WINDIANA",
+        "NIDN": "0702128701",
+        "NUPTK": "2534765666230283",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "YOHANA AGUSTINA",
+        "NIDN": "0703089201",
+        "NUPTK": "3135770671230343",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "M. ZUL MAZWAN",
+        "NIDN": "0712079401",
+        "NUPTK": "1044772673130313",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "RAHAYU RELAWATI",
+        "NIDN": "0001016504",
+        "NUPTK": "3433743644231332",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "NUR OCVANNY AMIR",
+        "NIDN": "0715109001",
+        "NUPTK": "4347768669230323",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Gasal 2025": [
+      {
+        "No": "1",
+        "Nama": "GUMOYO MUMPUNI NINGSIH",
+        "NIDN": "0016096802",
+        "NUPTK": "9248746647230083",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "ARY BAKHTIAR",
+        "NIDN": "0701019202",
+        "NUPTK": "6433770671130662",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "BAMBANG YUDI ARIADI",
+        "NIDN": "0720026601",
+        "NUPTK": "3552744645110002",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "FITHRI MUFRIANTIE",
+        "NIDN": "0222077605",
+        "NUPTK": "3054754655300023",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "LIVIA WINDIANA",
+        "NIDN": "0702128701",
+        "NUPTK": "2534765666230283",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "YOHANA AGUSTINA",
+        "NIDN": "0703089201",
+        "NUPTK": "3135770671230343",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "M. ZUL MAZWAN",
+        "NIDN": "0712079401",
+        "NUPTK": "1044772673130313",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "RAHAYU RELAWATI",
+        "NIDN": "0001016504",
+        "NUPTK": "3433743644231332",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "NUR OCVANNY AMIR",
+        "NIDN": "0715109001",
+        "NUPTK": "4347768669230323",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Genap 2024": [
+      {
+        "No": "1",
+        "Nama": "ISTIS BAROH",
+        "NIDN": "0705016001",
+        "NUPTK": "1437738639230092",
+        "Pendidikan": "",
+        "Status": "",
+        "Ikatan Kerja": ""
+      },
+      {
+        "No": "2",
+        "Nama": "GUMOYO MUMPUNI NINGSIH",
+        "NIDN": "0016096802",
+        "NUPTK": "9248746647230083",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "ARY BAKHTIAR",
+        "NIDN": "0701019202",
+        "NUPTK": "6433770671130662",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "BAMBANG YUDI ARIADI",
+        "NIDN": "0720026601",
+        "NUPTK": "3552744645110002",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "FITHRI MUFRIANTIE",
+        "NIDN": "0222077605",
+        "NUPTK": "3054754655300023",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "LIVIA WINDIANA",
+        "NIDN": "0702128701",
+        "NUPTK": "2534765666230283",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "YOHANA AGUSTINA",
+        "NIDN": "0703089201",
+        "NUPTK": "3135770671230343",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "M. ZUL MAZWAN",
+        "NIDN": "0712079401",
+        "NUPTK": "1044772673130313",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "RAHAYU RELAWATI",
+        "NIDN": "0001016504",
+        "NUPTK": "3433743644231332",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "10",
+        "Nama": "NUR OCVANNY AMIR",
+        "NIDN": "0715109001",
+        "NUPTK": "4347768669230323",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Gasal 2024": [
+      {
+        "No": "1",
+        "Nama": "ISTIS BAROH",
+        "NIDN": "0705016001",
+        "NUPTK": "1437738639230092",
+        "Pendidikan": "",
+        "Status": "",
+        "Ikatan Kerja": ""
+      },
+      {
+        "No": "2",
+        "Nama": "GUMOYO MUMPUNI NINGSIH",
+        "NIDN": "0016096802",
+        "NUPTK": "9248746647230083",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "ARY BAKHTIAR",
+        "NIDN": "0701019202",
+        "NUPTK": "6433770671130662",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "BAMBANG YUDI ARIADI",
+        "NIDN": "0720026601",
+        "NUPTK": "3552744645110002",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "FITHRI MUFRIANTIE",
+        "NIDN": "0222077605",
+        "NUPTK": "3054754655300023",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "LIVIA WINDIANA",
+        "NIDN": "0702128701",
+        "NUPTK": "2534765666230283",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "YOHANA AGUSTINA",
+        "NIDN": "0703089201",
+        "NUPTK": "3135770671230343",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "M. ZUL MAZWAN",
+        "NIDN": "0712079401",
+        "NUPTK": "1044772673130313",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "RAHAYU RELAWATI",
+        "NIDN": "0001016504",
+        "NUPTK": "3433743644231332",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "10",
+        "Nama": "NUR OCVANNY AMIR",
+        "NIDN": "0715109001",
+        "NUPTK": "4347768669230323",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Genap 2023": [
+      {
+        "No": "1",
+        "Nama": "ISTIS BAROH",
+        "NIDN": "0705016001",
+        "NUPTK": "1437738639230092",
+        "Pendidikan": "",
+        "Status": "",
+        "Ikatan Kerja": ""
+      },
+      {
+        "No": "2",
+        "Nama": "GUMOYO MUMPUNI NINGSIH",
+        "NIDN": "0016096802",
+        "NUPTK": "9248746647230083",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "ARY BAKHTIAR",
+        "NIDN": "0701019202",
+        "NUPTK": "6433770671130662",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "BAMBANG YUDI ARIADI",
+        "NIDN": "0720026601",
+        "NUPTK": "3552744645110002",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "FITHRI MUFRIANTIE",
+        "NIDN": "0222077605",
+        "NUPTK": "3054754655300023",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "LIVIA WINDIANA",
+        "NIDN": "0702128701",
+        "NUPTK": "2534765666230283",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "M. ZUL MAZWAN",
+        "NIDN": "0712079401",
+        "NUPTK": "1044772673130313",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "RAHAYU RELAWATI",
+        "NIDN": "0001016504",
+        "NUPTK": "3433743644231332",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "FESTY PUTRI RAMADHANI",
+        "NIDN": "0709059303",
+        "NUPTK": "3641771672230322",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "10",
+        "Nama": "NUR OCVANNY AMIR",
+        "NIDN": "0715109001",
+        "NUPTK": "4347768669230323",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "11",
+        "Nama": "ADHIS MILLIA WINDHY",
+        "NIDN": "0704118304",
+        "NUPTK": "1436761662230173",
+        "Pendidikan": "",
+        "Status": "",
+        "Ikatan Kerja": ""
+      }
+    ],
+    "Gasal 2023": [
+      {
+        "No": "1",
+        "Nama": "ISTIS BAROH",
+        "NIDN": "0705016001",
+        "NUPTK": "1437738639230092",
+        "Pendidikan": "",
+        "Status": "",
+        "Ikatan Kerja": ""
+      },
+      {
+        "No": "2",
+        "Nama": "GUMOYO MUMPUNI NINGSIH",
+        "NIDN": "0016096802",
+        "NUPTK": "9248746647230083",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "ARY BAKHTIAR",
+        "NIDN": "0701019202",
+        "NUPTK": "6433770671130662",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "BAMBANG YUDI ARIADI",
+        "NIDN": "0720026601",
+        "NUPTK": "3552744645110002",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "FITHRI MUFRIANTIE",
+        "NIDN": "0222077605",
+        "NUPTK": "3054754655300023",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "LIVIA WINDIANA",
+        "NIDN": "0702128701",
+        "NUPTK": "2534765666230283",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "M. ZUL MAZWAN",
+        "NIDN": "0712079401",
+        "NUPTK": "1044772673130313",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "RAHAYU RELAWATI",
+        "NIDN": "0001016504",
+        "NUPTK": "3433743644231332",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "FESTY PUTRI RAMADHANI",
+        "NIDN": "0709059303",
+        "NUPTK": "3641771672230322",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "10",
+        "Nama": "NUR OCVANNY AMIR",
+        "NIDN": "0715109001",
+        "NUPTK": "4347768669230323",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "11",
+        "Nama": "ADHIS MILLIA WINDHY",
+        "NIDN": "0704118304",
+        "NUPTK": "1436761662230173",
+        "Pendidikan": "",
+        "Status": "",
+        "Ikatan Kerja": ""
+      }
+    ]
+  },
+  "mahasiswa": [
+    {
+      "semester": "2025/2026 Genap",
+      "jumlah_mahasiswa": "6"
+    },
+    {
+      "semester": "2025/2026 Ganjil",
+      "jumlah_mahasiswa": "502"
+    },
+    {
+      "semester": "2024/2025 Genap",
+      "jumlah_mahasiswa": "547"
+    },
+    {
+      "semester": "2024/2025 Ganjil",
+      "jumlah_mahasiswa": "609"
+    },
+    {
+      "semester": "2023/2024 Genap",
+      "jumlah_mahasiswa": "642"
+    },
+    {
+      "semester": "2023/2024 Ganjil",
+      "jumlah_mahasiswa": "688"
+    },
+    {
+      "semester": "2022/2023 Genap",
+      "jumlah_mahasiswa": "660"
+    },
+    {
+      "semester": "2022/2023 Ganjil",
+      "jumlah_mahasiswa": "696"
+    },
+    {
+      "semester": "2021/2022 Genap",
+      "jumlah_mahasiswa": "781"
+    },
+    {
+      "semester": "2021/2022 Ganjil",
+      "jumlah_mahasiswa": "818"
+    },
+    {
+      "semester": "2020/2021 Genap",
+      "jumlah_mahasiswa": "872"
+    },
+    {
+      "semester": "2020/2021 Ganjil",
+      "jumlah_mahasiswa": "903"
+    },
+    {
+      "semester": "2019/2020 Genap",
+      "jumlah_mahasiswa": "832"
+    },
+    {
+      "semester": "2019/2020 Ganjil",
+      "jumlah_mahasiswa": "894"
+    },
+    {
+      "semester": "2018/2019 Genap",
+      "jumlah_mahasiswa": "856"
+    }
+  ],
+  "kode_pt": "071024",
+  "kode_ps": "54201",
+  "nama_ps": "Agribisnis"
+}

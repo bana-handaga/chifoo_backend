@@ -1,0 +1,22 @@
+# ============================================================
+#  PTMA Monitor — Backend .htaccess
+#  Letakkan di root folder backend (sama dengan passenger_wsgi.py)
+#
+#  Fungsi:
+#  - /static/* dan /media/* → dilayani Apache langsung dari folder public/
+#  - Semua request lain     → diteruskan ke Django via Passenger
+# ============================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Layani /static/ langsung dari folder public/static/
+    # tanpa melalui Django sama sekali
+    RewriteRule ^static/(.*)$ public/static/$1 [L]
+
+    # Layani /media/ langsung dari folder public/media/
+    RewriteRule ^media/(.*)$ public/media/$1 [L]
+
+    # Semua request lain diteruskan ke Passenger (Django)
+    # Baris ini otomatis ditambahkan oleh cPanel, tapi aman ditulis eksplisit
+</IfModule>

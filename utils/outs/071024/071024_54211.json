@@ -1,0 +1,854 @@
+{
+  "url": "https://pddikti.kemdiktisaintek.go.id/detail-prodi/DJ_Q_PB9JUDiKYo7OtmGJ9d_HZ7xOXmqMEwpMgGcmdRloa4dGOq43765VgQavBlB7EnffQ==",
+  "profile": {
+    "Kode": "54211",
+    "Biaya Kuliah": "Rp -",
+    "Tanggal Berdiri": "18 Februari 1985",
+    "Akreditasi": "Unggul",
+    "Akreditasi Internasional": "Terakreditasi Internasional",
+    "Rasio Dosen : Mahasiswa": "-",
+    "Rasio Diterima : Pendaftar": "-",
+    "SK Selenggara": "13327/D/T/K-VII/2012",
+    "Tanggal SK Selenggara": "22 Oktober 2012",
+    "nama_pt": "Universitas Muhammadiyah Malang",
+    "nama_prodi": "S1 Agroteknologi",
+    "Kontak": [
+      "0341-466321"
+    ]
+  },
+  "dosen": {
+    "Genap 2025": [
+      {
+        "No": "1",
+        "Nama": "AGUS ZAINUDIN",
+        "NIDN": "0722076401",
+        "NUPTK": "3054742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "PADHINA PANGESTIKA",
+        "NIDN": "0708029401",
+        "NUPTK": "8540772673230252",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "DYAH ROESWITAWATI",
+        "NIDN": "0721085801",
+        "NUPTK": "6153736637230043",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "ERFAN DANI SEPTIA",
+        "NIDN": "0705098902",
+        "NUPTK": "0237767668130343",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "WAHONO",
+        "NIDN": "0716066401",
+        "NUPTK": "3948742643130122",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "ALI IKHWAN",
+        "NIDN": "0020106402",
+        "NUPTK": "7352742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "SRI MURSIANI ARIFAH",
+        "NIDN": "0726066401",
+        "NUPTK": "5958742643230092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "HENIK SUKORINI",
+        "NIDN": "0724016701",
+        "NUPTK": "2456745646230072",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "DIAN INDRATMI",
+        "NIDN": "0005086603",
+        "NUPTK": "4137744645230123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "10",
+        "Nama": "SYARIF HUSEN",
+        "NIDN": "0021046402",
+        "NUPTK": "5753742643131092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "11",
+        "Nama": "MUHIDIN",
+        "NIDN": "0002066104",
+        "NUPTK": "5934739640130062",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "12",
+        "Nama": "ILMAM ZUL FAHMI",
+        "NIDN": "0730049501",
+        "NUPTK": "8762773674130242",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "13",
+        "Nama": "AULIA ZAKIA",
+        "NIDN": "0714078907",
+        "NUPTK": "1046767668237013",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Gasal 2025": [
+      {
+        "No": "1",
+        "Nama": "AGUS ZAINUDIN",
+        "NIDN": "0722076401",
+        "NUPTK": "3054742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "PADHINA PANGESTIKA",
+        "NIDN": "0708029401",
+        "NUPTK": "8540772673230252",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "DYAH ROESWITAWATI",
+        "NIDN": "0721085801",
+        "NUPTK": "6153736637230043",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "ERFAN DANI SEPTIA",
+        "NIDN": "0705098902",
+        "NUPTK": "0237767668130343",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "WAHONO",
+        "NIDN": "0716066401",
+        "NUPTK": "3948742643130122",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "ALI IKHWAN",
+        "NIDN": "0020106402",
+        "NUPTK": "7352742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "SRI MURSIANI ARIFAH",
+        "NIDN": "0726066401",
+        "NUPTK": "5958742643230092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "HENIK SUKORINI",
+        "NIDN": "0724016701",
+        "NUPTK": "2456745646230072",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "DIAN INDRATMI",
+        "NIDN": "0005086603",
+        "NUPTK": "4137744645230123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "10",
+        "Nama": "SYARIF HUSEN",
+        "NIDN": "0021046402",
+        "NUPTK": "5753742643131092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "11",
+        "Nama": "MUHIDIN",
+        "NIDN": "0002066104",
+        "NUPTK": "5934739640130062",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "12",
+        "Nama": "ILMAM ZUL FAHMI",
+        "NIDN": "0730049501",
+        "NUPTK": "8762773674130242",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "13",
+        "Nama": "AULIA ZAKIA",
+        "NIDN": "0714078907",
+        "NUPTK": "1046767668237013",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Genap 2024": [
+      {
+        "No": "1",
+        "Nama": "AGUS ZAINUDIN",
+        "NIDN": "0722076401",
+        "NUPTK": "3054742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "PADHINA PANGESTIKA",
+        "NIDN": "0708029401",
+        "NUPTK": "8540772673230252",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "DYAH ROESWITAWATI",
+        "NIDN": "0721085801",
+        "NUPTK": "6153736637230043",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "ERFAN DANI SEPTIA",
+        "NIDN": "0705098902",
+        "NUPTK": "0237767668130343",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "WAHONO",
+        "NIDN": "0716066401",
+        "NUPTK": "3948742643130122",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "ALI IKHWAN",
+        "NIDN": "0020106402",
+        "NUPTK": "7352742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "SRI MURSIANI ARIFAH",
+        "NIDN": "0726066401",
+        "NUPTK": "5958742643230092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "HENIK SUKORINI",
+        "NIDN": "0724016701",
+        "NUPTK": "2456745646230072",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "MACHMUDI",
+        "NIDN": "0719056001",
+        "NUPTK": "2851738639130062",
+        "Pendidikan": "",
+        "Status": "",
+        "Ikatan Kerja": ""
+      },
+      {
+        "No": "10",
+        "Nama": "DIAN INDRATMI",
+        "NIDN": "0005086603",
+        "NUPTK": "4137744645230123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "11",
+        "Nama": "SYARIF HUSEN",
+        "NIDN": "0021046402",
+        "NUPTK": "5753742643131092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "12",
+        "Nama": "MUHIDIN",
+        "NIDN": "0002066104",
+        "NUPTK": "5934739640130062",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "13",
+        "Nama": "ILMAM ZUL FAHMI",
+        "NIDN": "0730049501",
+        "NUPTK": "8762773674130242",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "14",
+        "Nama": "AULIA ZAKIA",
+        "NIDN": "0714078907",
+        "NUPTK": "1046767668237013",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Gasal 2024": [
+      {
+        "No": "1",
+        "Nama": "AGUS ZAINUDIN",
+        "NIDN": "0722076401",
+        "NUPTK": "3054742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "PADHINA PANGESTIKA",
+        "NIDN": "0708029401",
+        "NUPTK": "8540772673230252",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "DYAH ROESWITAWATI",
+        "NIDN": "0721085801",
+        "NUPTK": "6153736637230043",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "ERFAN DANI SEPTIA",
+        "NIDN": "0705098902",
+        "NUPTK": "0237767668130343",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "WAHONO",
+        "NIDN": "0716066401",
+        "NUPTK": "3948742643130122",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "ALI IKHWAN",
+        "NIDN": "0020106402",
+        "NUPTK": "7352742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "SRI MURSIANI ARIFAH",
+        "NIDN": "0726066401",
+        "NUPTK": "5958742643230092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "HENIK SUKORINI",
+        "NIDN": "0724016701",
+        "NUPTK": "2456745646230072",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "MACHMUDI",
+        "NIDN": "0719056001",
+        "NUPTK": "2851738639130062",
+        "Pendidikan": "",
+        "Status": "",
+        "Ikatan Kerja": ""
+      },
+      {
+        "No": "10",
+        "Nama": "DIAN INDRATMI",
+        "NIDN": "0005086603",
+        "NUPTK": "4137744645230123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "11",
+        "Nama": "SYARIF HUSEN",
+        "NIDN": "0021046402",
+        "NUPTK": "5753742643131092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "12",
+        "Nama": "MUHIDIN",
+        "NIDN": "0002066104",
+        "NUPTK": "5934739640130062",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "13",
+        "Nama": "ILMAM ZUL FAHMI",
+        "NIDN": "0730049501",
+        "NUPTK": "8762773674130242",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "14",
+        "Nama": "AULIA ZAKIA",
+        "NIDN": "0714078907",
+        "NUPTK": "1046767668237013",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Genap 2023": [
+      {
+        "No": "1",
+        "Nama": "AGUS ZAINUDIN",
+        "NIDN": "0722076401",
+        "NUPTK": "3054742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "PADHINA PANGESTIKA",
+        "NIDN": "0708029401",
+        "NUPTK": "8540772673230252",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "DYAH ROESWITAWATI",
+        "NIDN": "0721085801",
+        "NUPTK": "6153736637230043",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "ERFAN DANI SEPTIA",
+        "NIDN": "0705098902",
+        "NUPTK": "0237767668130343",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "WAHONO",
+        "NIDN": "0716066401",
+        "NUPTK": "3948742643130122",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "ALI IKHWAN",
+        "NIDN": "0020106402",
+        "NUPTK": "7352742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "ANIEK IRIANY",
+        "NIDN": "0709086301",
+        "NUPTK": "9141741642230073",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "SRI MURSIANI ARIFAH",
+        "NIDN": "0726066401",
+        "NUPTK": "5958742643230092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "HENIK SUKORINI",
+        "NIDN": "0724016701",
+        "NUPTK": "2456745646230072",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "10",
+        "Nama": "MACHMUDI",
+        "NIDN": "0719056001",
+        "NUPTK": "2851738639130062",
+        "Pendidikan": "",
+        "Status": "",
+        "Ikatan Kerja": ""
+      },
+      {
+        "No": "11",
+        "Nama": "DIAN INDRATMI",
+        "NIDN": "0005086603",
+        "NUPTK": "4137744645230123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "12",
+        "Nama": "SYARIF HUSEN",
+        "NIDN": "0021046402",
+        "NUPTK": "5753742643131092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "13",
+        "Nama": "MUHIDIN",
+        "NIDN": "0002066104",
+        "NUPTK": "5934739640130062",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "14",
+        "Nama": "ILMAM ZUL FAHMI",
+        "NIDN": "0730049501",
+        "NUPTK": "8762773674130242",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "15",
+        "Nama": "AULIA ZAKIA",
+        "NIDN": "0714078907",
+        "NUPTK": "1046767668237013",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Gasal 2023": [
+      {
+        "No": "1",
+        "Nama": "AGUS ZAINUDIN",
+        "NIDN": "0722076401",
+        "NUPTK": "3054742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "PADHINA PANGESTIKA",
+        "NIDN": "0708029401",
+        "NUPTK": "8540772673230252",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "DYAH ROESWITAWATI",
+        "NIDN": "0721085801",
+        "NUPTK": "6153736637230043",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "ERFAN DANI SEPTIA",
+        "NIDN": "0705098902",
+        "NUPTK": "0237767668130343",
+        "Pendidikan": "S2",
+        "Status": "TUGAS BELAJAR",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "WAHONO",
+        "NIDN": "0716066401",
+        "NUPTK": "3948742643130122",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "ALI IKHWAN",
+        "NIDN": "0020106402",
+        "NUPTK": "7352742643130063",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "ANIEK IRIANY",
+        "NIDN": "0709086301",
+        "NUPTK": "9141741642230073",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "SRI MURSIANI ARIFAH",
+        "NIDN": "0726066401",
+        "NUPTK": "5958742643230092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "HENIK SUKORINI",
+        "NIDN": "0724016701",
+        "NUPTK": "2456745646230072",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "10",
+        "Nama": "MACHMUDI",
+        "NIDN": "0719056001",
+        "NUPTK": "2851738639130062",
+        "Pendidikan": "",
+        "Status": "",
+        "Ikatan Kerja": ""
+      },
+      {
+        "No": "11",
+        "Nama": "DIAN INDRATMI",
+        "NIDN": "0005086603",
+        "NUPTK": "4137744645230123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "12",
+        "Nama": "SYARIF HUSEN",
+        "NIDN": "0021046402",
+        "NUPTK": "5753742643131092",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "13",
+        "Nama": "MUHIDIN",
+        "NIDN": "0002066104",
+        "NUPTK": "5934739640130062",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "14",
+        "Nama": "ILMAM ZUL FAHMI",
+        "NIDN": "0730049501",
+        "NUPTK": "8762773674130242",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "15",
+        "Nama": "AULIA ZAKIA",
+        "NIDN": "0714078907",
+        "NUPTK": "1046767668237013",
+        "Pendidikan": "S2",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ]
+  },
+  "mahasiswa": [
+    {
+      "semester": "2025/2026 Genap",
+      "jumlah_mahasiswa": "7"
+    },
+    {
+      "semester": "2025/2026 Ganjil",
+      "jumlah_mahasiswa": "345"
+    },
+    {
+      "semester": "2024/2025 Genap",
+      "jumlah_mahasiswa": "364"
+    },
+    {
+      "semester": "2024/2025 Ganjil",
+      "jumlah_mahasiswa": "394"
+    },
+    {
+      "semester": "2023/2024 Genap",
+      "jumlah_mahasiswa": "445"
+    },
+    {
+      "semester": "2023/2024 Ganjil",
+      "jumlah_mahasiswa": "466"
+    },
+    {
+      "semester": "2022/2023 Genap",
+      "jumlah_mahasiswa": "501"
+    },
+    {
+      "semester": "2022/2023 Ganjil",
+      "jumlah_mahasiswa": "560"
+    },
+    {
+      "semester": "2021/2022 Genap",
+      "jumlah_mahasiswa": "559"
+    },
+    {
+      "semester": "2021/2022 Ganjil",
+      "jumlah_mahasiswa": "619"
+    },
+    {
+      "semester": "2020/2021 Genap",
+      "jumlah_mahasiswa": "697"
+    },
+    {
+      "semester": "2020/2021 Ganjil",
+      "jumlah_mahasiswa": "732"
+    },
+    {
+      "semester": "2019/2020 Genap",
+      "jumlah_mahasiswa": "689"
+    },
+    {
+      "semester": "2019/2020 Ganjil",
+      "jumlah_mahasiswa": "724"
+    },
+    {
+      "semester": "2018/2019 Genap",
+      "jumlah_mahasiswa": "738"
+    }
+  ],
+  "kode_pt": "071024",
+  "kode_ps": "54211",
+  "nama_ps": "Agroteknologi"
+}

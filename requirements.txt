@@ -1,0 +1,16 @@
+# PTMA Monitor — Production Requirements
+
+Django==4.2.11
+djangorestframework==3.15.1
+django-cors-headers==4.3.1
+django-filter==24.1
+
+# MySQL connector
+# Opsi 1: mysqlclient (lebih cepat, butuh library C di server)
+mysqlclient==2.2.4
+# Opsi 2: PyMySQL (pure Python, aktifkan jika mysqlclient gagal install)
+PyMySQL==1.1.0
+
+Pillow==10.2.0
+python-dotenv==1.0.1
+openpyxl==3.1.2

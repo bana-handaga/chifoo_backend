@@ -1,0 +1,26 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$720000$ptma2024$8K5p3QmZ1xR9vN2wL7eA4cY6bT0uI3oJ5hF8gD1sE=",
+      "last_login": null,
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "Super",
+      "last_name": "Admin",
+      "email": "admin@ptma.or.id",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-01-01T00:00:00Z",
+      "role": "superadmin",
+      "perguruan_tinggi": null,
+      "nomor_telepon": "",
+      "foto": null,
+      "is_verified": true,
+      "last_active": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]

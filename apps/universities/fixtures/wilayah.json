@@ -1,0 +1,12 @@
+[
+  {"model": "universities.wilayah", "pk": 1, "fields": {"kode": "PWM-0001", "nama": "PWM Daerah Istimewa Yogyakarta", "provinsi": "Daerah Istimewa Yogyakarta"}},
+  {"model": "universities.wilayah", "pk": 2, "fields": {"kode": "PWM-0002", "nama": "PWM Jawa Tengah", "provinsi": "Jawa Tengah"}},
+  {"model": "universities.wilayah", "pk": 3, "fields": {"kode": "PWM-0003", "nama": "PWM Jawa Timur", "provinsi": "Jawa Timur"}},
+  {"model": "universities.wilayah", "pk": 4, "fields": {"kode": "PWM-0004", "nama": "PWM Jawa Barat", "provinsi": "Jawa Barat"}},
+  {"model": "universities.wilayah", "pk": 5, "fields": {"kode": "PWM-0005", "nama": "PWM Sumatera Utara", "provinsi": "Sumatera Utara"}},
+  {"model": "universities.wilayah", "pk": 6, "fields": {"kode": "PWM-0006", "nama": "PWM Sulawesi Selatan", "provinsi": "Sulawesi Selatan"}},
+  {"model": "universities.wilayah", "pk": 7, "fields": {"kode": "PWM-0007", "nama": "PWM DKI Jakarta", "provinsi": "DKI Jakarta"}},
+  {"model": "universities.wilayah", "pk": 8, "fields": {"kode": "PWM-0008", "nama": "PWM Sumatera Selatan", "provinsi": "Sumatera Selatan"}},
+  {"model": "universities.wilayah", "pk": 9, "fields": {"kode": "PWM-0009", "nama": "PWM Kalimantan Selatan", "provinsi": "Kalimantan Selatan"}},
+  {"model": "universities.wilayah", "pk": 10, "fields": {"kode": "PWM-0010", "nama": "PWM Aceh", "provinsi": "Aceh"}}
+]

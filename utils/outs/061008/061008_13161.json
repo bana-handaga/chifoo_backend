@@ -1,0 +1,567 @@
+{
+  "url": "https://pddikti.kemdiktisaintek.go.id/detail-prodi/_dOUkYjPb2lRiFfckHe18MNOrHQdgigJ36P0EqbelX19NfJiFhc8cZOAR3A77KeI_oZD2Q==",
+  "profile": {
+    "Kode": "13161",
+    "Biaya Kuliah": "Rp500.000 - 500.000",
+    "Tanggal Berdiri": "22 November 2022",
+    "Akreditasi": "Baik Sekali",
+    "Akreditasi Internasional": "-",
+    "Rasio Dosen : Mahasiswa": "-",
+    "Rasio Diterima : Pendaftar": "1:1",
+    "SK Selenggara": "859/E/O/2022",
+    "Tanggal SK Selenggara": "22 November 2022",
+    "nama_pt": "Universitas Muhammadiyah Surakarta",
+    "nama_prodi": "S2 Administrasi Rumah Sakit",
+    "Kontak": [
+      "0271717417",
+      "0271717548"
+    ]
+  },
+  "dosen": {
+    "Genap 2025": [
+      {
+        "No": "1",
+        "Nama": "FLORA RAMONA SIGIT PRAKOESWA",
+        "NIDN": "0602087604",
+        "NUPTK": "8134754655230123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "BURHANNUDIN ICHSAN",
+        "NIDN": "0605067202",
+        "NUPTK": "6937750651130232",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "EM SUTRISNA",
+        "NIDN": "0620087001",
+        "NUPTK": "8152748649130143",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "SAFARI WAHYU JATMIKO",
+        "NIDN": "0615107402",
+        "NUPTK": "7347752653130123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "SITI SOEKISWATI",
+        "NIDN": "0611096801",
+        "NUPTK": "6243746647230093",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "ARIA WIBAWA",
+        "NIDN": "0317086906",
+        "NUPTK": "9149747648137143",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "RIANDINI AISYAH",
+        "NIDN": "0624067901",
+        "NUPTK": "6956757658230122",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "IMRONUDIN",
+        "NIDN": "0617036902",
+        "NUPTK": "7649747648130102",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "AMBARWATI",
+        "NIDN": "0606127401",
+        "NUPTK": "8538752653230113",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Gasal 2025": [
+      {
+        "No": "1",
+        "Nama": "FLORA RAMONA SIGIT PRAKOESWA",
+        "NIDN": "0602087604",
+        "NUPTK": "8134754655230123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "BURHANNUDIN ICHSAN",
+        "NIDN": "0605067202",
+        "NUPTK": "6937750651130232",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "EM SUTRISNA",
+        "NIDN": "0620087001",
+        "NUPTK": "8152748649130143",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "SAFARI WAHYU JATMIKO",
+        "NIDN": "0615107402",
+        "NUPTK": "7347752653130123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "SITI SOEKISWATI",
+        "NIDN": "0611096801",
+        "NUPTK": "6243746647230093",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "ARIA WIBAWA",
+        "NIDN": "0317086906",
+        "NUPTK": "9149747648137143",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "RIANDINI AISYAH",
+        "NIDN": "0624067901",
+        "NUPTK": "6956757658230122",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "IMRONUDIN",
+        "NIDN": "0617036902",
+        "NUPTK": "7649747648130102",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "AMBARWATI",
+        "NIDN": "0606127401",
+        "NUPTK": "8538752653230113",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Genap 2024": [
+      {
+        "No": "1",
+        "Nama": "FLORA RAMONA SIGIT PRAKOESWA",
+        "NIDN": "0602087604",
+        "NUPTK": "8134754655230123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "BURHANNUDIN ICHSAN",
+        "NIDN": "0605067202",
+        "NUPTK": "6937750651130232",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "EM SUTRISNA",
+        "NIDN": "0620087001",
+        "NUPTK": "8152748649130143",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "YUSUF ALAM ROMADHON",
+        "NIDN": "0622107301",
+        "NUPTK": "9354751652131083",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "SAFARI WAHYU JATMIKO",
+        "NIDN": "0615107402",
+        "NUPTK": "7347752653130123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "PENI INDRAYUDHA",
+        "NIDN": "0029077801",
+        "NUPTK": "7061756657130083",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "SITI SOEKISWATI",
+        "NIDN": "0611096801",
+        "NUPTK": "6243746647230093",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "ARIA WIBAWA",
+        "NIDN": "0317086906",
+        "NUPTK": "9149747648137143",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "RIANDINI AISYAH",
+        "NIDN": "0624067901",
+        "NUPTK": "6956757658230122",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "10",
+        "Nama": "IMRONUDIN",
+        "NIDN": "0617036902",
+        "NUPTK": "7649747648130102",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "11",
+        "Nama": "AMBARWATI",
+        "NIDN": "0606127401",
+        "NUPTK": "8538752653230113",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Gasal 2024": [
+      {
+        "No": "1",
+        "Nama": "FLORA RAMONA SIGIT PRAKOESWA",
+        "NIDN": "0602087604",
+        "NUPTK": "8134754655230123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "BURHANNUDIN ICHSAN",
+        "NIDN": "0605067202",
+        "NUPTK": "6937750651130232",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "EM SUTRISNA",
+        "NIDN": "0620087001",
+        "NUPTK": "8152748649130143",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "YUSUF ALAM ROMADHON",
+        "NIDN": "0622107301",
+        "NUPTK": "9354751652131083",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "SAFARI WAHYU JATMIKO",
+        "NIDN": "0615107402",
+        "NUPTK": "7347752653130123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "PENI INDRAYUDHA",
+        "NIDN": "0029077801",
+        "NUPTK": "7061756657130083",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "7",
+        "Nama": "SITI SOEKISWATI",
+        "NIDN": "0611096801",
+        "NUPTK": "6243746647230093",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "8",
+        "Nama": "ARIA WIBAWA",
+        "NIDN": "0317086906",
+        "NUPTK": "9149747648137143",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "9",
+        "Nama": "RIANDINI AISYAH",
+        "NIDN": "0624067901",
+        "NUPTK": "6956757658230122",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "10",
+        "Nama": "IMRONUDIN",
+        "NIDN": "0617036902",
+        "NUPTK": "7649747648130102",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "11",
+        "Nama": "AMBARWATI",
+        "NIDN": "0606127401",
+        "NUPTK": "8538752653230113",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Genap 2023": [
+      {
+        "No": "1",
+        "Nama": "BURHANNUDIN ICHSAN",
+        "NIDN": "0605067202",
+        "NUPTK": "6937750651130232",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "EM SUTRISNA",
+        "NIDN": "0620087001",
+        "NUPTK": "8152748649130143",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "YUSUF ALAM ROMADHON",
+        "NIDN": "0622107301",
+        "NUPTK": "9354751652131083",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "SAFARI WAHYU JATMIKO",
+        "NIDN": "0615107402",
+        "NUPTK": "7347752653130123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "SITI SOEKISWATI",
+        "NIDN": "0611096801",
+        "NUPTK": "6243746647230093",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "IMRONUDIN",
+        "NIDN": "0617036902",
+        "NUPTK": "7649747648130102",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ],
+    "Gasal 2023": [
+      {
+        "No": "1",
+        "Nama": "BURHANNUDIN ICHSAN",
+        "NIDN": "0605067202",
+        "NUPTK": "6937750651130232",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "2",
+        "Nama": "EM SUTRISNA",
+        "NIDN": "0620087001",
+        "NUPTK": "8152748649130143",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "3",
+        "Nama": "YUSUF ALAM ROMADHON",
+        "NIDN": "0622107301",
+        "NUPTK": "9354751652131083",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "4",
+        "Nama": "SAFARI WAHYU JATMIKO",
+        "NIDN": "0615107402",
+        "NUPTK": "7347752653130123",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "5",
+        "Nama": "SITI SOEKISWATI",
+        "NIDN": "0611096801",
+        "NUPTK": "6243746647230093",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      },
+      {
+        "No": "6",
+        "Nama": "IMRONUDIN",
+        "NIDN": "0617036902",
+        "NUPTK": "7649747648130102",
+        "Pendidikan": "S3",
+        "Status": "Aktif",
+        "Ikatan Kerja": "Dosen Tetap"
+      }
+    ]
+  },
+  "mahasiswa": [
+    {
+      "semester": "2025/2026 Genap",
+      "jumlah_mahasiswa": "0"
+    },
+    {
+      "semester": "2025/2026 Ganjil",
+      "jumlah_mahasiswa": "70"
+    },
+    {
+      "semester": "2024/2025 Genap",
+      "jumlah_mahasiswa": "68"
+    },
+    {
+      "semester": "2024/2025 Ganjil",
+      "jumlah_mahasiswa": "60"
+    },
+    {
+      "semester": "2023/2024 Genap",
+      "jumlah_mahasiswa": "46"
+    },
+    {
+      "semester": "2023/2024 Ganjil",
+      "jumlah_mahasiswa": "30"
+    },
+    {
+      "semester": "2022/2023 Genap",
+      "jumlah_mahasiswa": "13"
+    },
+    {
+      "semester": "2022/2023 Ganjil",
+      "jumlah_mahasiswa": "0"
+    },
+    {
+      "semester": "2021/2022 Genap",
+      "jumlah_mahasiswa": "0"
+    },
+    {
+      "semester": "2021/2022 Ganjil",
+      "jumlah_mahasiswa": "0"
+    },
+    {
+      "semester": "2020/2021 Genap",
+      "jumlah_mahasiswa": "0"
+    },
+    {
+      "semester": "2020/2021 Ganjil",
+      "jumlah_mahasiswa": "0"
+    },
+    {
+      "semester": "2019/2020 Genap",
+      "jumlah_mahasiswa": "0"
+    },
+    {
+      "semester": "2019/2020 Ganjil",
+      "jumlah_mahasiswa": "0"
+    },
+    {
+      "semester": "2018/2019 Genap",
+      "jumlah_mahasiswa": "0"
+    }
+  ],
+  "kode_pt": "061008",
+  "kode_ps": "13161",
+  "nama_ps": "Administrasi Rumah Sakit"
+}
