@@ -1,20 +1,39 @@
 #!/usr/bin/env python3
 """
-Update universities_datamahasiswa table from a PDDikti programstudi JSON file.
+Update universities_datamahasiswa table dari file PDDikti pelaporan JSON.
 
-Untuk setiap program studi aktif di file JSON:
-  - Cari perguruan_tinggi_id dari universities_perguruantinggi berdasarkan kode_pt
-  - Cari program_studi_id dari universities_programstudi berdasarkan kode_prodi
+Format input (outs/[kode_pt]_pelaporan.json):
+    {
+        "kode_pt": "051007",
+        "nama_pt": "...",
+        "jumlah_semester": N,
+        "pelaporan": [
+            {
+                "semester": "Ganjil 2025",
+                "program_studi": [ { "Kode": ..., "Jumlah Mahasiswa": ..., ... } ]
+            },
+            ...
+        ]
+    }
+
+Untuk setiap program studi aktif pada periode yang dipilih:
+  - Resolve kode_pt → perguruan_tinggi_id
+  - Resolve kode_prodi → program_studi_id
   - Jika baris (pt_id, ps_id, tahun_akademik, semester) sudah ada → UPDATE mahasiswa_aktif
-  - Jika belum ada → INSERT baris baru dengan mahasiswa_aktif dari field 'Jumlah Mahasiswa'
+  - Jika belum ada → INSERT baris baru
+
+tahun_akademik dan semester di-derive otomatis dari label periode:
+    "Ganjil YYYY" → tahun_akademik=YYYY/YYYY+1, semester=ganjil
+    "Genap YYYY"  → tahun_akademik=YYYY-1/YYYY,  semester=genap
 
 Usage:
-    python update_datamahasiswa.py [--file PATH] [--tahun TAHUN] [--semester SEMESTER] [--dry-run]
+    python update_datamahasiswa.py [--file PATH] [--periode PERIODE] [--dry-run]
 
-Defaults:
-    --file      ~/projects/utils/outs/071024_programstudi.json
-    --tahun     2025/2026
-    --semester  ganjil
+    # Preview semester terbaru
+    python3 utils/update_datamahasiswa.py --dry-run
+
+    # Periode tertentu
+    python3 utils/update_datamahasiswa.py --periode "Genap 2024" --dry-run
 """
 
 import argparse
@@ -26,8 +45,8 @@ from pathlib import Path
 import pymysql
 from dotenv import load_dotenv
 
-# ── Load .env from backend dir ───────────────────────────────
-ENV_PATH = Path(__file__).resolve().parent.parent / "backend" / ".env"
+# ── Load .env ────────────────────────────────────────────────
+ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(ENV_PATH)
 
 DB_CONFIG = {
@@ -40,21 +59,69 @@ DB_CONFIG = {
     "cursorclass": pymysql.cursors.DictCursor,
 }
 
-VALID_SEMESTER = {"ganjil", "genap"}
+def _derive_tahun_semester(periode_label: str) -> tuple[str, str]:
+    """
+    Derive (tahun_akademik, semester) dari label periode PDDikti.
+      "Ganjil YYYY" → ("YYYY/YYYY+1", "ganjil")
+      "Genap YYYY"  → ("YYYY/YYYY+1", "genap")
+    YYYY selalu menjadi tahun pertama tahun akademik.
+    """
+    parts = periode_label.strip().split()
+    if len(parts) != 2:
+        raise ValueError(f"Format periode tidak dikenali: {periode_label!r}")
+    tipe, tahun = parts[0].lower(), int(parts[1])
+    if tipe not in ("ganjil", "genap"):
+        raise ValueError(f"Tipe semester tidak dikenali: {tipe!r}")
+    return f"{tahun}/{tahun + 1}", tipe
 
 
-def run(json_path: str, tahun_akademik: str, semester: str, dry_run: bool) -> None:
+def run(json_path: str, periode: str | None, dry_run: bool) -> None:
     with open(json_path, encoding="utf-8") as f:
-        items = json.load(f)
+        data = json.load(f)
 
-    if not items:
+    if not data:
         print("JSON file is empty.")
         return
 
-    total = len(items)
-    items = [i for i in items if i.get("Status", "").strip().upper() == "AKTIF"]
-    print(f"Loaded {total} items, {len(items)} aktif (others ignored)")
-    print(f"Target: tahun_akademik={tahun_akademik!r}, semester={semester!r}\n")
+    # ── Parse format pelaporan ──────────────────────────────────
+    kode_pt   = data.get("kode_pt", "").strip()
+    nama_pt   = data.get("nama_pt", "")
+    pelaporan = data.get("pelaporan", [])
+
+    if not pelaporan:
+        print("Tidak ada data pelaporan dalam file.")
+        return
+
+    # Pilih periode dari file
+    if periode:
+        match = next(
+            (s for s in pelaporan if s.get("semester", "").strip().lower() == periode.strip().lower()),
+            None,
+        )
+        if match is None:
+            tersedia = [s.get("semester", "") for s in pelaporan]
+            print(f"[ERROR] Periode {periode!r} tidak ditemukan. Tersedia: {tersedia}", file=sys.stderr)
+            return
+        dipilih = match
+    else:
+        dipilih = pelaporan[0]
+
+    periode_label = dipilih.get("semester", "")
+    all_items     = dipilih.get("program_studi", [])
+
+    # Derive tahun_akademik dan semester dari label periode
+    try:
+        tahun_akademik, semester = _derive_tahun_semester(periode_label)
+    except ValueError as e:
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return
+
+    total = len(all_items)
+    items = [i for i in all_items if i.get("Status", "").strip().upper() == "AKTIF"]
+
+    print(f"PT      : {nama_pt} ({kode_pt})")
+    print(f"Periode : {periode_label}  →  tahun_akademik={tahun_akademik!r}, semester={semester!r}")
+    print(f"Loaded {total} items, {len(items)} aktif (others ignored)\n")
 
     conn = pymysql.connect(**DB_CONFIG)
 
@@ -66,16 +133,17 @@ def run(json_path: str, tahun_akademik: str, semester: str, dry_run: bool) -> No
     try:
         with conn.cursor() as cur:
             # ── Resolve kode_pt → perguruan_tinggi_id ────────────
-            kode_pt_set = {item["kode_pt"] for item in items}
-            ph = ",".join(["%s"] * len(kode_pt_set))
             cur.execute(
-                f"SELECT id, kode_pt FROM universities_perguruantinggi WHERE kode_pt IN ({ph})",
-                list(kode_pt_set),
+                "SELECT id FROM universities_perguruantinggi WHERE kode_pt = %s",
+                (kode_pt,),
             )
-            pt_map = {row["kode_pt"]: row["id"] for row in cur.fetchall()}
+            pt_row = cur.fetchone()
+            if pt_row is None:
+                print(f"[ERROR] kode_pt={kode_pt!r} tidak ditemukan di universities_perguruantinggi")
+                return
+            pt_id = pt_row["id"]
 
             for item in items:
-                kode_pt    = item.get("kode_pt", "").strip()
                 kode_prodi = item.get("Kode", "").strip()
                 nama_ps    = item.get("Nama Program Studi", "").strip()
 
@@ -83,13 +151,6 @@ def run(json_path: str, tahun_akademik: str, semester: str, dry_run: bool) -> No
                     mhs_aktif = int(item.get("Jumlah Mahasiswa", 0))
                 except (ValueError, TypeError):
                     mhs_aktif = 0
-
-                # ── Lookup PT ────────────────────────────────────
-                pt_id = pt_map.get(kode_pt)
-                if pt_id is None:
-                    print(f"  [SKIP] kode_pt={kode_pt!r} tidak ditemukan di universities_perguruantinggi")
-                    skipped += 1
-                    continue
 
                 # ── Lookup Program Studi ──────────────────────────
                 cur.execute(
@@ -176,49 +237,24 @@ def run(json_path: str, tahun_akademik: str, semester: str, dry_run: bool) -> No
 
 def main() -> None:
     default_file = str(
-        Path(__file__).resolve().parent / "outs" / "071024_programstudi.json"
+        Path(__file__).resolve().parent / "outs" / "051007_pelaporan.json"
     )
     parser = argparse.ArgumentParser(
-        description="Update universities_datamahasiswa dari file programstudi JSON"
+        description="Update universities_datamahasiswa dari file pelaporan JSON"
     )
-    parser.add_argument("--file",     default=default_file, help="Path ke file JSON program studi")
-    parser.add_argument("--tahun",    default="2025/2026",  help="Tahun akademik (default: 2025/2026)")
-    parser.add_argument("--semester", default="ganjil",     choices=list(VALID_SEMESTER),
-                        help="Semester: ganjil atau genap (default: ganjil)")
-    parser.add_argument("--dry-run",  action="store_true",  help="Preview tanpa menulis ke DB")
+    parser.add_argument("--file",    default=default_file, help="Path ke file pelaporan JSON")
+    parser.add_argument("--periode", default=None,
+                        help='Periode semester dari file, misal "Ganjil 2025". Default: semester terbaru')
+    parser.add_argument("--dry-run", action="store_true",  help="Preview tanpa menulis ke DB")
     args = parser.parse_args()
 
     if not os.path.exists(args.file):
         print(f"File tidak ditemukan: {args.file}", file=sys.stderr)
         sys.exit(1)
 
-    run(args.file, args.tahun, args.semester, args.dry_run)
+    run(args.file, args.periode, args.dry_run)
 
 
 if __name__ == "__main__":
     main()
 
-'''
-Script update_datamahasiswa.py telah dibuat. Yang dilakukan:
-
-Filter hanya item dengan Status = "Aktif"
-Lookup perguruan_tinggi_id dari universities_perguruantinggi berdasarkan kode_pt
-Lookup program_studi_id dari universities_programstudi berdasarkan (pt_id, kode_prodi)
-Cek apakah baris (pt_id, ps_id, tahun_akademik, semester) sudah ada:
-Sudah ada → UPDATE mahasiswa_aktif
-Belum ada → INSERT baris baru (field lain default 0)
-Nilai mahasiswa_aktif diambil dari field "Jumlah Mahasiswa" di JSON
-Catatan: tahun_akademik default 2025/2026 (bukan 2005/2006 seperti di request — kemungkinan typo). Bisa diubah via --tahun.
-
-Usage:
-
-
-# Preview
-python3 ~/projects/utils/update_datamahasiswa.py --dry-run
-
-# Jalankan dengan default (tahun 2025/2026, semester ganjil)
-python3 ~/projects/utils/update_datamahasiswa.py
-
-# Tahun dan semester custom
-python3 ~/projects/utils/update_datamahasiswa.py --tahun 2024/2025 --semester genap
-'''

@@ -27,12 +27,12 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 
-OUT_DIR = "/home/ubuntu/projects/utils/outs"
+OUT_DIR = "/home/ubuntu/_chifoo/chifoo_backend/utils/outs"
 BASE_URL = "https://pddikti.kemdiktisaintek.go.id"
 
 KOLOM_PRODI = [
     "Kode", "Nama Program Studi", "Status", "Jenjang", "Akreditasi",
-    "Data Pelaporan (Penghitung)", "Dosen Tetap", "Dosen Tidak Tetap",
+    "Jumlah Dosen Penghitung Rasio", "Dosen Tetap", "Dosen Tidak Tetap",
     "Total Dosen", "Jumlah Mahasiswa", "Rasio Dosen/Mahasiswa",
 ]
 
@@ -158,7 +158,12 @@ def _read_prodi_table(driver):
 def scrape_pelaporan(driver, pt_url, n_semester=5):
     """
     Buka halaman detail PT, iterasi N semester terakhir dari dropdown
-    'Data Pelaporan Tahunan', baca semua baris program studi tiap semester.
+    'Data Pelaporan Tahunan'.
+
+    Alur per semester:
+      1. Pilih 'semua' di dropdown Tampilkan → tunggu reload
+      2. Pilih semester di dropdown Semester → tunggu reload
+      3. Baca seluruh baris program studi dari tabel
     """
     print(f"\nMembuka detail PT: {pt_url[:70]}...")
     driver.get(pt_url)
@@ -170,38 +175,72 @@ def scrape_pelaporan(driver, pt_url, n_semester=5):
         print("  [PERINGATAN] Dropdown semester tidak ditemukan.")
         return []
 
-    # 1. Pilih 'semua' di dropdown Tampilkan sekali di awal
-    if tampilkan_sel:
-        sel_obj    = Select(tampilkan_sel)
-        opt_values = [o.get_attribute("value") for o in sel_obj.options]
-        target_val = "semua" if "semua" in opt_values else opt_values[-1]
-        sel_obj.select_by_value(target_val)
-        print(f"  Tampilkan '{target_val}' dipilih, menunggu reload...")
-        time.sleep(5)
+    # Simpan signature opsi untuk re-identify dropdown setelah DOM reload
+    semester_opt_values  = [o.get_attribute("value") for o in Select(semester_sel).options]
+    tampilkan_opt_values = (
+        [o.get_attribute("value") for o in Select(tampilkan_sel).options]
+        if tampilkan_sel else []
+    )
+    tampilkan_target = (
+        "semua" if "semua" in tampilkan_opt_values
+        else tampilkan_opt_values[-1] if tampilkan_opt_values
+        else None
+    )
 
-    # Re-fetch setelah reload
-    _, semester_sel = _get_dropdowns(driver)
-    if semester_sel is None:
-        print("  [PERINGATAN] Dropdown semester tidak ditemukan setelah reload.")
-        return []
+    # Ekstrak semua opsi semester sebelum interaksi apapun (hindari stale element)
+    target_opts = [
+        (o.get_attribute("value"), o.text.strip())
+        for o in Select(semester_sel).options[:n_semester]
+    ]
+    print(f"  Ditemukan {len(semester_opt_values)} semester, mengambil {len(target_opts)} terakhir.")
 
-    sem_opts    = Select(semester_sel).options
-    target_opts = sem_opts[:n_semester]   # index 0 = semester terbaru
-    print(f"  Ditemukan {len(sem_opts)} semester, mengambil {len(target_opts)} terakhir.")
+    def _refetch_tampilkan():
+        for sel_el in driver.find_elements(By.TAG_NAME, "select"):
+            vals = [o.get_attribute("value") for o in sel_el.find_elements(By.TAG_NAME, "option")]
+            if vals == tampilkan_opt_values:
+                return sel_el
+        return None
 
-    # 2. Iterasi tiap semester: pilih semester → baca tabel prodi
+    def _refetch_semester():
+        for sel_el in driver.find_elements(By.TAG_NAME, "select"):
+            vals = [o.get_attribute("value") for o in sel_el.find_elements(By.TAG_NAME, "option")]
+            if vals == semester_opt_values:
+                return sel_el
+        return None
+
+    def _pilih_semua():
+        """Pilih 'semua' di Tampilkan jika belum terpilih. Return True jika ada reload."""
+        if not tampilkan_target:
+            return False
+        tap = _refetch_tampilkan()
+        if tap is None:
+            return False
+        sel_obj = Select(tap)
+        if sel_obj.first_selected_option.get_attribute("value") != tampilkan_target:
+            sel_obj.select_by_value(tampilkan_target)
+            print(f"    Tampilkan '{tampilkan_target}' dipilih, menunggu reload...")
+            time.sleep(5)
+            return True
+        return False
+
     hasil = []
-    for i, opt in enumerate(target_opts, 1):
-        sem_val = opt.get_attribute("value")
-        sem_txt = opt.text.strip()
+    for i, (sem_val, sem_txt) in enumerate(target_opts, 1):
         print(f"\n  [{i}/{len(target_opts)}] Semester: {sem_txt}")
 
-        # Re-fetch semester dropdown (DOM bisa re-render)
-        _, semester_sel = _get_dropdowns(driver)
-        if semester_sel:
-            Select(semester_sel).select_by_value(sem_val)
-            time.sleep(4)
+        # Langkah 1: pastikan Tampilkan = 'semua' sebelum pilih semester
+        _pilih_semua()
 
+        # Langkah 2: pilih semester
+        sem = _refetch_semester()
+        if sem:
+            Select(sem).select_by_value(sem_val)
+            print(f"    Semester '{sem_txt}' dipilih, menunggu reload...")
+            time.sleep(4)
+        else:
+            print("    [PERINGATAN] Dropdown semester tidak ditemukan, lewati.")
+            continue
+
+        # Langkah 3: baca tabel (Tampilkan sudah 'semua' sebelum ganti semester)
         prodi_list = _read_prodi_table(driver)
         print(f"    → {len(prodi_list)} program studi terbaca.")
 
@@ -239,9 +278,10 @@ def main(keyword, nama_pt_target, kode_pt, n_semester):
             return
 
         output = {
-            "kode_pt":   kode_pt,
-            "nama_pt":   nama_pt_target,
-            "pelaporan": pelaporan,
+            "kode_pt":         kode_pt,
+            "nama_pt":         nama_pt_target,
+            "jumlah_semester": len(pelaporan),
+            "pelaporan":       pelaporan,
         }
         out_path = f"{OUT_DIR}/{kode_pt}_pelaporan.json"
         with open(out_path, "w", encoding="utf-8") as f:
@@ -267,8 +307,8 @@ if __name__ == "__main__":
                         help="Nama PT persis (huruf kapital)")
     parser.add_argument("--kode",     default="051007",
                         help="Kode PT (prefix nama file output)")
-    parser.add_argument("--semester", default=5, type=int,
-                        help="Jumlah semester terakhir (default: 5)")
+    parser.add_argument("--semester", default=7, type=int,
+                        help="Jumlah semester terakhir (default: 7)")
     args = parser.parse_args()
 
     main(
