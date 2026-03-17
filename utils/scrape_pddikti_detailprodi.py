@@ -18,7 +18,7 @@ Usage:
     python3 utils/scrape_pddikti_detailprodi.py --resume
     python3 utils/scrape_pddikti_detailprodi.py --start 5
     python3 utils/scrape_pddikti_detailprodi.py --force
-    python3 utils/scrape_pddikti_detailprodi.py --resume --force --start 3 --end 10
+    python3 utils/scrape_pddikti_detailprodi.py --resume --force --start 1 --end 2
 """
 
 import os
@@ -471,25 +471,42 @@ def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
             print(f"        [{sem_txt}] timeout {TIMEOUT_DOSEN}s — tidak ada dosen homebase, berhenti iterasi semester")
             break
 
+        def _find_dosen_table():
+            """Cari tabel dosen (ada header Nama + NIDN), tanpa syarat ada data."""
+            for tbl in driver.find_elements(By.TAG_NAME, "table"):
+                try:
+                    hdrs = [c.text.strip() for c in tbl.find_elements(
+                        By.CSS_SELECTOR, "tr:first-child th, tr:first-child td")]
+                    if "Nama" in hdrs and "NIDN" in hdrs:
+                        return tbl
+                except Exception:
+                    continue
+            return None
+
+        def _find_next_btn():
+            """Cari tombol '>' (next page) yang tidak disabled di area pagination dosen."""
+            # Utama: cari tombol dengan teks persis '>'
+            for btn in driver.find_elements(By.TAG_NAME, "button"):
+                try:
+                    txt      = btn.text.strip()
+                    aria     = (btn.get_attribute("aria-label") or "").lower()
+                    disabled = btn.get_attribute("disabled")
+                    if (txt == ">" or txt in ("›", "»") or "next" in aria) and not disabled:
+                        return btn
+                except Exception:
+                    continue
+            return None
+
         all_dosen = []
+        page = 1
         try:
             while True:
-                # Re-cari tabel (DOM bisa stale setelah paginasi)
-                dosen_table = None
-                for tbl in driver.find_elements(By.TAG_NAME, "table"):
-                    try:
-                        hdrs = [c.text.strip() for c in tbl.find_elements(
-                            By.CSS_SELECTOR, "tr:first-child th, tr:first-child td")]
-                        if "Nama" in hdrs and "NIDN" in hdrs:
-                            dosen_table = tbl
-                            break
-                    except Exception:
-                        continue
+                dosen_table = _find_dosen_table()
                 if dosen_table is None:
                     break
 
-                rows = dosen_table.find_elements(By.TAG_NAME, "tr")
-                for row in rows[1:]:
+                rows_before = len(all_dosen)
+                for row in dosen_table.find_elements(By.TAG_NAME, "tr")[1:]:
                     try:
                         cells = row.find_elements(By.TAG_NAME, "td")
                         if not cells or not any(c.text.strip() for c in cells):
@@ -499,59 +516,18 @@ def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
                     except Exception:
                         continue
 
-                # Deteksi paginasi "X dari Y"
-                has_next = False
-                next_btn = None
-                try:
-                    pag_els = driver.find_elements(By.XPATH, "//*[contains(text(),' dari ')]")
-                    for pag_el in pag_els:
-                        txt = pag_el.text.strip()
-                        m = re.search(r"(\d+)\s+dari\s+(\d+)", txt)
-                        if m and len(txt) < 30:
-                            cur_p, tot_p = int(m.group(1)), int(m.group(2))
-                            if cur_p < tot_p:
-                                has_next = True
-                            # Naik ke container untuk cari tombol paginasi
-                            container = pag_el
-                            for _ in range(6):
-                                try:
-                                    parent = container.find_element(By.XPATH, "..")
-                                    btns = parent.find_elements(By.TAG_NAME, "button")
-                                    enabled = [b for b in btns
-                                               if not b.get_attribute("disabled")]
-                                    if len(enabled) >= 2 and has_next:
-                                        next_btn = enabled[-1]
-                                        break
-                                    container = parent
-                                except Exception:
-                                    break
-                            break
-                except Exception:
-                    pass
+                rows_added = len(all_dosen) - rows_before
+                if page > 1 or rows_added > 0:
+                    print(f"          hal.{page}: +{rows_added} dosen (total {len(all_dosen)})")
 
-                # Fallback pencarian tombol next
-                if has_next and not next_btn:
-                    try:
-                        for btn in driver.find_elements(By.TAG_NAME, "button"):
-                            aria = (btn.get_attribute("aria-label") or "").lower()
-                            txt  = btn.text.strip()
-                            if ("next" in aria or txt in (">", "›", "»")) \
-                                    and not btn.get_attribute("disabled"):
-                                next_btn = btn
-                                break
-                        if not next_btn:
-                            nav_btns = driver.find_elements(
-                                By.XPATH,
-                                "//nav//button[not(@disabled)] | "
-                                "//*[contains(@class,'pagination')]//button[not(@disabled)]"
-                            )
-                            if nav_btns:
-                                next_btn = nav_btns[-1]
-                    except Exception:
-                        pass
-
+                # Klik '>' ke halaman berikutnya jika ada
+                next_btn = _find_next_btn()
                 if next_btn:
-                    next_btn.click()
+                    driver.execute_script(
+                        "arguments[0].scrollIntoView({block:'center'});", next_btn)
+                    time.sleep(0.3)
+                    driver.execute_script("arguments[0].click();", next_btn)
+                    page += 1
                     time.sleep(3)
                 else:
                     break
@@ -803,11 +779,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Scraper PDDikti — Detail profil, dosen, mahasiswa tiap prodi"
     )
-    parser.add_argument("--keyword", default="universitas muhammadiyah yogyakarta",
+    parser.add_argument("--keyword", default="universitas muhammadiyah surakarta",
                         help="Kata kunci pencarian PT")
-    parser.add_argument("--nama",    default="UNIVERSITAS MUHAMMADIYAH YOGYAKARTA",
+    parser.add_argument("--nama",    default="UNIVERSITAS MUHAMMADIYAH SURAKARTA",
                         help="Nama PT persis (huruf kapital)")
-    parser.add_argument("--kode",    default="051007",
+    parser.add_argument("--kode",    default="061008",
                         help="Kode PT (prefix nama file output)")
     parser.add_argument("--resume",  action="store_true",
                         help="Skip prodi yang file output-nya sudah ada")

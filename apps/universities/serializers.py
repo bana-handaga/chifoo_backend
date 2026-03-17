@@ -19,7 +19,7 @@ class WilayahSerializer(serializers.ModelSerializer):
 def _get_periode_aktif():
     """Ambil periode pelaporan aktif (dipanggil berulang, tabel kecil)."""
     from apps.monitoring.models import PeriodePelaporan
-    return PeriodePelaporan.objects.filter(status='aktif').first()
+    return PeriodePelaporan.objects.filter(status='aktif').order_by('-tahun', 'semester').first()
 
 
 class ProgramStudiSerializer(serializers.ModelSerializer):
@@ -29,8 +29,9 @@ class ProgramStudiSerializer(serializers.ModelSerializer):
         model = ProgramStudi
         fields = [
             'id', 'kode_prodi', 'nama', 'jenjang', 'jenjang_display',
-            'akreditasi', 'akreditasi_display', 'is_active',
-            'mahasiswa_aktif_periode',
+            'akreditasi', 'akreditasi_display',
+            'no_sk_akreditasi', 'tanggal_kedaluarsa_akreditasi',
+            'is_active', 'mahasiswa_aktif_periode',
         ]
         extra_kwargs = {
             'jenjang_display': {'source': 'get_jenjang_display', 'read_only': True},
@@ -74,6 +75,7 @@ class PerguruanTinggiListSerializer(serializers.ModelSerializer):
     wilayah_nama = serializers.CharField(source='wilayah.nama', read_only=True)
     total_prodi = serializers.SerializerMethodField()
     total_mahasiswa = serializers.SerializerMethodField()
+    total_dosen = serializers.SerializerMethodField()
 
     class Meta:
         model = PerguruanTinggi
@@ -82,40 +84,46 @@ class PerguruanTinggiListSerializer(serializers.ModelSerializer):
             'organisasi_induk', 'kota', 'provinsi', 'wilayah_nama',
             'akreditasi_institusi', 'nomor_sk_akreditasi',
             'tanggal_kadaluarsa_akreditasi', 'is_active',
-            'total_prodi', 'total_mahasiswa', 'logo', 'website'
+            'total_prodi', 'total_mahasiswa', 'total_dosen', 'logo', 'website'
         ]
 
     def get_total_prodi(self, obj):
         return obj.program_studi.filter(is_active=True).count()
 
+    def _get_tahun_semester(self, periode_aktif):
+        if periode_aktif.semester == 'genap':
+            return f"{periode_aktif.tahun - 1}/{periode_aktif.tahun}"
+        return f"{periode_aktif.tahun}/{periode_aktif.tahun + 1}"
+
     def get_total_mahasiswa(self, obj):
-        from apps.monitoring.models import PeriodePelaporan
-
-        # Hanya gunakan data per program studi (bukan rekap level PT)
-        qs = obj.data_mahasiswa.filter(program_studi__isnull=False)
-
-        # Coba filter berdasarkan periode pelaporan aktif
-        periode_aktif = PeriodePelaporan.objects.filter(status='aktif').first()
-        if periode_aktif:
-            if periode_aktif.semester == 'genap':
-                tahun_akademik = f"{periode_aktif.tahun - 1}/{periode_aktif.tahun}"
-            else:
-                tahun_akademik = f"{periode_aktif.tahun}/{periode_aktif.tahun + 1}"
-            total = qs.filter(
+        periode_aktif = _get_periode_aktif()
+        if not periode_aktif:
+            return 0
+        tahun_akademik = self._get_tahun_semester(periode_aktif)
+        total = (
+            obj.data_mahasiswa
+            .filter(
+                program_studi__is_active=True,
                 tahun_akademik=tahun_akademik,
                 semester=periode_aktif.semester,
-            ).aggregate(total=Sum('mahasiswa_aktif'))['total']
-            if total is not None:
-                return total
+            )
+            .aggregate(total=Sum('mahasiswa_aktif'))['total']
+        )
+        return total or 0
 
-        # Fallback: gunakan tahun_akademik & semester terbaru yang tersedia
-        latest = qs.order_by('-tahun_akademik', '-semester').first()
-        if not latest:
+    def get_total_dosen(self, obj):
+        periode_aktif = _get_periode_aktif()
+        if not periode_aktif:
             return 0
-        total = qs.filter(
-            tahun_akademik=latest.tahun_akademik,
-            semester=latest.semester,
-        ).aggregate(total=Sum('mahasiswa_aktif'))['total']
+        tahun_akademik = self._get_tahun_semester(periode_aktif)
+        total = (
+            obj.data_dosen
+            .filter(
+                tahun_akademik=tahun_akademik,
+                semester=periode_aktif.semester,
+            )
+            .aggregate(total=Sum('dosen_tetap'))['total']
+        )
         return total or 0
 
 
@@ -153,14 +161,14 @@ class PerguruanTinggiDetailSerializer(serializers.ModelSerializer):
         ]
         totals = list(
             obj.data_mahasiswa
-            .filter(program_studi__isnull=False)
+            .filter(program_studi__is_active=True)
             .values('tahun_akademik', 'semester')
             .annotate(**{f: Sum(f) for f in AGG_FIELDS})
             .order_by('-tahun_akademik', 'semester')
         )
         detail_qs = (
             obj.data_mahasiswa
-            .filter(program_studi__isnull=False)
+            .filter(program_studi__is_active=True)
             .select_related('program_studi')
             .order_by('-tahun_akademik', 'semester', 'program_studi__nama')
         )

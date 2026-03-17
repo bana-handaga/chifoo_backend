@@ -3,8 +3,9 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    WilayahViewSet, PerguruanTinggiViewSet, 
-    ProgramStudiViewSet, DataMahasiswaViewSet, DataDosenViewSet
+    WilayahViewSet, PerguruanTinggiViewSet,
+    ProgramStudiViewSet, DataMahasiswaViewSet, DataDosenViewSet,
+    banpt_prodi_search,
 )
 
 router = DefaultRouter()
@@ -16,4 +17,5 @@ router.register(r'data-dosen', DataDosenViewSet, basename='data-dosen')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('banpt-prodi-search/', banpt_prodi_search, name='banpt-prodi-search'),
 ]

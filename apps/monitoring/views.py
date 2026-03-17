@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
@@ -19,25 +19,30 @@ from .serializers import (
 )
 
 
-class KategoriIndikatorViewSet(viewsets.ModelViewSet):
+class PublicReadAuthWriteMixin:
+    """GET/HEAD/OPTIONS bebas akses; metode tulis butuh autentikasi."""
+    def get_permissions(self):
+        if self.request.method in ('GET', 'HEAD', 'OPTIONS'):
+            return [AllowAny()]
+        return [IsAuthenticated()]
+
+
+class KategoriIndikatorViewSet(PublicReadAuthWriteMixin, viewsets.ModelViewSet):
     queryset = KategoriIndikator.objects.prefetch_related('indikator')
     serializer_class = KategoriIndikatorSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
-class IndikatorViewSet(viewsets.ModelViewSet):
+class IndikatorViewSet(PublicReadAuthWriteMixin, viewsets.ModelViewSet):
     queryset = Indikator.objects.select_related('kategori')
     serializer_class = IndikatorSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['kategori', 'tipe_data', 'is_wajib', 'is_active']
     search_fields = ['kode', 'nama']
 
 
-class PeriodePelaporanViewSet(viewsets.ModelViewSet):
+class PeriodePelaporanViewSet(PublicReadAuthWriteMixin, viewsets.ModelViewSet):
     queryset = PeriodePelaporan.objects.all()
     serializer_class = PeriodePelaporanSerializer
-    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['tahun', 'semester', 'status']
 
