@@ -644,3 +644,67 @@ def dosen_stats(request):
         'per_pt':         per_pt,
         'per_wilayah':    per_wilayah,
     })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def dosen_search(request):
+    """Pencarian profil dosen dengan filter nama, PT, jabatan, pendidikan, status."""
+    nama       = request.query_params.get('nama', '').strip()
+    pt_kode    = request.query_params.get('pt_kode', '').strip()
+    jabatan    = request.query_params.get('jabatan', '').strip()
+    pendidikan = request.query_params.get('pendidikan', '').strip()
+    status     = request.query_params.get('status', '').strip()
+    page       = max(1, int(request.query_params.get('page', 1)))
+    page_size  = 5
+
+    ALLOWED_SORT = {
+        'nama', 'jabatan_fungsional', 'pendidikan_tertinggi',
+        'program_studi_nama', 'perguruan_tinggi__nama',
+    }
+    ordering_raw = request.query_params.get('ordering', 'nama')
+    desc = ordering_raw.startswith('-')
+    ordering_field = ordering_raw.lstrip('-')
+    if ordering_field not in ALLOWED_SORT:
+        ordering_field = 'nama'
+        desc = False
+    ordering = ('-' if desc else '') + ordering_field
+
+    qs = ProfilDosen.objects.select_related('perguruan_tinggi', 'program_studi')
+
+    if nama:
+        qs = qs.filter(nama__icontains=nama)
+    if pt_kode:
+        qs = qs.filter(perguruan_tinggi__kode_pt=pt_kode)
+    if jabatan:
+        qs = qs.filter(jabatan_fungsional=jabatan)
+    if pendidikan:
+        qs = qs.filter(pendidikan_tertinggi=pendidikan)
+    if status:
+        qs = qs.filter(status=status)
+
+    total = qs.count()
+    offset = (page - 1) * page_size
+    results = qs.order_by(ordering)[offset: offset + page_size]
+
+    data = [{
+        'nidn':              r.nidn or '',
+        'nuptk':             r.nuptk,
+        'nama':              r.nama,
+        'jenis_kelamin':     r.jenis_kelamin,
+        'jabatan_fungsional': r.jabatan_fungsional,
+        'pendidikan_tertinggi': r.pendidikan_tertinggi,
+        'ikatan_kerja':      r.ikatan_kerja,
+        'status':            r.status,
+        'program_studi_nama': r.program_studi_nama,
+        'pt_nama':           r.perguruan_tinggi.nama,
+        'pt_kode':           r.perguruan_tinggi.kode_pt,
+        'pt_singkatan':      r.perguruan_tinggi.singkatan,
+    } for r in results]
+
+    return Response({
+        'total':     total,
+        'page':      page,
+        'page_size': page_size,
+        'results':   data,
+    })

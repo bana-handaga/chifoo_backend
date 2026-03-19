@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     WilayahViewSet, PerguruanTinggiViewSet,
     ProgramStudiViewSet, DataMahasiswaViewSet, DataDosenViewSet,
-    banpt_prodi_search, dosen_stats,
+    banpt_prodi_search, dosen_stats, dosen_search,
 )
 
 router = DefaultRouter()
@@ -19,4 +19,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('banpt-prodi-search/', banpt_prodi_search, name='banpt-prodi-search'),
     path('dosen-stats/', dosen_stats, name='dosen-stats'),
+    path('dosen-search/', dosen_search, name='dosen-search'),
 ]
