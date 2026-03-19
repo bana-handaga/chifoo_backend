@@ -220,10 +220,14 @@ class PerguruanTinggiDetailSerializer(serializers.ModelSerializer):
         per_periode = defaultdict(list)
         for d in detail_qs:
             key = (d.tahun_akademik, d.semester)
+            ps = d.program_studi
             per_periode[key].append({
-                'prodi_id': d.program_studi_id,
-                'prodi_nama': d.program_studi.nama if d.program_studi else '—',
-                'prodi_jenjang': d.program_studi.get_jenjang_display() if d.program_studi else '',
+                'prodi_id':      d.program_studi_id,
+                'prodi_nama':    ps.nama if ps else '—',
+                'prodi_kode':    ps.kode_prodi if ps else '',
+                'prodi_jenjang': ps.get_jenjang_display() if ps else '',
+                'pt_kode':       obj.kode_pt,
+                'pt_nama':       obj.singkatan or obj.nama,
                 **{f: getattr(d, f) for f in AGG_FIELDS},
             })
         # Gabungkan
