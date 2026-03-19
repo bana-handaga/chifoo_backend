@@ -305,7 +305,7 @@ class SnapshotLaporanViewSet(viewsets.ReadOnlyModelViewSet):
     POST /api/snapshot-laporan/generate/ → hitung & simpan snapshot baru
     GET  /api/snapshot-laporan/<id>/    → detail + per_pt
     """
-    queryset = SnapshotLaporan.objects.all()[:10]
+    queryset = SnapshotLaporan.objects.all()
 
     def get_permissions(self):
         return [AllowAny()]
@@ -314,6 +314,11 @@ class SnapshotLaporanViewSet(viewsets.ReadOnlyModelViewSet):
         if self.action == 'retrieve':
             return SnapshotLaporanSerializer
         return SnapshotLaporanListSerializer
+
+    def list(self, request, *args, **kwargs):
+        qs = SnapshotLaporan.objects.all()[:10]
+        serializer = SnapshotLaporanListSerializer(qs, many=True)
+        return Response(serializer.data)
 
     @action(detail=False, methods=['post'], url_path='generate')
     def generate(self, request):
