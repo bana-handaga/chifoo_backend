@@ -112,8 +112,9 @@ class PublicReadAdminWriteMixin:
 
 
 class WilayahViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
-    queryset = Wilayah.objects.all()
+    queryset = Wilayah.objects.all().order_by('nama')
     serializer_class = WilayahSerializer
+    pagination_class = None
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['nama', 'provinsi']
     ordering_fields = ['nama', 'provinsi']
