@@ -3,7 +3,8 @@
 from rest_framework import serializers
 from .models import (
     KategoriIndikator, Indikator, PeriodePelaporan,
-    LaporanPT, IsiLaporan, Notifikasi
+    LaporanPT, IsiLaporan, Notifikasi,
+    SnapshotLaporan, SnapshotPerPT,
 )
 
 
@@ -106,3 +107,35 @@ class NotifikasiSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notifikasi
         fields = '__all__'
+
+
+class SnapshotPerPTSerializer(serializers.ModelSerializer):
+    pt_id       = serializers.IntegerField(source='perguruan_tinggi_id')
+    pt_kode     = serializers.CharField(source='perguruan_tinggi.kode_pt')
+    pt_nama     = serializers.CharField(source='perguruan_tinggi.nama')
+    pt_singkatan = serializers.CharField(source='perguruan_tinggi.singkatan')
+
+    class Meta:
+        model  = SnapshotPerPT
+        fields = [
+            'pt_id', 'pt_kode', 'pt_nama', 'pt_singkatan',
+            'total_prodi', 'prodi_per_jenjang',
+            'total_dosen', 'dosen_pria', 'dosen_wanita',
+            'dosen_per_jabatan', 'dosen_per_pendidikan',
+            'dosen_per_status', 'dosen_per_ikatan',
+            'mhs_tren',
+        ]
+
+
+class SnapshotLaporanSerializer(serializers.ModelSerializer):
+    per_pt = SnapshotPerPTSerializer(many=True, read_only=True)
+
+    class Meta:
+        model  = SnapshotLaporan
+        fields = ['id', 'dibuat_pada', 'keterangan', 'total_pt', 'per_pt']
+
+
+class SnapshotLaporanListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = SnapshotLaporan
+        fields = ['id', 'dibuat_pada', 'keterangan', 'total_pt']

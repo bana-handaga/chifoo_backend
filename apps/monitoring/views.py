@@ -8,14 +8,24 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
+from collections import defaultdict
+
+from django.db.models import Count, Sum, Q
+
+from apps.universities.models import (
+    PerguruanTinggi, ProgramStudi, ProfilDosen, DataMahasiswa
+)
+
 from .models import (
     KategoriIndikator, Indikator, PeriodePelaporan,
-    LaporanPT, IsiLaporan, Notifikasi
+    LaporanPT, IsiLaporan, Notifikasi,
+    SnapshotLaporan, SnapshotPerPT,
 )
 from .serializers import (
     KategoriIndikatorSerializer, IndikatorSerializer,
     PeriodePelaporanSerializer, LaporanPTListSerializer,
-    LaporanPTDetailSerializer, IsiLaporanSerializer, NotifikasiSerializer
+    LaporanPTDetailSerializer, IsiLaporanSerializer, NotifikasiSerializer,
+    SnapshotLaporanSerializer, SnapshotLaporanListSerializer,
 )
 
 
@@ -163,3 +173,153 @@ class NotifikasiViewSet(viewsets.ModelViewSet):
         """Tandai semua notifikasi sebagai sudah dibaca"""
         self.get_queryset().filter(is_read=False).update(is_read=True)
         return Response({'detail': 'Semua notifikasi telah ditandai sebagai dibaca.'})
+
+
+# ─────────────────────────────────────────────────────────────────
+# Helper: hitung semua distribusi dan simpan ke SnapshotLaporan
+# ─────────────────────────────────────────────────────────────────
+
+def _compute_snapshot(keterangan: str = '') -> SnapshotLaporan:
+    """Hitung semua distribusi per-PT dan simpan snapshot baru."""
+
+    # 1. 7 semester terakhir berdasarkan DataMahasiswa
+    semesters = list(
+        DataMahasiswa.objects
+        .values_list('tahun_akademik', 'semester')
+        .distinct()
+        .order_by('-tahun_akademik', '-semester')[:7]
+    )
+
+    # 2. Kumpulkan semua query sekaligus (bulk)
+    prodi_qs = (
+        ProgramStudi.objects.filter(is_active=True)
+        .values('perguruan_tinggi_id', 'jenjang')
+        .annotate(n=Count('id'))
+    )
+    gender_qs = (
+        ProfilDosen.objects
+        .values('perguruan_tinggi_id', 'jenis_kelamin')
+        .annotate(n=Count('id'))
+    )
+    jabatan_qs = (
+        ProfilDosen.objects
+        .values('perguruan_tinggi_id', 'jabatan_fungsional')
+        .annotate(n=Count('id'))
+    )
+    pendidikan_qs = (
+        ProfilDosen.objects
+        .values('perguruan_tinggi_id', 'pendidikan_tertinggi')
+        .annotate(n=Count('id'))
+    )
+    status_qs = (
+        ProfilDosen.objects
+        .values('perguruan_tinggi_id', 'status')
+        .annotate(n=Count('id'))
+    )
+    ikatan_qs = (
+        ProfilDosen.objects
+        .values('perguruan_tinggi_id', 'ikatan_kerja')
+        .annotate(n=Count('id'))
+    )
+
+    ta_list  = [s[0] for s in semesters]
+    sem_list = [s[1] for s in semesters]
+    mhs_qs = (
+        DataMahasiswa.objects
+        .filter(tahun_akademik__in=ta_list, semester__in=sem_list)
+        .values('perguruan_tinggi_id', 'tahun_akademik', 'semester')
+        .annotate(total=Sum('mahasiswa_aktif'))
+    ) if semesters else []
+
+    # 3. Indeks per PT_id
+    prodi_idx    = defaultdict(dict)
+    gender_idx   = defaultdict(lambda: {'L': 0, 'P': 0})
+    jabatan_idx  = defaultdict(dict)
+    pend_idx     = defaultdict(dict)
+    status_idx   = defaultdict(dict)
+    ikatan_idx   = defaultdict(dict)
+    mhs_idx      = defaultdict(dict)   # pt_id → {(ta, sem): total}
+
+    for r in prodi_qs:
+        prodi_idx[r['perguruan_tinggi_id']][r['jenjang'] or ''] = r['n']
+    for r in gender_qs:
+        gender_idx[r['perguruan_tinggi_id']][r['jenis_kelamin'] or ''] = r['n']
+    for r in jabatan_qs:
+        jabatan_idx[r['perguruan_tinggi_id']][r['jabatan_fungsional'] or ''] = r['n']
+    for r in pendidikan_qs:
+        pend_idx[r['perguruan_tinggi_id']][r['pendidikan_tertinggi'] or ''] = r['n']
+    for r in status_qs:
+        status_idx[r['perguruan_tinggi_id']][r['status'] or ''] = r['n']
+    for r in ikatan_qs:
+        ikatan_idx[r['perguruan_tinggi_id']][r['ikatan_kerja'] or ''] = r['n']
+    for r in mhs_qs:
+        mhs_idx[r['perguruan_tinggi_id']][(r['tahun_akademik'], r['semester'])] = r['total'] or 0
+
+    # 4. Daftar semua PT aktif
+    all_pt = list(PerguruanTinggi.objects.filter(is_active=True).values_list('id', flat=True))
+
+    # 5. Simpan snapshot
+    snap = SnapshotLaporan.objects.create(keterangan=keterangan, total_pt=len(all_pt))
+
+    bulk = []
+    for pt_id in all_pt:
+        g = gender_idx[pt_id]
+        pria   = g.get('L', 0)
+        wanita = g.get('P', 0)
+        total_dosen = sum(g.values())
+
+        # Tren 7 semester — urut dari lama ke baru
+        tren = []
+        for ta, sem in reversed(semesters):
+            tren.append({
+                'periode': f"{ta} {sem.capitalize()}",
+                'total': mhs_idx[pt_id].get((ta, sem), 0),
+            })
+
+        bulk.append(SnapshotPerPT(
+            snapshot_id          = snap.id,
+            perguruan_tinggi_id  = pt_id,
+            total_prodi          = sum(prodi_idx[pt_id].values()),
+            prodi_per_jenjang    = prodi_idx[pt_id],
+            total_dosen          = total_dosen,
+            dosen_pria           = pria,
+            dosen_wanita         = wanita,
+            dosen_per_jabatan    = jabatan_idx[pt_id],
+            dosen_per_pendidikan = pend_idx[pt_id],
+            dosen_per_status     = status_idx[pt_id],
+            dosen_per_ikatan     = ikatan_idx[pt_id],
+            mhs_tren             = tren,
+        ))
+
+    SnapshotPerPT.objects.bulk_create(bulk)
+    return snap
+
+
+# ─────────────────────────────────────────────────────────────────
+# ViewSet: SnapshotLaporan
+# ─────────────────────────────────────────────────────────────────
+
+class SnapshotLaporanViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    GET  /api/snapshot-laporan/         → daftar 10 snapshot terbaru
+    POST /api/snapshot-laporan/generate/ → hitung & simpan snapshot baru
+    GET  /api/snapshot-laporan/<id>/    → detail + per_pt
+    """
+    queryset = SnapshotLaporan.objects.all()[:10]
+
+    def get_permissions(self):
+        return [AllowAny()]
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return SnapshotLaporanSerializer
+        return SnapshotLaporanListSerializer
+
+    @action(detail=False, methods=['post'], url_path='generate')
+    def generate(self, request):
+        keterangan = request.data.get('keterangan', '')
+        snap = _compute_snapshot(keterangan)
+        return Response(
+            SnapshotLaporanSerializer(snap).data,
+            status=status.HTTP_201_CREATED,
+        )

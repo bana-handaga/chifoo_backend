@@ -146,6 +146,49 @@ class IsiLaporan(models.Model):
         return f"{self.laporan} - {self.indikator.kode}"
 
 
+class SnapshotLaporan(models.Model):
+    """Snapshot perhitungan performa PT — satu baris per sesi generate."""
+    dibuat_pada = models.DateTimeField(auto_now_add=True)
+    keterangan   = models.CharField(max_length=200, blank=True)
+    total_pt     = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['-dibuat_pada']
+        verbose_name = 'Snapshot Laporan Performa'
+
+    def __str__(self):
+        return f"Snapshot {self.dibuat_pada.strftime('%d %b %Y %H:%M')} ({self.total_pt} PT)"
+
+
+class SnapshotPerPT(models.Model):
+    """Distribusi per-PT dalam satu snapshot."""
+    snapshot          = models.ForeignKey(SnapshotLaporan, on_delete=models.CASCADE, related_name='per_pt')
+    perguruan_tinggi  = models.ForeignKey(PerguruanTinggi, on_delete=models.CASCADE)
+
+    # Prodi
+    total_prodi       = models.IntegerField(default=0)
+    prodi_per_jenjang = models.JSONField(default=dict)   # {"S1": 10, "S2": 3, …}
+
+    # Dosen profil (dari ProfilDosen)
+    total_dosen       = models.IntegerField(default=0)
+    dosen_pria        = models.IntegerField(default=0)
+    dosen_wanita      = models.IntegerField(default=0)
+    dosen_per_jabatan    = models.JSONField(default=dict) # {"Profesor": 5, "Lektor": 40, …}
+    dosen_per_pendidikan = models.JSONField(default=dict) # {"s3": 20, "s2": 50, …}
+    dosen_per_status     = models.JSONField(default=dict) # {"Aktif": 100, …}
+    dosen_per_ikatan     = models.JSONField(default=dict) # {"tetap": 80, "tidak_tetap": 20}
+
+    # Mahasiswa aktif — 7 semester terakhir
+    mhs_tren = models.JSONField(default=list)  # [{"periode": "2024/2025 Ganjil", "total": 1000}, …]
+
+    class Meta:
+        unique_together = [('snapshot', 'perguruan_tinggi')]
+        ordering = ['perguruan_tinggi__nama']
+
+    def __str__(self):
+        return f"{self.perguruan_tinggi.singkatan} @ {self.snapshot_id}"
+
+
 class Notifikasi(models.Model):
     """Notifikasi untuk PT"""
 
