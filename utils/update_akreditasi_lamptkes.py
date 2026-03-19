@@ -21,8 +21,8 @@ from dotenv import dotenv_values
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 env = dotenv_values(os.path.join(BASE_DIR, ".env"))
 
-LAMPTKES_FILE = os.path.join(BASE_DIR, "utils/outs/lamptkes_prodi.json")
-BANPT_PT_FILE  = os.path.join(BASE_DIR, "utils/outs/banpt_pt.json")
+LAMPTKES_FILE = os.path.join(BASE_DIR, "utils/ext/lamptkes_prodi.json")
+BANPT_PT_FILE  = os.path.join(BASE_DIR, "utils/ext/banpt_pt.json")
 
 FUZZY_THRESHOLD = 0.88
 
@@ -70,8 +70,8 @@ PERINGKAT_MAP = {
 
 
 def normalize(name: str) -> str:
-    name = html.unescape(name).upper().strip()
-    return re.sub(r"\s+", " ", name)
+    name = re.sub(r"[.]", "", html.unescape(name))
+    return re.sub(r"\s+", " ", name.upper().strip())
 
 def strip_city_suffix(name: str) -> str | None:
     m = re.search(r",\s+[A-Z\s]+$", name)
@@ -158,11 +158,11 @@ def main():
 
     # Ambil prodi yang belum terakreditasi
     cur.execute("""
-        SELECT ps.kode_prodi, ps.nama, ps.jenjang, pt.kode_pt, pt.nama
+        SELECT ps.kode_prodi, ps.nama, ps.jenjang, pt.nama
         FROM universities_programstudi ps
         JOIN universities_perguruantinggi pt ON pt.id = ps.perguruan_tinggi_id
         WHERE ps.akreditasi = 'belum'
-        ORDER BY pt.kode_pt, ps.nama
+        ORDER BY pt.nama, ps.nama
     """)
     rows = cur.fetchall()
     print(f"Prodi 'belum' di DB: {len(rows)}")
@@ -170,13 +170,8 @@ def main():
     update_rows = []   # (akreditasi, nomor_sk, tgl_expired, kode_prodi)
     exact_count = fuzzy_count = not_found = pt_skip = 0
 
-    for kode_prodi, nama_prodi, jenjang, kode_pt, nama_pt in rows:
-        nama_banpt_pt = pt_map.get(kode_pt)
-        if not nama_banpt_pt:
-            pt_skip += 1
-            continue
-
-        candidates = index.get(normalize(nama_banpt_pt), [])
+    for kode_prodi, nama_prodi, jenjang, nama_pt in rows:
+        candidates = index.get(normalize(nama_pt), [])
         if not candidates:
             not_found += 1
             continue
