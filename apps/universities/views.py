@@ -406,7 +406,7 @@ class ProgramStudiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             .select_related('perguruan_tinggi')
             .order_by('perguruan_tinggi__nama')
             .values(
-                'id', 'nama', 'kode_prodi', 'akreditasi', 'no_sk_akreditasi', 'tanggal_kedaluarsa_akreditasi',
+                'id', 'nama', 'jenjang', 'kode_prodi', 'akreditasi', 'no_sk_akreditasi', 'tanggal_kedaluarsa_akreditasi',
                 'perguruan_tinggi__id', 'perguruan_tinggi__kode_pt',
                 'perguruan_tinggi__nama', 'perguruan_tinggi__singkatan',
                 'perguruan_tinggi__kota', 'perguruan_tinggi__provinsi',
@@ -445,6 +445,7 @@ class ProgramStudiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             {
                 'prodi_id':           r['id'],
                 'nama_prodi':         r['nama'],
+                'jenjang':            r['jenjang'].upper() if r['jenjang'] else '',
                 'kode_prodi':         r['kode_prodi'],
                 'akreditasi':         r['akreditasi'],
                 'akreditasi_display': AKREDITASI_LABEL.get(r['akreditasi'], r['akreditasi']),
