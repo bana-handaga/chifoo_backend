@@ -91,7 +91,7 @@ def banpt_prodi_search(request):
 class PT10Pagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
-    max_page_size = 200
+    max_page_size = 500
 
 from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen
 from .serializers import _get_periode_aktif
