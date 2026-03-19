@@ -700,6 +700,7 @@ def dosen_search(request):
         'ikatan_kerja':      r.ikatan_kerja,
         'status':            r.status,
         'program_studi_nama': r.program_studi_nama,
+        'kode_prodi':        r.program_studi.kode_prodi if r.program_studi else '',
         'pt_nama':           r.perguruan_tinggi.nama,
         'pt_kode':           r.perguruan_tinggi.kode_pt,
         'pt_singkatan':      r.perguruan_tinggi.singkatan,
