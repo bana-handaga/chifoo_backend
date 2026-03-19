@@ -122,7 +122,8 @@ class WilayahViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
 
 class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
     queryset = PerguruanTinggi.objects.select_related('wilayah').prefetch_related(
-        'program_studi', 'program_studi__data_mahasiswa', 'data_mahasiswa', 'data_dosen'
+        'program_studi', 'program_studi__data_mahasiswa', 'program_studi__data_dosen',
+        'data_mahasiswa', 'data_dosen'
     )
     pagination_class = PT10Pagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]

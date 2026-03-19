@@ -24,6 +24,7 @@ def _get_periode_aktif():
 
 class ProgramStudiSerializer(serializers.ModelSerializer):
     mahasiswa_aktif_periode = serializers.SerializerMethodField()
+    dosen_tetap_periode = serializers.SerializerMethodField()
 
     class Meta:
         model = ProgramStudi
@@ -31,7 +32,7 @@ class ProgramStudiSerializer(serializers.ModelSerializer):
             'id', 'kode_prodi', 'nama', 'jenjang', 'jenjang_display',
             'akreditasi', 'akreditasi_display',
             'no_sk_akreditasi', 'tanggal_kedaluarsa_akreditasi',
-            'is_active', 'mahasiswa_aktif_periode',
+            'is_active', 'mahasiswa_aktif_periode', 'dosen_tetap_periode',
         ]
         extra_kwargs = {
             'jenjang_display': {'source': 'get_jenjang_display', 'read_only': True},
@@ -44,19 +45,27 @@ class ProgramStudiSerializer(serializers.ModelSerializer):
         data['akreditasi_display'] = instance.get_akreditasi_display()
         return data
 
-    def get_mahasiswa_aktif_periode(self, obj):
+    def _get_ta(self):
         periode = _get_periode_aktif()
         if not periode:
+            return None, None
+        ta = (f"{periode.tahun - 1}/{periode.tahun}" if periode.semester == 'genap'
+              else f"{periode.tahun}/{periode.tahun + 1}")
+        return ta, periode.semester
+
+    def get_mahasiswa_aktif_periode(self, obj):
+        ta, sem = self._get_ta()
+        if not ta:
             return 0
-        if periode.semester == 'genap':
-            tahun_akademik = f"{periode.tahun - 1}/{periode.tahun}"
-        else:
-            tahun_akademik = f"{periode.tahun}/{periode.tahun + 1}"
-        dm = obj.data_mahasiswa.filter(
-            tahun_akademik=tahun_akademik,
-            semester=periode.semester,
-        ).first()
+        dm = obj.data_mahasiswa.filter(tahun_akademik=ta, semester=sem).first()
         return dm.mahasiswa_aktif if dm else 0
+
+    def get_dosen_tetap_periode(self, obj):
+        ta, sem = self._get_ta()
+        if not ta:
+            return 0
+        dd = obj.data_dosen.filter(tahun_akademik=ta, semester=sem).first()
+        return dd.dosen_tetap if dd else 0
 
 
 class DataMahasiswaSerializer(serializers.ModelSerializer):
