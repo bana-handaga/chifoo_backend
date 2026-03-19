@@ -200,3 +200,76 @@ class DataDosen(models.Model):
 
     def __str__(self):
         return f"{self.perguruan_tinggi.singkatan} - {self.tahun_akademik}/{self.semester}"
+
+
+class ProfilDosen(models.Model):
+    """Profil individu dosen hasil scrape PDDikti"""
+
+    class JenisKelamin(models.TextChoices):
+        LAKI = 'L', 'Laki-laki'
+        PEREMPUAN = 'P', 'Perempuan'
+
+    class PendidikanTertinggi(models.TextChoices):
+        S1 = 's1', 'S1'
+        S2 = 's2', 'S2'
+        S3 = 's3', 'S3'
+        PROFESI = 'profesi', 'Profesi'
+        LAINNYA = 'lainnya', 'Lainnya'
+
+    class IkatanKerja(models.TextChoices):
+        TETAP = 'tetap', 'Dosen Tetap'
+        TIDAK_TETAP = 'tidak_tetap', 'Dosen Tidak Tetap'
+
+    # Identitas — nidn nullable agar unique_together (pt, nidn) tetap valid
+    # untuk dosen tanpa NIDN (MySQL mengizinkan banyak NULL di unique index)
+    nidn  = models.CharField(max_length=20, null=True, blank=True, db_index=True, verbose_name='NIDN')
+    nuptk = models.CharField(max_length=20, blank=True, verbose_name='NUPTK')
+    nama  = models.CharField(max_length=200, verbose_name='Nama Dosen')
+    jenis_kelamin = models.CharField(
+        max_length=1, choices=JenisKelamin.choices, blank=True
+    )
+
+    # Relasi
+    perguruan_tinggi = models.ForeignKey(
+        PerguruanTinggi, on_delete=models.CASCADE,
+        related_name='profil_dosen', verbose_name='Perguruan Tinggi'
+    )
+    program_studi = models.ForeignKey(
+        ProgramStudi, on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='profil_dosen', verbose_name='Program Studi'
+    )
+    # Nama prodi dari PDDikti (untuk kasus prodi belum ter-match ke FK)
+    program_studi_nama = models.CharField(max_length=200, blank=True, verbose_name='Nama Prodi (PDDikti)')
+
+    # Jabatan & status
+    jabatan_fungsional   = models.CharField(max_length=50, blank=True, verbose_name='Jabatan Fungsional')
+    pendidikan_tertinggi = models.CharField(
+        max_length=10, choices=PendidikanTertinggi.choices, blank=True, verbose_name='Pendidikan Tertinggi'
+    )
+    ikatan_kerja = models.CharField(
+        max_length=15, choices=IkatanKerja.choices, blank=True, verbose_name='Ikatan Kerja'
+    )
+    status = models.CharField(max_length=30, blank=True, verbose_name='Status')
+
+    # Referensi scrape
+    url_pencarian = models.CharField(max_length=500, blank=True, verbose_name='URL Pencarian')
+    scraped_at    = models.DateTimeField(null=True, blank=True, verbose_name='Waktu Scrape')
+
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Profil Dosen'
+        verbose_name_plural = 'Profil Dosen'
+        unique_together = [['perguruan_tinggi', 'nidn']]
+        ordering = ['nama']
+        indexes = [
+            models.Index(fields=['nidn']),
+            models.Index(fields=['nuptk']),
+            models.Index(fields=['perguruan_tinggi', 'program_studi']),
+        ]
+
+    def __str__(self):
+        return f"{self.nama} ({self.nidn or self.nuptk}) — {self.perguruan_tinggi.singkatan}"

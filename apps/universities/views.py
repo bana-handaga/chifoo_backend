@@ -93,7 +93,7 @@ class PT10Pagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 200
 
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen
 from .serializers import _get_periode_aktif
 from apps.monitoring.models import PeriodePelaporan
 from .serializers import (
@@ -568,3 +568,79 @@ class DataDosenViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['perguruan_tinggi', 'tahun_akademik', 'semester']
     ordering_fields = ['tahun_akademik', 'dosen_tetap']
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def dosen_stats(request):
+    """Statistik profil dosen untuk halaman infografik."""
+    qs = ProfilDosen.objects.all()
+
+    total         = qs.count()
+    total_tetap   = qs.filter(ikatan_kerja='tetap').count()
+    total_profesor = qs.filter(jabatan_fungsional='Profesor').count()
+    total_s3      = qs.filter(pendidikan_tertinggi='s3').count()
+    total_aktif   = qs.filter(status='Aktif').count()
+
+    # Distribusi jabatan fungsional
+    per_jabatan_raw = (
+        qs.exclude(jabatan_fungsional='')
+          .values('jabatan_fungsional')
+          .annotate(total=Count('id'))
+          .order_by('-total')
+    )
+    jabatan_order = ['Profesor', 'Lektor Kepala', 'Lektor', 'Asisten Ahli']
+    per_jabatan = sorted(
+        [r for r in per_jabatan_raw if r['jabatan_fungsional'] in jabatan_order],
+        key=lambda r: jabatan_order.index(r['jabatan_fungsional'])
+    )
+
+    # Distribusi pendidikan tertinggi
+    pend_label = {'s1': 'S1', 's2': 'S2', 's3': 'S3', 'profesi': 'Profesi', 'lainnya': 'Lainnya'}
+    per_pendidikan = [
+        {'label': pend_label.get(r['pendidikan_tertinggi'], r['pendidikan_tertinggi']),
+         'total': r['total']}
+        for r in qs.exclude(pendidikan_tertinggi='')
+                   .values('pendidikan_tertinggi')
+                   .annotate(total=Count('id'))
+                   .order_by('-total')
+    ]
+
+    # Distribusi jenis kelamin
+    per_jk = {
+        r['jenis_kelamin']: r['total']
+        for r in qs.exclude(jenis_kelamin='').values('jenis_kelamin').annotate(total=Count('id'))
+    }
+
+    # Distribusi status
+    per_status = list(
+        qs.exclude(status='').values('status').annotate(total=Count('id')).order_by('-total')[:6]
+    )
+
+    # Top 20 PT dengan dosen terbanyak
+    per_pt = list(
+        qs.values('perguruan_tinggi__nama', 'perguruan_tinggi__singkatan', 'perguruan_tinggi__kode_pt')
+          .annotate(total=Count('id'))
+          .order_by('-total')[:20]
+    )
+
+    # Distribusi per wilayah
+    per_wilayah = list(
+        qs.values('perguruan_tinggi__wilayah__nama')
+          .annotate(total=Count('id'))
+          .order_by('-total')
+    )
+
+    return Response({
+        'total_dosen':    total,
+        'total_tetap':    total_tetap,
+        'total_profesor': total_profesor,
+        'total_s3':       total_s3,
+        'total_aktif':    total_aktif,
+        'per_jabatan':    per_jabatan,
+        'per_pendidikan': per_pendidikan,
+        'per_jk':         {'L': per_jk.get('L', 0), 'P': per_jk.get('P', 0)},
+        'per_status':     per_status,
+        'per_pt':         per_pt,
+        'per_wilayah':    per_wilayah,
+    })
