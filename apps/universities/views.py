@@ -659,7 +659,7 @@ def dosen_search(request):
     pendidikan = request.query_params.get('pendidikan', '').strip()
     status     = request.query_params.get('status', '').strip()
     page       = max(1, int(request.query_params.get('page', 1)))
-    page_size  = 5
+    page_size  = min(int(request.query_params.get('page_size', 5)), 5000)
 
     ALLOWED_SORT = {
         'nama', 'jabatan_fungsional', 'pendidikan_tertinggi',
