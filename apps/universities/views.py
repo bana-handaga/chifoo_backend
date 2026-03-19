@@ -396,11 +396,13 @@ class ProgramStudiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
     def _pt_list_inner(self, request):
         nama    = request.query_params.get('nama', '').strip()
         jenjang = request.query_params.get('jenjang', '').strip()
-        if not nama or not jenjang:
+        if not nama:
             return Response([])
+        qs = ProgramStudi.objects.filter(is_active=True, nama__icontains=nama)
+        if jenjang:
+            qs = qs.filter(jenjang=jenjang)
         rows = list(
-            ProgramStudi.objects
-            .filter(is_active=True, nama=nama, jenjang=jenjang)
+            qs
             .select_related('perguruan_tinggi')
             .order_by('perguruan_tinggi__nama')
             .values(
