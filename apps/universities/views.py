@@ -673,7 +673,9 @@ def dosen_search(request):
         desc = False
     ordering = ('-' if desc else '') + ordering_field
 
-    qs = ProfilDosen.objects.select_related('perguruan_tinggi', 'program_studi')
+    qs = ProfilDosen.objects.select_related('perguruan_tinggi', 'program_studi').filter(
+        nama__isnull=False
+    ).exclude(nama='').exclude(nama__regex=r'^[\.\-\s]+$')
 
     if nama:
         qs = qs.filter(nama__icontains=nama)
