@@ -94,6 +94,7 @@ class PT10Pagination(PageNumberPagination):
     max_page_size = 500
 
 from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen
+from django.db.models import OuterRef, Subquery
 from .serializers import _get_periode_aktif
 from apps.monitoring.models import PeriodePelaporan
 from .serializers import (
@@ -826,4 +827,225 @@ def riwayat_pendidikan_search(request):
         'page':      page,
         'page_size': page_size,
         'results':   data,
+    })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def prodi_distribusi(request):
+    """
+    Distribusi Program Studi dikelompokkan berdasarkan nama prodi.
+    Setiap baris = satu nama prodi unik, berisi jumlah PT, total dosen tetap, total mhs aktif.
+    Query params: ta (tahun akademik), sem (ganjil/genap)
+    """
+    ta_filter      = request.GET.get('ta', '')
+    sem_filter     = request.GET.get('sem', '')
+    jenjang_filter = request.GET.get('jenjang', '')
+
+    # Semester choices
+    sem_choices = list(
+        DataMahasiswa.objects
+        .values('tahun_akademik', 'semester')
+        .distinct()
+        .annotate(sem_order=Case(
+            When(semester='ganjil', then=Value(1)),
+            default=Value(2),
+            output_field=IntegerField(),
+        ))
+        .order_by('-tahun_akademik', 'sem_order')
+        .values('tahun_akademik', 'semester')
+    )
+
+    if ta_filter and sem_filter:
+        selected_ta, selected_sem = ta_filter, sem_filter
+    elif sem_choices:
+        selected_ta  = sem_choices[0]['tahun_akademik']
+        selected_sem = sem_choices[0]['semester']
+    else:
+        selected_ta = selected_sem = ''
+
+    # Annotate each prodi record
+    qs = ProgramStudi.objects
+    if jenjang_filter:
+        qs = qs.filter(jenjang__iexact=jenjang_filter)
+    qs = qs.annotate(
+        dosen_ann=Count('profil_dosen', distinct=True)
+    )
+
+    if selected_ta and selected_sem:
+        mhs_sub = (
+            DataMahasiswa.objects
+            .filter(program_studi=OuterRef('pk'), tahun_akademik=selected_ta, semester=selected_sem)
+            .values('mahasiswa_aktif')[:1]
+        )
+        qs = qs.annotate(mhs_aktif=Subquery(mhs_sub, output_field=IntegerField()))
+    else:
+        qs = qs.annotate(mhs_aktif=Value(None, output_field=IntegerField()))
+
+    # Group by nama in Python
+    from collections import defaultdict
+    groups: dict = defaultdict(lambda: {'jumlah_pt': set(), 'total_dosen': 0, 'total_mhs': 0, 'has_mhs': False})
+
+    for ps in qs.only('id', 'nama', 'perguruan_tinggi_id'):
+        g = groups[ps.nama.strip()]
+        g['jumlah_pt'].add(ps.perguruan_tinggi_id)
+        g['total_dosen'] += ps.dosen_ann or 0
+        if ps.mhs_aktif is not None:
+            g['total_mhs'] += ps.mhs_aktif
+            g['has_mhs'] = True
+
+    results = [
+        {
+            'nama':        nama,
+            'jumlah_pt':   len(g['jumlah_pt']),
+            'total_dosen': g['total_dosen'],
+            'total_mhs':   g['total_mhs'] if g['has_mhs'] else None,
+        }
+        for nama, g in sorted(groups.items(), key=lambda x: x[0].lower())
+    ]
+
+    return Response({
+        'selected_ta':  selected_ta,
+        'selected_sem': selected_sem,
+        'sem_choices':  sem_choices,
+        'total':        len(results),
+        'results':      results,
+    })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def prodi_daftar(request):
+    """
+    Daftar seluruh prodi (paginated, filterable, sortable).
+    Kolom kode_pt dan kode_prodi ditampilkan terpisah.
+    Query params: nama, jenjang, nama_pt, kode_pt, kode_prodi, akreditasi,
+                  ta, sem, sort, dir, page, page_size
+    """
+    nama_f      = request.GET.get('nama', '').strip()
+    jenjang_f   = request.GET.get('jenjang', '').strip()
+    nama_pt_f   = request.GET.get('nama_pt', '').strip()
+    kode_pt_f   = request.GET.get('kode_pt', '').strip()
+    kode_prodi_f= request.GET.get('kode_prodi', '').strip()
+    akreditasi_f= request.GET.get('akreditasi', '').strip()
+    ta_f        = request.GET.get('ta', '').strip()
+    sem_f       = request.GET.get('sem', '').strip()
+
+    # Semester choices (ganjil first within same year)
+    sem_choices = list(
+        DataMahasiswa.objects
+        .values('tahun_akademik', 'semester')
+        .distinct()
+        .annotate(sem_order=Case(
+            When(semester='ganjil', then=Value(1)),
+            default=Value(2),
+            output_field=IntegerField(),
+        ))
+        .order_by('-tahun_akademik', 'sem_order')
+        .values('tahun_akademik', 'semester')
+    )
+
+    # Auto-default ta/sem to active reporting period
+    if not ta_f and not sem_f:
+        periode_aktif = PeriodePelaporan.objects.filter(status='aktif').order_by('-tahun', 'semester').first()
+        if periode_aktif:
+            if periode_aktif.semester == 'genap':
+                ta_f = f"{periode_aktif.tahun - 1}/{periode_aktif.tahun}"
+            else:
+                ta_f = f"{periode_aktif.tahun}/{periode_aktif.tahun + 1}"
+            sem_f = periode_aktif.semester
+        elif sem_choices:
+            ta_f  = sem_choices[0]['tahun_akademik']
+            sem_f = sem_choices[0]['semester']
+
+    selected_ta  = ta_f
+    selected_sem = sem_f
+
+    ALLOWED_SORT = {
+        'nama': 'nama', 'jenjang': 'jenjang',
+        'pt_nama': 'perguruan_tinggi__nama',
+        'kode_pt': 'perguruan_tinggi__kode_pt',
+        'kode_prodi': 'kode_prodi',
+        'akreditasi': 'akreditasi',
+        'dosen_tetap': 'dosen_tetap',
+        'mhs_aktif': 'mhs_aktif',
+    }
+    sort_field = ALLOWED_SORT.get(request.GET.get('sort', 'nama'), 'nama')
+    sort_dir   = '' if request.GET.get('dir', 'asc') == 'asc' else '-'
+
+    try:
+        page      = max(1, int(request.GET.get('page', 1)))
+        page_size = min(99999, max(1, int(request.GET.get('page_size', 50))))
+    except (ValueError, TypeError):
+        page, page_size = 1, 50
+
+    qs = ProgramStudi.objects.select_related('perguruan_tinggi')
+
+    if nama_f:
+        qs = qs.filter(nama__icontains=nama_f)
+    if jenjang_f:
+        qs = qs.filter(jenjang__iexact=jenjang_f)
+    if nama_pt_f:
+        qs = qs.filter(perguruan_tinggi__nama__icontains=nama_pt_f)
+    if kode_pt_f:
+        qs = qs.filter(perguruan_tinggi__kode_pt__icontains=kode_pt_f)
+    if kode_prodi_f:
+        qs = qs.filter(kode_prodi__icontains=kode_prodi_f)
+    if akreditasi_f:
+        qs = qs.filter(akreditasi__iexact=akreditasi_f)
+
+    # Annotate total dosen from ProfilDosen aggregate
+    qs = qs.annotate(
+        dosen_ann=Count('profil_dosen', distinct=True)
+    )
+
+    # Annotate mahasiswa aktif
+    if ta_f and sem_f:
+        mhs_sub = (
+            DataMahasiswa.objects
+            .filter(
+                program_studi=OuterRef('pk'),
+                tahun_akademik=ta_f,
+                semester=sem_f,
+            )
+            .values('mahasiswa_aktif')[:1]
+        )
+        qs = qs.annotate(mhs_aktif=Subquery(mhs_sub, output_field=IntegerField()))
+    else:
+        qs = qs.annotate(mhs_aktif=Value(None, output_field=IntegerField()))
+
+    total = qs.count()
+
+    if sort_field in ('mhs_aktif', 'dosen_tetap'):
+        db_field = 'mhs_aktif' if sort_field == 'mhs_aktif' else 'dosen_ann'
+        qs = qs.order_by(f'{sort_dir}{db_field}', 'nama')
+    else:
+        qs = qs.order_by(f'{sort_dir}{sort_field}')
+
+    offset  = (page - 1) * page_size
+    results = qs[offset: offset + page_size]
+
+    data = [{
+        'id':                ps.id,
+        'kode_pt':           ps.perguruan_tinggi.kode_pt   if ps.perguruan_tinggi else '',
+        'pt_nama':           ps.perguruan_tinggi.nama       if ps.perguruan_tinggi else '',
+        'pt_singkatan':      ps.perguruan_tinggi.singkatan  if ps.perguruan_tinggi else '',
+        'kode_prodi':        ps.kode_prodi or '',
+        'nama':              ps.nama,
+        'jenjang':           ps.jenjang,
+        'akreditasi':        ps.akreditasi,
+        'no_sk_akreditasi':  ps.no_sk_akreditasi or '',
+        'tanggal_kedaluarsa_akreditasi': str(ps.tanggal_kedaluarsa_akreditasi) if ps.tanggal_kedaluarsa_akreditasi else None,
+        'dosen_tetap':       ps.dosen_ann or 0,
+        'mhs_aktif':         ps.mhs_aktif,
+    } for ps in results]
+
+    return Response({
+        'total':        total,
+        'page':         page,
+        'page_size':    page_size,
+        'selected_ta':  selected_ta,
+        'selected_sem': selected_sem,
+        'sem_choices':  sem_choices,
+        'results':      data,
     })

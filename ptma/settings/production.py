@@ -10,8 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-DEBUG = True
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h.strip()]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -134,7 +134,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
 }
 
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+CORS_ALLOWED_ORIGINS = [o.strip() for o in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',') if o.strip()]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'accept', 'accept-encoding', 'authorization', 'content-type',
