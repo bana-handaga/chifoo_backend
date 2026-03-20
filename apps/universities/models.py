@@ -273,3 +273,30 @@ class ProfilDosen(models.Model):
 
     def __str__(self):
         return f"{self.nama} ({self.nidn or self.nuptk}) — {self.perguruan_tinggi.singkatan}"
+
+
+class RiwayatPendidikanDosen(models.Model):
+    """Riwayat pendidikan dosen dari PDDikti (field sekolah di ept_itdd.json)"""
+
+    profil_dosen = models.ForeignKey(
+        ProfilDosen, on_delete=models.CASCADE,
+        related_name='riwayat_pendidikan', verbose_name='Profil Dosen'
+    )
+    perguruan_tinggi_asal = models.CharField(max_length=300, blank=True, verbose_name='Perguruan Tinggi Asal')
+    gelar                 = models.CharField(max_length=150, blank=True, verbose_name='Gelar Akademik')
+    jenjang               = models.CharField(max_length=20,  blank=True, verbose_name='Jenjang')
+    tahun_lulus           = models.CharField(max_length=4,   blank=True, verbose_name='Tahun Lulus')
+    is_luar_negeri        = models.BooleanField(default=False, db_index=True, verbose_name='Luar Negeri')
+
+    class Meta:
+        verbose_name        = 'Riwayat Pendidikan Dosen'
+        verbose_name_plural = 'Riwayat Pendidikan Dosen'
+        ordering            = ['profil_dosen__nama', 'tahun_lulus']
+        indexes             = [
+            models.Index(fields=['profil_dosen']),
+            models.Index(fields=['jenjang']),
+            models.Index(fields=['jenjang', 'is_luar_negeri']),
+        ]
+
+    def __str__(self):
+        return f"{self.profil_dosen.nama} — {self.jenjang} {self.tahun_lulus}"

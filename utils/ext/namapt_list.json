@@ -1,0 +1,812 @@
+[
+  {
+    "keyword": "universitas muhammadiyah sumatera utara",
+    "target": "UNIVERSITAS MUHAMMADIYAH SUMATERA UTARA",
+    "kode": "011003"
+  },
+  {
+    "keyword": "universitas muhammadiyah tapanuli selatan",
+    "target": "UNIVERSITAS MUHAMMADIYAH TAPANULI SELATAN",
+    "kode": "011014"
+  },
+  {
+    "keyword": "universitas muhammadiyah asahan",
+    "target": "UNIVERSITAS MUHAMMADIYAH ASAHAN",
+    "kode": "011071"
+  },
+  {
+    "keyword": "universitas muhammadiyah palembang",
+    "target": "UNIVERSITAS MUHAMMADIYAH PALEMBANG",
+    "kode": "021001"
+  },
+  {
+    "keyword": "universitas muhammadiyah lampung",
+    "target": "UNIVERSITAS MUHAMMADIYAH LAMPUNG",
+    "kode": "021002"
+  },
+  {
+    "keyword": "universitas muhammadiyah metro",
+    "target": "UNIVERSITAS MUHAMMADIYAH METRO",
+    "kode": "021004"
+  },
+  {
+    "keyword": "universitas muhammadiyah bengkulu",
+    "target": "UNIVERSITAS MUHAMMADIYAH BENGKULU",
+    "kode": "021010"
+  },
+  {
+    "keyword": "universitas muhammadiyah pringsewu lampung",
+    "target": "UNIVERSITAS MUHAMMADIYAH PRINGSEWU LAMPUNG",
+    "kode": "021034"
+  },
+  {
+    "keyword": "universitas muhammadiyah kotabumi",
+    "target": "UNIVERSITAS MUHAMMADIYAH KOTABUMI",
+    "kode": "021035"
+  },
+  {
+    "keyword": "universitas muhammadiyah bangka belitung",
+    "target": "UNIVERSITAS MUHAMMADIYAH BANGKA BELITUNG",
+    "kode": "021036"
+  },
+  {
+    "keyword": "universitas muhammadiyah kalianda",
+    "target": "UNIVERSITAS MUHAMMADIYAH KALIANDA",
+    "kode": "021049"
+  },
+  {
+    "keyword": "universitas muhammadiyah ahmad dahlan palembang",
+    "target": "UNIVERSITAS MUHAMMADIYAH AHMAD DAHLAN PALEMBANG",
+    "kode": "021052"
+  },
+  {
+    "keyword": "universitas aisyiyah palembang",
+    "target": "UNIVERSITAS AISYIYAH PALEMBANG",
+    "kode": "021053"
+  },
+  {
+    "keyword": "institut teknologi muhammadiyah sumatera",
+    "target": "INSTITUT TEKNOLOGI MUHAMMADIYAH SUMATERA",
+    "kode": "022013"
+  },
+  {
+    "keyword": "sekolah tinggi keguruan dan ilmu pendidikan muhammadiyah pagaralam",
+    "target": "SEKOLAH TINGGI KEGURUAN DAN ILMU PENDIDIKAN MUHAMMADIYAH PAGARALAM",
+    "kode": "023061"
+  },
+  {
+    "keyword": "sekolah tinggi keguruan dan ilmu pendidikan muhammadiyah oku timur",
+    "target": "SEKOLAH TINGGI KEGURUAN DAN ILMU PENDIDIKAN MUHAMMADIYAH OKU TIMUR",
+    "kode": "023138"
+  },
+  {
+    "keyword": "universitas muhammadiyah jakarta",
+    "target": "UNIVERSITAS MUHAMMADIYAH JAKARTA",
+    "kode": "031011"
+  },
+  {
+    "keyword": "universitas muhammadiyah prof dr hamka",
+    "target": "UNIVERSITAS MUHAMMADIYAH PROF DR HAMKA",
+    "kode": "031039"
+  },
+  {
+    "keyword": "universitas saintek muhammadiyah",
+    "target": "UNIVERSITAS SAINTEK MUHAMMADIYAH",
+    "kode": "031073"
+  },
+  {
+    "keyword": "universitas teknologi muhammadiyah jakarta",
+    "target": "UNIVERSITAS TEKNOLOGI MUHAMMADIYAH JAKARTA",
+    "kode": "031077"
+  },
+  {
+    "keyword": "institut teknologi dan bisnis ahmad dahlan",
+    "target": "INSTITUT TEKNOLOGI DAN BISNIS AHMAD DAHLAN",
+    "kode": "032023"
+  },
+  {
+    "keyword": "universitas islam 45",
+    "target": "UNIVERSITAS ISLAM 45",
+    "kode": "041018"
+  },
+  {
+    "keyword": "universitas muhammadiyah cirebon",
+    "target": "UNIVERSITAS MUHAMMADIYAH CIREBON",
+    "kode": "041029"
+  },
+  {
+    "keyword": "universitas muhammadiyah sukabumi",
+    "target": "UNIVERSITAS MUHAMMADIYAH SUKABUMI",
+    "kode": "041040"
+  },
+  {
+    "keyword": "universitas muhammadiyah tangerang",
+    "target": "UNIVERSITAS MUHAMMADIYAH TANGERANG",
+    "kode": "041051"
+  },
+  {
+    "keyword": "universitas muhammadiyah tasikmalaya",
+    "target": "UNIVERSITAS MUHAMMADIYAH TASIKMALAYA",
+    "kode": "041061"
+  },
+  {
+    "keyword": "universitas muhammadiyah bandung",
+    "target": "UNIVERSITAS MUHAMMADIYAH BANDUNG",
+    "kode": "041064"
+  },
+  {
+    "keyword": "universitas muhammadiyah banten",
+    "target": "UNIVERSITAS MUHAMMADIYAH BANTEN",
+    "kode": "041080"
+  },
+  {
+    "keyword": "universitas 'aisyiyah bandung",
+    "target": "UNIVERSITAS 'AISYIYAH BANDUNG",
+    "kode": "041087"
+  },
+  {
+    "keyword": "universitas muhammadiyah a.r. fachruddin",
+    "target": "UNIVERSITAS MUHAMMADIYAH A.R. FACHRUDDIN",
+    "kode": "041101"
+  },
+  {
+    "keyword": "universitas muhammadiyah bogor raya",
+    "target": "UNIVERSITAS MUHAMMADIYAH BOGOR RAYA",
+    "kode": "041113"
+  },
+  {
+    "keyword": "universitas muhammadiyah kuningan",
+    "target": "UNIVERSITAS MUHAMMADIYAH KUNINGAN",
+    "kode": "041136"
+  },
+  {
+    "keyword": "universitas muhammadiyah cileungsi",
+    "target": "UNIVERSITAS MUHAMMADIYAH CILEUNGSI",
+    "kode": "041137"
+  },
+  {
+    "keyword": "universitas muhammadiyah ahmad dahlan cirebon",
+    "target": "UNIVERSITAS MUHAMMADIYAH AHMAD DAHLAN CIREBON",
+    "kode": "041138"
+  },
+  {
+    "keyword": "institut bisnis muhammadiyah bekasi",
+    "target": "INSTITUT BISNIS MUHAMMADIYAH BEKASI",
+    "kode": "042010"
+  },
+  {
+    "keyword": "stikes muhammadiyah ciamis",
+    "target": "STIKES MUHAMMADIYAH CIAMIS",
+    "kode": "043277"
+  },
+  {
+    "keyword": "politeknik kesehatan aisyiyah banten",
+    "target": "POLITEKNIK KESEHATAN AISYIYAH BANTEN",
+    "kode": "045045"
+  },
+  {
+    "keyword": "universitas muhammadiyah yogyakarta",
+    "target": "UNIVERSITAS MUHAMMADIYAH YOGYAKARTA",
+    "kode": "051007"
+  },
+  {
+    "keyword": "universitas ahmad dahlan",
+    "target": "UNIVERSITAS AHMAD DAHLAN",
+    "kode": "051013"
+  },
+  {
+    "keyword": "universitas aisyiyah yogyakarta",
+    "target": "UNIVERSITAS AISYIYAH YOGYAKARTA",
+    "kode": "051022"
+  },
+  {
+    "keyword": "universitas siber muhammadiyah",
+    "target": "UNIVERSITAS SIBER MUHAMMADIYAH",
+    "kode": "051027"
+  },
+  {
+    "keyword": "universitas muhammadiyah magelang",
+    "target": "UNIVERSITAS MUHAMMADIYAH MAGELANG",
+    "kode": "061004"
+  },
+  {
+    "keyword": "universitas muhammadiyah surakarta",
+    "target": "UNIVERSITAS MUHAMMADIYAH SURAKARTA",
+    "kode": "061008"
+  },
+  {
+    "keyword": "universitas muhammadiyah purwokerto",
+    "target": "UNIVERSITAS MUHAMMADIYAH PURWOKERTO",
+    "kode": "061019"
+  },
+  {
+    "keyword": "universitas muhammadiyah purworejo",
+    "target": "UNIVERSITAS MUHAMMADIYAH PURWOREJO",
+    "kode": "061025"
+  },
+  {
+    "keyword": "universitas muhammadiyah semarang",
+    "target": "UNIVERSITAS MUHAMMADIYAH SEMARANG",
+    "kode": "061026"
+  },
+  {
+    "keyword": "universitas muhammadiyah kudus",
+    "target": "UNIVERSITAS MUHAMMADIYAH KUDUS",
+    "kode": "061050"
+  },
+  {
+    "keyword": "universitas muhammadiyah pekajangan pekalongan",
+    "target": "UNIVERSITAS MUHAMMADIYAH PEKAJANGAN PEKALONGAN",
+    "kode": "061052"
+  },
+  {
+    "keyword": "universitas 'aisyiyah surakarta",
+    "target": "UNIVERSITAS 'AISYIYAH SURAKARTA",
+    "kode": "061057"
+  },
+  {
+    "keyword": "universitas muhammadiyah gombong",
+    "target": "UNIVERSITAS MUHAMMADIYAH GOMBONG",
+    "kode": "061061"
+  },
+  {
+    "keyword": "universitas muhammadiyah klaten",
+    "target": "UNIVERSITAS MUHAMMADIYAH KLATEN",
+    "kode": "061066"
+  },
+  {
+    "keyword": "universitas muhammadiyah kendal batang",
+    "target": "UNIVERSITAS MUHAMMADIYAH KENDAL BATANG",
+    "kode": "061067"
+  },
+  {
+    "keyword": "universitas muhammadiyah karanganyar",
+    "target": "UNIVERSITAS MUHAMMADIYAH KARANGANYAR",
+    "kode": "061070"
+  },
+  {
+    "keyword": "universitas muhammadiyah tegal",
+    "target": "UNIVERSITAS MUHAMMADIYAH TEGAL",
+    "kode": "061076"
+  },
+  {
+    "keyword": "universitas muhammadiyah brebes",
+    "target": "UNIVERSITAS MUHAMMADIYAH BREBES",
+    "kode": "061077"
+  },
+  {
+    "keyword": "universitas muhammadiyah pku surakarta",
+    "target": "UNIVERSITAS MUHAMMADIYAH PKU SURAKARTA",
+    "kode": "061081"
+  },
+  {
+    "keyword": "institut teknologi dan bisnis muhammadiyah purbalingga",
+    "target": "INSTITUT TEKNOLOGI DAN BISNIS MUHAMMADIYAH PURBALINGGA",
+    "kode": "062009"
+  },
+  {
+    "keyword": "institut teknologi statistika dan bisnis muhammadiyah semarang",
+    "target": "INSTITUT TEKNOLOGI STATISTIKA DAN BISNIS MUHAMMADIYAH SEMARANG",
+    "kode": "062010"
+  },
+  {
+    "keyword": "institut teknologi dan bisnis muhammadiyah grobogan",
+    "target": "INSTITUT TEKNOLOGI DAN BISNIS MUHAMMADIYAH GROBOGAN",
+    "kode": "062013"
+  },
+  {
+    "keyword": "sekolah tinggi ilmu ekonomi muhammadiyah cilacap",
+    "target": "SEKOLAH TINGGI ILMU EKONOMI MUHAMMADIYAH CILACAP",
+    "kode": "063064"
+  },
+  {
+    "keyword": "stkip muhammadiyah blora",
+    "target": "STKIP MUHAMMADIYAH BLORA",
+    "kode": "063105"
+  },
+  {
+    "keyword": "sekolah tinggi ilmu kesehatan muhammadiyah wonosobo",
+    "target": "SEKOLAH TINGGI ILMU KESEHATAN MUHAMMADIYAH WONOSOBO",
+    "kode": "063114"
+  },
+  {
+    "keyword": "akademi kesehatan muhammadiyah temanggung",
+    "target": "AKADEMI KESEHATAN MUHAMMADIYAH TEMANGGUNG",
+    "kode": "064167"
+  },
+  {
+    "keyword": "politeknik muhammadiyah magelang",
+    "target": "POLITEKNIK MUHAMMADIYAH MAGELANG",
+    "kode": "065004"
+  },
+  {
+    "keyword": "universitas muhammadiyah surabaya",
+    "target": "UNIVERSITAS MUHAMMADIYAH SURABAYA",
+    "kode": "071012"
+  },
+  {
+    "keyword": "universitas muhammadiyah malang",
+    "target": "UNIVERSITAS MUHAMMADIYAH MALANG",
+    "kode": "071024"
+  },
+  {
+    "keyword": "universitas muhammadiyah jember",
+    "target": "UNIVERSITAS MUHAMMADIYAH JEMBER",
+    "kode": "071032"
+  },
+  {
+    "keyword": "universitas muhammadiyah ponorogo",
+    "target": "UNIVERSITAS MUHAMMADIYAH PONOROGO",
+    "kode": "071044"
+  },
+  {
+    "keyword": "universitas muhammadiyah gresik",
+    "target": "UNIVERSITAS MUHAMMADIYAH GRESIK",
+    "kode": "071059"
+  },
+  {
+    "keyword": "universitas muhammadiyah sidoarjo",
+    "target": "UNIVERSITAS MUHAMMADIYAH SIDOARJO",
+    "kode": "071060"
+  },
+  {
+    "keyword": "universitas muhammadiyah lamongan",
+    "target": "UNIVERSITAS MUHAMMADIYAH LAMONGAN",
+    "kode": "071096"
+  },
+  {
+    "keyword": "universitas muhammadiyah madiun",
+    "target": "UNIVERSITAS MUHAMMADIYAH MADIUN",
+    "kode": "071102"
+  },
+  {
+    "keyword": "institut teknologi dan bisnis ahmad dahlan lamongan",
+    "target": "INSTITUT TEKNOLOGI DAN BISNIS AHMAD DAHLAN LAMONGAN",
+    "kode": "072027"
+  },
+  {
+    "keyword": "institut teknologi bisnis dan kesehatan muhammadiyah tulungagung",
+    "target": "INSTITUT TEKNOLOGI BISNIS DAN KESEHATAN MUHAMMADIYAH TULUNGAGUNG",
+    "kode": "072038"
+  },
+  {
+    "keyword": "stkip muhammadiyah lumajang",
+    "target": "STKIP MUHAMMADIYAH LUMAJANG",
+    "kode": "073035"
+  },
+  {
+    "keyword": "sekolah tinggi ilmu ekonomi muhammadiyah tuban",
+    "target": "SEKOLAH TINGGI ILMU EKONOMI MUHAMMADIYAH TUBAN",
+    "kode": "073107"
+  },
+  {
+    "keyword": "stikes muhammadiyah bojonegoro",
+    "target": "STIKES MUHAMMADIYAH BOJONEGORO",
+    "kode": "073169"
+  },
+  {
+    "keyword": "sekolah tinggi teknologi muhammadiyah ar fachruddin",
+    "target": "SEKOLAH TINGGI TEKNOLOGI MUHAMMADIYAH AR FACHRUDDIN",
+    "kode": "073182"
+  },
+  {
+    "keyword": "universitas muhammadiyah mataram",
+    "target": "UNIVERSITAS MUHAMMADIYAH MATARAM",
+    "kode": "081010"
+  },
+  {
+    "keyword": "universitas muhammadiyah bima",
+    "target": "UNIVERSITAS MUHAMMADIYAH BIMA",
+    "kode": "081048"
+  },
+  {
+    "keyword": "institut teknologi dan bisnis muhammadiyah bali",
+    "target": "INSTITUT TEKNOLOGI DAN BISNIS MUHAMMADIYAH BALI",
+    "kode": "082017"
+  },
+  {
+    "keyword": "institut teknologi sosial dan kesehatan muhammadiyah selong",
+    "target": "INSTITUT TEKNOLOGI SOSIAL DAN KESEHATAN MUHAMMADIYAH SELONG",
+    "kode": "082020"
+  },
+  {
+    "keyword": "universitas muhammadiyah makassar",
+    "target": "UNIVERSITAS MUHAMMADIYAH MAKASSAR",
+    "kode": "091004"
+  },
+  {
+    "keyword": "universitas muhammadiyah pare-pare",
+    "target": "UNIVERSITAS MUHAMMADIYAH PARE-PARE",
+    "kode": "091024"
+  },
+  {
+    "keyword": "universitas muhammadiyah buton",
+    "target": "UNIVERSITAS MUHAMMADIYAH BUTON",
+    "kode": "091032"
+  },
+  {
+    "keyword": "universitas muhammadiyah kendari",
+    "target": "UNIVERSITAS MUHAMMADIYAH KENDARI",
+    "kode": "091036"
+  },
+  {
+    "keyword": "universitas muhammadiyah sidenreng rappang",
+    "target": "UNIVERSITAS MUHAMMADIYAH SIDENRENG RAPPANG",
+    "kode": "091058"
+  },
+  {
+    "keyword": "universitas muhammadiyah palopo",
+    "target": "UNIVERSITAS MUHAMMADIYAH PALOPO",
+    "kode": "091059"
+  },
+  {
+    "keyword": "universitas muhammadiyah bulukumba",
+    "target": "UNIVERSITAS MUHAMMADIYAH BULUKUMBA",
+    "kode": "091061"
+  },
+  {
+    "keyword": "universitas muhammadiyah sinjai",
+    "target": "UNIVERSITAS MUHAMMADIYAH SINJAI",
+    "kode": "091064"
+  },
+  {
+    "keyword": "universitas muhammadiyah enrekang",
+    "target": "UNIVERSITAS MUHAMMADIYAH ENREKANG",
+    "kode": "091065"
+  },
+  {
+    "keyword": "universitas muhammadiyah bone",
+    "target": "UNIVERSITAS MUHAMMADIYAH BONE",
+    "kode": "091069"
+  },
+  {
+    "keyword": "universitas muhammadiyah mamuju",
+    "target": "UNIVERSITAS MUHAMMADIYAH MAMUJU",
+    "kode": "091071"
+  },
+  {
+    "keyword": "universitas muhammadiyah barru",
+    "target": "UNIVERSITAS MUHAMMADIYAH BARRU",
+    "kode": "091086"
+  },
+  {
+    "keyword": "universitas muhammadiyah kolaka utara",
+    "target": "UNIVERSITAS MUHAMMADIYAH KOLAKA UTARA",
+    "kode": "091094"
+  },
+  {
+    "keyword": "institut teknologi dan bisnis muhammadiyah polewali mandar",
+    "target": "INSTITUT TEKNOLOGI DAN BISNIS MUHAMMADIYAH POLEWALI MANDAR",
+    "kode": "092007"
+  },
+  {
+    "keyword": "institut teknologi dan bisnis muhammadiyah wakatobi",
+    "target": "INSTITUT TEKNOLOGI DAN BISNIS MUHAMMADIYAH WAKATOBI",
+    "kode": "092013"
+  },
+  {
+    "keyword": "institut teknologi kesehatan dan sains muhammadiyah sidrap",
+    "target": "INSTITUT TEKNOLOGI KESEHATAN DAN SAINS MUHAMMADIYAH SIDRAP",
+    "kode": "092017"
+  },
+  {
+    "keyword": "institut sains teknologi dan kesehatan 'aisyiyah kendari",
+    "target": "INSTITUT SAINS TEKNOLOGI DAN KESEHATAN 'AISYIYAH KENDARI",
+    "kode": "092024"
+  },
+  {
+    "keyword": "institut teknologi dan bisnis muhammadiyah kolaka",
+    "target": "INSTITUT TEKNOLOGI DAN BISNIS MUHAMMADIYAH KOLAKA",
+    "kode": "092026"
+  },
+  {
+    "keyword": "institut teknologi sains dan bisnis muhammadiyah selayar",
+    "target": "INSTITUT TEKNOLOGI SAINS DAN BISNIS MUHAMMADIYAH SELAYAR",
+    "kode": "092030"
+  },
+  {
+    "keyword": "institut teknologi bisnis dan kesehatan muhammadiyah muna barat",
+    "target": "INSTITUT TEKNOLOGI BISNIS DAN KESEHATAN MUHAMMADIYAH MUNA BARAT",
+    "kode": "092032"
+  },
+  {
+    "keyword": "politeknik muhammadiyah makassar",
+    "target": "POLITEKNIK MUHAMMADIYAH MAKASSAR",
+    "kode": "095022"
+  },
+  {
+    "keyword": "universitas muhammadiyah sumatera barat",
+    "target": "UNIVERSITAS MUHAMMADIYAH SUMATERA BARAT",
+    "kode": "101002"
+  },
+  {
+    "keyword": "universitas muhammadiyah jambi",
+    "target": "UNIVERSITAS MUHAMMADIYAH JAMBI",
+    "kode": "101031"
+  },
+  {
+    "keyword": "universitas muhammadiyah muara bungo",
+    "target": "UNIVERSITAS MUHAMMADIYAH MUARA BUNGO",
+    "kode": "101045"
+  },
+  {
+    "keyword": "institut teknologi dan bisnis muhammadiyah sarolangun",
+    "target": "INSTITUT TEKNOLOGI DAN BISNIS MUHAMMADIYAH SAROLANGUN",
+    "kode": "102011"
+  },
+  {
+    "keyword": "stkip muhammadiyah sungai penuh",
+    "target": "STKIP MUHAMMADIYAH SUNGAI PENUH",
+    "kode": "103022"
+  },
+  {
+    "keyword": "politeknik 'aisyiyah sumatera barat",
+    "target": "POLITEKNIK 'AISYIYAH SUMATERA BARAT",
+    "kode": "105012"
+  },
+  {
+    "keyword": "universitas muhammadiyah palangka raya",
+    "target": "UNIVERSITAS MUHAMMADIYAH PALANGKA RAYA",
+    "kode": "111009"
+  },
+  {
+    "keyword": "universitas muhammadiyah pontianak",
+    "target": "UNIVERSITAS MUHAMMADIYAH PONTIANAK",
+    "kode": "111013"
+  },
+  {
+    "keyword": "universitas muhammadiyah banjarmasin",
+    "target": "UNIVERSITAS MUHAMMADIYAH BANJARMASIN",
+    "kode": "111023"
+  },
+  {
+    "keyword": "universitas muhammadiyah kalimantan timur",
+    "target": "UNIVERSITAS MUHAMMADIYAH KALIMANTAN TIMUR",
+    "kode": "111024"
+  },
+  {
+    "keyword": "universitas muhammadiyah berau",
+    "target": "UNIVERSITAS MUHAMMADIYAH BERAU",
+    "kode": "111030"
+  },
+  {
+    "keyword": "universitas muhammadiyah sampit",
+    "target": "UNIVERSITAS MUHAMMADIYAH SAMPIT",
+    "kode": "111033"
+  },
+  {
+    "keyword": "institut sains dan teknologi muhammadiyah tarakan",
+    "target": "INSTITUT SAINS DAN TEKNOLOGI MUHAMMADIYAH TARAKAN",
+    "kode": "112007"
+  },
+  {
+    "keyword": "institut teknologi dan kesehatan muhammadiyah kalimantan barat",
+    "target": "INSTITUT TEKNOLOGI DAN KESEHATAN MUHAMMADIYAH KALIMANTAN BARAT",
+    "kode": "112010"
+  },
+  {
+    "keyword": "politeknik aisyiyah pontianak",
+    "target": "POLITEKNIK AISYIYAH PONTIANAK",
+    "kode": "115021"
+  },
+  {
+    "keyword": "universitas muhammadiyah maluku utara",
+    "target": "UNIVERSITAS MUHAMMADIYAH MALUKU UTARA",
+    "kode": "121005"
+  },
+  {
+    "keyword": "universitas muhammadiyah maluku",
+    "target": "UNIVERSITAS MUHAMMADIYAH MALUKU",
+    "kode": "121020"
+  },
+  {
+    "keyword": "universitas muhammadiyah aceh",
+    "target": "UNIVERSITAS MUHAMMADIYAH ACEH",
+    "kode": "131004"
+  },
+  {
+    "keyword": "universitas muhammadiyah mahakarya aceh",
+    "target": "UNIVERSITAS MUHAMMADIYAH MAHAKARYA ACEH",
+    "kode": "131014"
+  },
+  {
+    "keyword": "sekolah tinggi ilmu hukum muhammadiyah takengon",
+    "target": "SEKOLAH TINGGI ILMU HUKUM MUHAMMADIYAH TAKENGON",
+    "kode": "133011"
+  },
+  {
+    "keyword": "stikes muhammadiyah lhokseumawe",
+    "target": "STIKES MUHAMMADIYAH LHOKSEUMAWE",
+    "kode": "133031"
+  },
+  {
+    "keyword": "stkip muhammadiyah aceh barat daya",
+    "target": "STKIP MUHAMMADIYAH ACEH BARAT DAYA",
+    "kode": "133040"
+  },
+  {
+    "keyword": "sekolah tinggi ilmu kesehatan muhammadiyah aceh",
+    "target": "SEKOLAH TINGGI ILMU KESEHATAN MUHAMMADIYAH ACEH",
+    "kode": "133053"
+  },
+  {
+    "keyword": "universitas muhammadiyah sorong",
+    "target": "UNIVERSITAS MUHAMMADIYAH SORONG",
+    "kode": "141001"
+  },
+  {
+    "keyword": "universitas pendidikan muhammadiyah sorong",
+    "target": "UNIVERSITAS PENDIDIKAN MUHAMMADIYAH SORONG",
+    "kode": "141010"
+  },
+  {
+    "keyword": "universitas muhammadiyah papua",
+    "target": "UNIVERSITAS MUHAMMADIYAH PAPUA",
+    "kode": "141012"
+  },
+  {
+    "keyword": "universitas muhammadiyah papua barat",
+    "target": "UNIVERSITAS MUHAMMADIYAH PAPUA BARAT",
+    "kode": "141024"
+  },
+  {
+    "keyword": "universitas muhammadiyah kupang",
+    "target": "UNIVERSITAS MUHAMMADIYAH KUPANG",
+    "kode": "151004"
+  },
+  {
+    "keyword": "universitas muhammadiyah maumere",
+    "target": "UNIVERSITAS MUHAMMADIYAH MAUMERE",
+    "kode": "151018"
+  },
+  {
+    "keyword": "stkip muhammadiyah kalabahi",
+    "target": "STKIP MUHAMMADIYAH KALABAHI",
+    "kode": "153028"
+  },
+  {
+    "keyword": "universitas muhammadiyah palu",
+    "target": "UNIVERSITAS MUHAMMADIYAH PALU",
+    "kode": "161003"
+  },
+  {
+    "keyword": "universitas muhammadiyah luwuk",
+    "target": "UNIVERSITAS MUHAMMADIYAH LUWUK",
+    "kode": "161008"
+  },
+  {
+    "keyword": "universitas muhammadiyah gorontalo",
+    "target": "UNIVERSITAS MUHAMMADIYAH GORONTALO",
+    "kode": "161018"
+  },
+  {
+    "keyword": "universitas muhammadiyah manado",
+    "target": "UNIVERSITAS MUHAMMADIYAH MANADO",
+    "kode": "161026"
+  },
+  {
+    "keyword": "universitas muhammadiyah riau",
+    "target": "UNIVERSITAS MUHAMMADIYAH RIAU",
+    "kode": "171018"
+  },
+  {
+    "keyword": "institut pendidikan dan teknologi `aisyiyah riau",
+    "target": "INSTITUT PENDIDIKAN DAN TEKNOLOGI `AISYIYAH RIAU",
+    "kode": "172025"
+  },
+  {
+    "keyword": "sekolah tinggi ilmu komputer muhammadiyah batam",
+    "target": "SEKOLAH TINGGI ILMU KOMPUTER MUHAMMADIYAH BATAM",
+    "kode": "173136"
+  },
+  {
+    "keyword": "universitas islam ahmad dahlan",
+    "target": "UNIVERSITAS ISLAM AHMAD DAHLAN",
+    "kode": "211009"
+  },
+  {
+    "keyword": "institut agama islam muhammadiyah kotamobagu",
+    "target": "INSTITUT AGAMA ISLAM MUHAMMADIYAH KOTAMOBAGU",
+    "kode": "212067"
+  },
+  {
+    "keyword": "institut studi islam muhammadiyah pacitan",
+    "target": "INSTITUT STUDI ISLAM MUHAMMADIYAH PACITAN",
+    "kode": "212094"
+  },
+  {
+    "keyword": "institut ahmad dahlan probolinggo",
+    "target": "INSTITUT AHMAD DAHLAN PROBOLINGGO",
+    "kode": "212143"
+  },
+  {
+    "keyword": "institut muhammadiyah darul arqam garut",
+    "target": "INSTITUT MUHAMMADIYAH DARUL ARQAM GARUT",
+    "kode": "212174"
+  },
+  {
+    "keyword": "institut 'aisyiyah sulawesi selatan",
+    "target": "INSTITUT 'AISYIYAH SULAWESI SELATAN",
+    "kode": "212184"
+  },
+  {
+    "keyword": "stit muhammadiyah aceh barat daya",
+    "target": "STIT MUHAMMADIYAH ACEH BARAT DAYA",
+    "kode": "213005"
+  },
+  {
+    "keyword": "stai muhammadiyah garut",
+    "target": "STAI MUHAMMADIYAH GARUT",
+    "kode": "213025"
+  },
+  {
+    "keyword": "stit muhammadiyah banjar",
+    "target": "STIT MUHAMMADIYAH BANJAR",
+    "kode": "213137"
+  },
+  {
+    "keyword": "stai muhammadiyah paciran, lamongan",
+    "target": "STAI MUHAMMADIYAH PACIRAN, LAMONGAN",
+    "kode": "213226"
+  },
+  {
+    "keyword": "stai muhammadiyah tulungagung",
+    "target": "STAI MUHAMMADIYAH TULUNGAGUNG",
+    "kode": "213228"
+  },
+  {
+    "keyword": "stit muhammadiyah bangil, pasuruan",
+    "target": "STIT MUHAMMADIYAH BANGIL, PASURUAN",
+    "kode": "213263"
+  },
+  {
+    "keyword": "stit muhammadiyah bojonegoro",
+    "target": "STIT MUHAMMADIYAH BOJONEGORO",
+    "kode": "213264"
+  },
+  {
+    "keyword": "stit muhammadiyah kediri",
+    "target": "STIT MUHAMMADIYAH KEDIRI",
+    "kode": "213265"
+  },
+  {
+    "keyword": "stit muhammadiyah lumajang",
+    "target": "STIT MUHAMMADIYAH LUMAJANG",
+    "kode": "213266"
+  },
+  {
+    "keyword": "stit muhammadiyah tempurejo ngawi",
+    "target": "STIT MUHAMMADIYAH TEMPUREJO NGAWI",
+    "kode": "213269"
+  },
+  {
+    "keyword": "stit muhammadiyah sibolga, tapanuli tengah, sumatera utara",
+    "target": "STIT MUHAMMADIYAH SIBOLGA, TAPANULI TENGAH, SUMATERA UTARA",
+    "kode": "213378"
+  },
+  {
+    "keyword": "stai muhammadiyah (staim) blora, jawa tengah",
+    "target": "STAI MUHAMMADIYAH (STAIM) BLORA, JAWA TENGAH",
+    "kode": "213388"
+  },
+  {
+    "keyword": "sekolah tinggi ilmu tarbiyah muhammadiyah tanjung redeb berau",
+    "target": "SEKOLAH TINGGI ILMU TARBIYAH MUHAMMADIYAH TANJUNG REDEB BERAU",
+    "kode": "213420"
+  },
+  {
+    "keyword": "stit muhammadiyah paciran",
+    "target": "STIT MUHAMMADIYAH PACIRAN",
+    "kode": "213438"
+  },
+  {
+    "keyword": "sekolah tinggi ekonomi dan bisnis islam (stebis) muhammadiyah sumedang",
+    "target": "SEKOLAH TINGGI EKONOMI DAN BISNIS ISLAM (STEBIS) MUHAMMADIYAH SUMEDANG",
+    "kode": "213539"
+  },
+  {
+    "keyword": "sekolah tinggi ilmu tarbiyah internasional muhammadiyah batam",
+    "target": "SEKOLAH TINGGI ILMU TARBIYAH INTERNASIONAL MUHAMMADIYAH BATAM",
+    "kode": "213707"
+  }
+]

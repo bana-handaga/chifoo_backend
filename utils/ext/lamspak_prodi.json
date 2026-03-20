@@ -1,0 +1,5172 @@
+[
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Profesor Kiai Haji Saifuddin Zuhri Purwokerto",
+    "nama_pt": "Universitas Islam Negeri Profesor Kiai Haji Saifuddin Zuhri Purwokerto",
+    "nama_prodi": "Perpustakaan dan Sains Informasi",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "061/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "12 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Magister Manajemen dan Kebijakan Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "062/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "12 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Abdul Muthalib Sangadji Ambon",
+    "nama_pt": "Universitas Islam Negeri Abdul Muthalib Sangadji Ambon",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "064/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "9 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Padjadjaran",
+    "nama_pt": "Universitas Padjadjaran",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "056/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "8 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Sultan Ageng Tirtayasa",
+    "nama_pt": "Universitas Sultan Ageng Tirtayasa",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "060/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "8 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Al Asyariah Mandar",
+    "nama_pt": "Universitas Al Asyariah Mandar",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "070/AK.03.01/2026",
+    "tgl_sk": "4 Maret 2026",
+    "tgl_expired": "8 September 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Ilmu Sosial dan Manajemen STIAMI",
+    "nama_pt": "Institut Ilmu Sosial dan Manajemen STIAMI",
+    "nama_prodi": "Administrasi Bisnis",
+    "jenjang": "D3",
+    "peringkat": "B",
+    "nomor_sk": "051/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "5 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Yogyakarta",
+    "nama_pt": "Universitas Muhammadiyah Yogyakarta",
+    "nama_prodi": "Politik Islam",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "055/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "5 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pembangunan Nasional Veteran Yogyakarta",
+    "nama_pt": "Universitas Pembangunan Nasional Veteran Yogyakarta",
+    "nama_prodi": "Ilmu Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "069/AK.03.01/2026",
+    "tgl_sk": "3 Maret 2026",
+    "tgl_expired": "5 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Airlangga",
+    "nama_pt": "Universitas Airlangga",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "057/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "3 September 2026"
+  },
+  {
+    "nama_pt_raw": "Politeknik Kesejahteraan Sosial Bandung",
+    "nama_pt": "Politeknik Kesejahteraan Sosial Bandung",
+    "nama_prodi": "Perlindungan dan Pemberdayaan Sosial",
+    "jenjang": "D4",
+    "peringkat": "Unggul",
+    "nomor_sk": "076/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "2 Maret 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Terbuka",
+    "nama_pt": "Universitas Terbuka",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "060/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "2 Maret 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Airlangga",
+    "nama_pt": "Universitas Airlangga",
+    "nama_prodi": "Ilmu Informasi dan Perpustakaan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "062/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "2 Maret 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Nusa Cendana",
+    "nama_pt": "Universitas Nusa Cendana",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "067/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "1 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pembangunan Nasional Veteran Jakarta",
+    "nama_pt": "Universitas Pembangunan Nasional Veteran Jakarta",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "025/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "26 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pesantren Tinggi Darul  ulum",
+    "nama_pt": "Universitas Pesantren Tinggi Darul  ulum",
+    "nama_prodi": "Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "032/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "24 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Seni Budaya Indonesia Bandung",
+    "nama_pt": "Institut Seni Budaya Indonesia Bandung",
+    "nama_prodi": "Antropologi Budaya",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "033/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "22 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Sultan Muhammad Syafiuddin Sambas",
+    "nama_pt": "Universitas Sultan Muhammad Syafiuddin Sambas",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "C",
+    "nomor_sk": "040/AK.03.01/2026",
+    "tgl_sk": "25 Februari 2026",
+    "tgl_expired": "22 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Wanita Internasional",
+    "nama_pt": "Universitas Wanita Internasional",
+    "nama_prodi": "Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "041/AK.03.01/2026",
+    "tgl_sk": "25 Februari 2026",
+    "tgl_expired": "22 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Slamet Riyadi",
+    "nama_pt": "Universitas Slamet Riyadi",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "054/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "20 Februari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Airlangga",
+    "nama_pt": "Universitas Airlangga",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "056/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "20 Februari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Jember",
+    "nama_pt": "Universitas Jember",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "053/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "20 Februari 2031"
+  },
+  {
+    "nama_pt_raw": "Politeknik Kesejahteraan Sosial Bandung",
+    "nama_pt": "Politeknik Kesejahteraan Sosial Bandung",
+    "nama_prodi": "Rehabilitasi Sosial",
+    "jenjang": "D4",
+    "peringkat": "Unggul",
+    "nomor_sk": "055/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "20 Februari 2031"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Administrasi Bengkulu",
+    "nama_pt": "Sekolah Tinggi Ilmu Administrasi Bengkulu",
+    "nama_prodi": "Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "031/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "15 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gorontalo",
+    "nama_pt": "Universitas Gorontalo",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "035/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "15 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Nusantara",
+    "nama_pt": "Universitas Islam Nusantara",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "042/AK.03.01/2026",
+    "tgl_sk": "25 Februari 2026",
+    "tgl_expired": "15 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Panji Sakti Singaraja",
+    "nama_pt": "Universitas Panji Sakti Singaraja",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "027/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "12 Februari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Ibn Khaldun Bogor",
+    "nama_pt": "Universitas Ibn Khaldun Bogor",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "030/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "12 Februari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Mahmud Yunus Batusangkar",
+    "nama_pt": "Universitas Islam Negeri Mahmud Yunus Batusangkar",
+    "nama_prodi": "Ilmu Perpustakaan dan Informasi Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "044/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "10 Februari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Fatmawati Sukarno Bengkulu",
+    "nama_pt": "Universitas Islam Negeri Fatmawati Sukarno Bengkulu",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "069/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "3 Februari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Komputer Indonesia",
+    "nama_pt": "Universitas Komputer Indonesia",
+    "nama_prodi": "Ilmu Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "034/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "2 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Fatmawati Sukarno Bengkulu",
+    "nama_pt": "Universitas Islam Negeri Fatmawati Sukarno Bengkulu",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "023/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "1 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Riau",
+    "nama_pt": "Universitas Islam Riau",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "014/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "26 Januari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Sahid",
+    "nama_pt": "Universitas Sahid",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "034/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "23 Januari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Bandar Lampung",
+    "nama_pt": "Universitas Bandar Lampung",
+    "nama_prodi": "Ilmu Administrasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "82/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "23 Januari 2031"
+  },
+  {
+    "nama_pt_raw": "Politeknik Indonusa Surakarta",
+    "nama_pt": "Politeknik Indonusa Surakarta",
+    "nama_prodi": "Produksi Media",
+    "jenjang": "D4",
+    "peringkat": "Baik",
+    "nomor_sk": "013/AK.03.01/2026",
+    "tgl_sk": "27 Januari 2026",
+    "tgl_expired": "22 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Ichsan Gorontalo Utara",
+    "nama_pt": "Universitas Ichsan Gorontalo Utara",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "037/AK.03.01/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "22 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Sahid",
+    "nama_pt": "Universitas Sahid",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "002/AK.03.01/2026",
+    "tgl_sk": "8 Januari 2026",
+    "tgl_expired": "21 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Al Fithrah Surabaya",
+    "nama_pt": "Institut Al Fithrah Surabaya",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "06/AK.03.03.A/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "17 Januari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Salatiga",
+    "nama_pt": "Universitas Islam Negeri Salatiga",
+    "nama_prodi": "Perpustakaan dan Sains Informasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "05/AK.03.03.A/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "17 Januari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Pelita Harapan",
+    "nama_pt": "Universitas Pelita Harapan",
+    "nama_prodi": "Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "068/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "13 Januari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Pelita Harapan",
+    "nama_pt": "Universitas Pelita Harapan",
+    "nama_prodi": "Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "003/AK.03.01/2026",
+    "tgl_sk": "8 Januari 2026",
+    "tgl_expired": "11 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Agama Islam Negeri Takengon",
+    "nama_pt": "Institut Agama Islam Negeri Takengon",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "010/AK.03.01/2026",
+    "tgl_sk": "27 Januari 2026",
+    "tgl_expired": "11 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Administrasi Malang",
+    "nama_pt": "Sekolah Tinggi Ilmu Administrasi Malang",
+    "nama_prodi": "Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "012/AK.03.01/2026",
+    "tgl_sk": "27 Januari 2026",
+    "tgl_expired": "11 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Kebijakan Publik dan Governansi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "81/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "11 Januari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Setia Budhi Rangkasbitung",
+    "nama_pt": "Universitas Setia Budhi Rangkasbitung",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "006/AK.03.01/2026",
+    "tgl_sk": "8 Januari 2026",
+    "tgl_expired": "10 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Setia Budhi Rangkasbitung",
+    "nama_pt": "Universitas Setia Budhi Rangkasbitung",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "007/AK.03.01/2026",
+    "tgl_sk": "8 Januari 2026",
+    "tgl_expired": "9 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Nurtanio Bandung",
+    "nama_pt": "Universitas Nurtanio Bandung",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "004/AK.03.05/2026",
+    "tgl_sk": "9 Januari 2026",
+    "tgl_expired": "9 Januari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Tapanuli Selatan",
+    "nama_pt": "Universitas Muhammadiyah Tapanuli Selatan",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "035/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "6 Januari 2031"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Tapanuli Selatan",
+    "nama_pt": "Universitas Muhammadiyah Tapanuli Selatan",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "001/AK.03.01/2026",
+    "tgl_sk": "8 Januari 2026",
+    "tgl_expired": "4 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Agama Hindu Dharma Nusantara Jakarta",
+    "nama_pt": "Sekolah Tinggi Agama Hindu Dharma Nusantara Jakarta",
+    "nama_prodi": "Ilmu Komunikasi Hindu",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "133/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Yarsi",
+    "nama_pt": "Universitas Yarsi",
+    "nama_prodi": "Perpustakaan dan Sains Informasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "58/AK.03.05/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Ilmu Sosial Dan Ilmu Politik Jakarta",
+    "nama_pt": "Institut Ilmu Sosial Dan Ilmu Politik Jakarta",
+    "nama_prodi": "Ilmu Kesejahteraan Sosial",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "012/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Pembangunan Masyarakat Santa Ursula",
+    "nama_pt": "Sekolah Tinggi Pembangunan Masyarakat Santa Ursula",
+    "nama_prodi": "Ilmu Sosiatri",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "018/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Budi Luhur",
+    "nama_pt": "Universitas Budi Luhur",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "029/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Teuku Umar",
+    "nama_pt": "Universitas Teuku Umar",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "036/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Yogyakarta",
+    "nama_pt": "Universitas Muhammadiyah Yogyakarta",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "78/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Riau",
+    "nama_pt": "Universitas Islam Riau",
+    "nama_prodi": "Kriminologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "89/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Malang",
+    "nama_pt": "Universitas Islam Malang",
+    "nama_prodi": "Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "066/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Agama Hindu Negeri Gde Pudja Mataram",
+    "nama_pt": "Institut Agama Hindu Negeri Gde Pudja Mataram",
+    "nama_prodi": "Ilmu Komunikasi Hindu",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "041/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Wijaya Putra",
+    "nama_pt": "Universitas Wijaya Putra",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "058/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Walisongo Semarang",
+    "nama_pt": "Universitas Islam Negeri Walisongo Semarang",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam (KPI)",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "065/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "31 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Teuku Umar",
+    "nama_pt": "Universitas Teuku Umar",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "304/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Teuku Umar",
+    "nama_pt": "Universitas Teuku Umar",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "305/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Agama Hindu Negeri Gde Pudja Mataram",
+    "nama_pt": "Institut Agama Hindu Negeri Gde Pudja Mataram",
+    "nama_prodi": "Ilmu Komunikasi Hindu",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "306/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Wijaya Putra",
+    "nama_pt": "Universitas Wijaya Putra",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "309/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Malang",
+    "nama_pt": "Universitas Islam Malang",
+    "nama_prodi": "Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "310/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Pembangunan Masyarakat Santa Ursula",
+    "nama_pt": "Sekolah Tinggi Pembangunan Masyarakat Santa Ursula",
+    "nama_prodi": "Ilmu Sosiatri",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "311/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Budi Luhur",
+    "nama_pt": "Universitas Budi Luhur",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "312/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Walisongo Semarang",
+    "nama_pt": "Universitas Islam Negeri Walisongo Semarang",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam (KPI)",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "313/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Yogyakarta",
+    "nama_pt": "Universitas Muhammadiyah Yogyakarta",
+    "nama_prodi": "Komunikasi Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "144/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Ekasakti",
+    "nama_pt": "Universitas Ekasakti",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "319/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Ilmu Sosial Dan Ilmu Politik Jakarta",
+    "nama_pt": "Institut Ilmu Sosial Dan Ilmu Politik Jakarta",
+    "nama_prodi": "Ilmu Kesejahteraan Sosial",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "147/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pasundan",
+    "nama_pt": "Universitas Pasundan",
+    "nama_prodi": "Ilmu Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "323/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Hasanuddin",
+    "nama_pt": "Universitas Hasanuddin",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "326/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "STAI Luqman Al-Hakim (STAIL) Surabaya",
+    "nama_pt": "STAI Luqman Al-Hakim (STAIL) Surabaya",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "340/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Ratu Samban",
+    "nama_pt": "Universitas Ratu Samban",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "344/AK.03.01/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "29 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Pertanian Bogor",
+    "nama_pt": "Institut Pertanian Bogor",
+    "nama_prodi": "Komunikasi Digital dan Media",
+    "jenjang": "D4",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "308/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "25 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Mulawarman",
+    "nama_pt": "Universitas Mulawarman",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "151/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "23 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sahid",
+    "nama_pt": "Universitas Sahid",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "156/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "23 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "STAI Al-Masthuriyah Sukabumi",
+    "nama_pt": "STAI Al-Masthuriyah Sukabumi",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "146/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "23 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Lancang Kuning",
+    "nama_pt": "Universitas Lancang Kuning",
+    "nama_prodi": "Ilmu Perpustakaan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "143/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "23 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Wijaya Putra",
+    "nama_pt": "Universitas Wijaya Putra",
+    "nama_prodi": "Ilmu Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "154/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "23 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Katolik Widya Mandira Kupang",
+    "nama_pt": "Universitas Katolik Widya Mandira Kupang",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "145/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "23 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Ilmu Kesejahteraan Sosial",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "039/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "23 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Ilmu Kesejahteraan Sosial",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "307/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "21 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Pembina Rohani Islam Jakarta (IPRIJA)",
+    "nama_pt": "Institut Pembina Rohani Islam Jakarta (IPRIJA)",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "342/AK.03.01/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "21 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Politik dan Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "343/AK.03.01/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "19 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pattimura",
+    "nama_pt": "Universitas Pattimura",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "132/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "16 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Nurtanio Bandung",
+    "nama_pt": "Universitas Nurtanio Bandung",
+    "nama_prodi": "Ilmu Administrasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "137/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "16 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Pendidikan Nasional",
+    "nama_pt": "Universitas Pendidikan Nasional",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "130/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "16 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Agama Islam Sunan Giri (INSURI) Ponorogo",
+    "nama_pt": "Institut Agama Islam Sunan Giri (INSURI) Ponorogo",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "322/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "14 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Peradaban",
+    "nama_pt": "Universitas Peradaban",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "325/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "14 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Padjadjaran",
+    "nama_pt": "Universitas Padjadjaran",
+    "nama_prodi": "Inovasi Regional",
+    "jenjang": "S2",
+    "peringkat": "Baik",
+    "nomor_sk": "339/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "14 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Alauddin Makassar",
+    "nama_pt": "Universitas Islam Negeri Alauddin Makassar",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "008/AK.03.01/2026",
+    "tgl_sk": "12 Januari 2026",
+    "tgl_expired": "14 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Sunan Gunung Djati",
+    "nama_pt": "Universitas Islam Negeri Sunan Gunung Djati",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "014/AK.03.01/2026",
+    "tgl_sk": "27 Januari 2026",
+    "tgl_expired": "14 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Agama Islam Dirosat Islamiyah Al-Hikmah Jakarta",
+    "nama_pt": "Sekolah Tinggi Agama Islam Dirosat Islamiyah Al-Hikmah Jakarta",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "020/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "14 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas 17 Agustus 1945 Surabaya",
+    "nama_pt": "Universitas 17 Agustus 1945 Surabaya",
+    "nama_prodi": "Ilmu Administrasi Niaga",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "028/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "14 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas 17 Agustus 1945 Surabaya",
+    "nama_pt": "Universitas 17 Agustus 1945 Surabaya",
+    "nama_prodi": "Ilmu Administrasi Niaga",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "315/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "12 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Agama Islam Dirosat Islamiyah Al-Hikmah Jakarta",
+    "nama_pt": "Sekolah Tinggi Agama Islam Dirosat Islamiyah Al-Hikmah Jakarta",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "318/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "12 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Magister Sosiologi",
+    "jenjang": "S2",
+    "peringkat": "A",
+    "nomor_sk": "329/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "12 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Ar-Raniry Banda Aceh",
+    "nama_pt": "Universitas Islam Negeri Ar-Raniry Banda Aceh",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "90/AK.03.05/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "9 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Andalas",
+    "nama_pt": "Universitas Andalas",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "123/AK.03.05/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "9 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Al Washliyah",
+    "nama_pt": "Universitas Al Washliyah",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "324/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "7 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Andalas",
+    "nama_pt": "Universitas Andalas",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "131/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "7 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Agama Islam An Nadwah Kuala Tungkal",
+    "nama_pt": "Institut Agama Islam An Nadwah Kuala Tungkal",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "338/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "7 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Papua",
+    "nama_pt": "Universitas Papua",
+    "nama_prodi": "Antropologi",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "216/AK.03.01/2025",
+    "tgl_sk": "20 September 2025",
+    "tgl_expired": "2 Desember 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Jember",
+    "nama_pt": "Universitas Muhammadiyah Jember",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "022/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "2 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Swadaya Gunung Jati",
+    "nama_pt": "Universitas Swadaya Gunung Jati",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "014/AK.03.02/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "2 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "STAI UISU, Pematang Siantar, Sumatera Utara",
+    "nama_pt": "STAI UISU, Pematang Siantar, Sumatera Utara",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "95/AK.03.05/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "2 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Negeri Yogyakarta",
+    "nama_pt": "Universitas Negeri Yogyakarta",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "104/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "2 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Agama Islam Negeri Datuk Laksemana Bengkalis",
+    "nama_pt": "Institut Agama Islam Negeri Datuk Laksemana Bengkalis",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "121/AK.03.05/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "2 Desember 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Negeri Yogyakarta",
+    "nama_pt": "Universitas Negeri Yogyakarta",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "146/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "30 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Jember",
+    "nama_pt": "Universitas Muhammadiyah Jember",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "320/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "30 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Ngurah Rai",
+    "nama_pt": "Universitas Ngurah Rai",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "63/AK.03.05/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "30 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Syiah Kuala",
+    "nama_pt": "Universitas Syiah Kuala",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "116/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "30 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Sumatera Utara",
+    "nama_pt": "Universitas Sumatera Utara",
+    "nama_prodi": "Perpustakaan dan Sains Informasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "125/AK.03.05/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "28 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Ngurah Rai",
+    "nama_pt": "Universitas Ngurah Rai",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "134/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "28 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pepabri Makassar",
+    "nama_pt": "Universitas Pepabri Makassar",
+    "nama_prodi": "Ilmu Administrasi Niaga",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "331/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "28 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pepabri Makassar",
+    "nama_pt": "Universitas Pepabri Makassar",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "333/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "28 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "STISIP Merdeka Manado",
+    "nama_pt": "STISIP Merdeka Manado",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "117/AK.03.05/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "28 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Ar-Raniry Banda Aceh",
+    "nama_pt": "Universitas Islam Negeri Ar-Raniry Banda Aceh",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "68/AK.03.05/2025",
+    "tgl_sk": "13 Oktober 2025",
+    "tgl_expired": "26 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Syarif Hidayatullah",
+    "nama_pt": "Universitas Islam Negeri Syarif Hidayatullah",
+    "nama_prodi": "Kesejahteraan Sosial",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "112/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "25 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sultan Ageng Tirtayasa",
+    "nama_pt": "Universitas Sultan Ageng Tirtayasa",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "048/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "25 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Ar-Raniry Banda Aceh",
+    "nama_pt": "Universitas Islam Negeri Ar-Raniry Banda Aceh",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S2",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "137/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "24 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Internasional Darullughah Wadda`wah",
+    "nama_pt": "Universitas Islam Internasional Darullughah Wadda`wah",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "287/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "24 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "STAI Al-Hikmah Pariangan Batusangkar, Tanah Datar",
+    "nama_pt": "STAI Al-Hikmah Pariangan Batusangkar, Tanah Datar",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "288/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "24 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Cahaya Prima",
+    "nama_pt": "Universitas Cahaya Prima",
+    "nama_prodi": "Ilmu Administrasi",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "289/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "24 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Sultan Ageng Tirtayasa",
+    "nama_pt": "Universitas Sultan Ageng Tirtayasa",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "286/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "23 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Syarif Hidayatullah",
+    "nama_pt": "Universitas Islam Negeri Syarif Hidayatullah",
+    "nama_prodi": "Kesejahteraan Sosial",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "107/AK.03.01/2025",
+    "tgl_sk": "2 Juni 2025",
+    "tgl_expired": "23 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Ilmu Sosial Dan Ilmu Politik Jakarta",
+    "nama_pt": "Institut Ilmu Sosial Dan Ilmu Politik Jakarta",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "92/AK.03.01/2025",
+    "tgl_sk": "2 Juni 2025",
+    "tgl_expired": "20 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Mercu Buana Yogyakarta",
+    "nama_pt": "Universitas Mercu Buana Yogyakarta",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "55/AK.03.05/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "18 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Presiden",
+    "nama_pt": "Universitas Presiden",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "138/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "18 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sains Alqur an",
+    "nama_pt": "Universitas Sains Alqur an",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "87/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "18 November 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Agama Islam Yasni Bungo",
+    "nama_pt": "Institut Agama Islam Yasni Bungo",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "011/AK.03.01/2026",
+    "tgl_sk": "27 Januari 2026",
+    "tgl_expired": "17 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Teknologi Yogyakarta",
+    "nama_pt": "Universitas Teknologi Yogyakarta",
+    "nama_prodi": "Ilmu Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "99/AK.03.01/2025",
+    "tgl_sk": "2 Juni 2025",
+    "tgl_expired": "17 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Komunikasi Almamater Wartawan Surabaya",
+    "nama_pt": "Sekolah Tinggi Ilmu Komunikasi Almamater Wartawan Surabaya",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "100/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "17 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Pramita Indonesia",
+    "nama_pt": "Universitas Pramita Indonesia",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "341/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "16 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Ilmu Administrasi Fiskal",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "153/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "16 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Presiden",
+    "nama_pt": "Universitas Presiden",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "258/AK.03.01/2025",
+    "tgl_sk": "27 Oktober 2025",
+    "tgl_expired": "16 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Malikussaleh",
+    "nama_pt": "Universitas Malikussaleh",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "265/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "16 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Bunga Bangsa Cirebon",
+    "nama_pt": "Universitas Islam Bunga Bangsa Cirebon",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "036/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "16 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Jakarta",
+    "nama_pt": "Universitas Jakarta",
+    "nama_prodi": "Ilmu Administrasi Niaga",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "016/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "16 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas 17 Agustus 1945 Surabaya",
+    "nama_pt": "Universitas 17 Agustus 1945 Surabaya",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "106/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "16 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Mercu Buana Yogyakarta",
+    "nama_pt": "Universitas Mercu Buana Yogyakarta",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "113/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "16 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Sains Alqur an",
+    "nama_pt": "Universitas Sains Alqur an",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "117/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "16 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pepabri Makassar",
+    "nama_pt": "Universitas Pepabri Makassar",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "327/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "14 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Palu",
+    "nama_pt": "Universitas Muhammadiyah Palu",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "275/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "14 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Sunan Ampel",
+    "nama_pt": "Universitas Islam Negeri Sunan Ampel",
+    "nama_prodi": "Pemikiran Politik Islam",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "276/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "14 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Jakarta",
+    "nama_pt": "Universitas Jakarta",
+    "nama_prodi": "Ilmu Administrasi Niaga",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "278/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "14 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Mathla ul Anwar",
+    "nama_pt": "Universitas Mathla ul Anwar",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "282/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "14 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Krisnadwipayana",
+    "nama_pt": "Universitas Krisnadwipayana",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "283/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "14 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Ilmu Administrasi Fiskal",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "95/AK.03.01/2025",
+    "tgl_sk": "2 Juni 2025",
+    "tgl_expired": "14 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Agama dan Lintas Budaya",
+    "jenjang": "S2",
+    "peringkat": "A",
+    "nomor_sk": "96/AK.03.01/2025",
+    "tgl_sk": "2 Juni 2025",
+    "tgl_expired": "14 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Al Washliyah Darussalam Banda Aceh",
+    "nama_pt": "Universitas Al Washliyah Darussalam Banda Aceh",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "299/AK.03.01/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "14 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "STIA & Pemerintahan Annisa Dwi Salfaritzi",
+    "nama_pt": "STIA & Pemerintahan Annisa Dwi Salfaritzi",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "147/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "12 November 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Studi Al Qur`an dan Ilmu Keislaman Sunan Pandanaran",
+    "nama_pt": "Institut Studi Al Qur`an dan Ilmu Keislaman Sunan Pandanaran",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "110/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "12 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Halu Oleo",
+    "nama_pt": "Universitas Halu Oleo",
+    "nama_prodi": "Antropologi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "010/AK.03.02/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "11 November 2030"
+  },
+  {
+    "nama_pt_raw": "STIA & Pemerintahan Annisa Dwi Salfaritzi",
+    "nama_pt": "STIA & Pemerintahan Annisa Dwi Salfaritzi",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "262/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "10 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Tanjungpura",
+    "nama_pt": "Universitas Tanjungpura",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "284/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "10 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Doktor Manajemen dan Kebijakan Publik",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "139/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "9 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Halu Oleo",
+    "nama_pt": "Universitas Halu Oleo",
+    "nama_prodi": "Arkeologi",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "038/AK.03.01/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "9 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Tanjungpura",
+    "nama_pt": "Universitas Tanjungpura",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "281/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "9 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Halu Oleo",
+    "nama_pt": "Universitas Halu Oleo",
+    "nama_prodi": "Antropologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "039/AK.03.01/2026",
+    "tgl_sk": "25 Februari 2026",
+    "tgl_expired": "9 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Ilmu Sosial dan Manajemen STIAMI",
+    "nama_pt": "Institut Ilmu Sosial dan Manajemen STIAMI",
+    "nama_prodi": "Ilmu Administrasi",
+    "jenjang": "S2",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "91/AK.03.01/2025",
+    "tgl_sk": "2 Juni 2025",
+    "tgl_expired": "9 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Doktor Ilmu Politik",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "045/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "9 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Media Nusantara Citra",
+    "nama_pt": "Universitas Media Nusantara Citra",
+    "nama_prodi": "Sains Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "010/AK.03.03.A/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "8 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Negeri Surabaya",
+    "nama_pt": "Universitas Negeri Surabaya",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "09/AK.03.03.A/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "8 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Doktor Ilmu Politik",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "296/AK.03.01/2025",
+    "tgl_sk": "7 November 2025",
+    "tgl_expired": "7 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Doktor Manajemen dan Kebijakan Publik",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "302/AK.03.01/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "7 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Bangka Belitung",
+    "nama_pt": "Universitas Bangka Belitung",
+    "nama_prodi": "Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "002/AK.03.02/2026",
+    "tgl_sk": "9 Januari 2026",
+    "tgl_expired": "6 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Bangka Belitung",
+    "nama_pt": "Universitas Bangka Belitung",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "005/AK.03.02/2026",
+    "tgl_sk": "9 Januari 2026",
+    "tgl_expired": "6 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Media Nusantara Citra",
+    "nama_pt": "Universitas Media Nusantara Citra",
+    "nama_prodi": "Sains Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "261/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "6 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Negeri Surabaya",
+    "nama_pt": "Universitas Negeri Surabaya",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "271/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "6 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Dakwah dan Komunikasi Islam Ar-rahmah Surabaya",
+    "nama_pt": "Sekolah Tinggi Ilmu Dakwah dan Komunikasi Islam Ar-rahmah Surabaya",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "009/AK.03.02/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "6 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas W R Supratman",
+    "nama_pt": "Universitas W R Supratman",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "297/AK.03.01/2025",
+    "tgl_sk": "7 November 2025",
+    "tgl_expired": "3 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Ar-Raniry Banda Aceh",
+    "nama_pt": "Universitas Islam Negeri Ar-Raniry Banda Aceh",
+    "nama_prodi": "Ilmu Perpustakaan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "116/AK.03.05/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "2 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Ilmu Administrasi Niaga",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "60/AK.03.05/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "2 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Madako Tolitoli",
+    "nama_pt": "Universitas Madako Tolitoli",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "252/AK.03.01/2025",
+    "tgl_sk": "27 Oktober 2025",
+    "tgl_expired": "2 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Brawijaya",
+    "nama_pt": "Universitas Brawijaya",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "264/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "2 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Hasanuddin",
+    "nama_pt": "Universitas Hasanuddin",
+    "nama_prodi": "Ilmu Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "043/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "2 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Jakarta",
+    "nama_pt": "Universitas Muhammadiyah Jakarta",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "76/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "2 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Jenderal Soedirman",
+    "nama_pt": "Universitas Jenderal Soedirman",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "77/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "2 November 2030"
+  },
+  {
+    "nama_pt_raw": "STISIPOL Raja Haji",
+    "nama_pt": "STISIPOL Raja Haji",
+    "nama_prodi": "Ilmu Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "98/AK.03.05/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "2 November 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sultan Fatah",
+    "nama_pt": "Universitas Sultan Fatah",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "C",
+    "nomor_sk": "130/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "1 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "STISIPOL Raja Haji",
+    "nama_pt": "STISIPOL Raja Haji",
+    "nama_prodi": "Ilmu Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "82/AK.03.01/2025",
+    "tgl_sk": "20 Mei 2025",
+    "tgl_expired": "1 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Mochammad Sroedji",
+    "nama_pt": "Universitas Mochammad Sroedji",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "253/AK.03.01/2025",
+    "tgl_sk": "27 Oktober 2025",
+    "tgl_expired": "1 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Siliwangi",
+    "nama_pt": "Universitas Siliwangi",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "270/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "1 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Hasanuddin",
+    "nama_pt": "Universitas Hasanuddin",
+    "nama_prodi": "Ilmu Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "277/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "1 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Ilmu Administrasi Niaga",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "85/AK.03.01/2025",
+    "tgl_sk": "2 Juni 2025",
+    "tgl_expired": "1 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "STISIPOL Raja Haji",
+    "nama_pt": "STISIPOL Raja Haji",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "86/AK.03.01/2025",
+    "tgl_sk": "2 Juni 2025",
+    "tgl_expired": "1 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Sunan Gunung Djati",
+    "nama_pt": "Universitas Islam Negeri Sunan Gunung Djati",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "292/AK.03.01/2025",
+    "tgl_sk": "7 November 2025",
+    "tgl_expired": "1 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Yudharta Pasuruan",
+    "nama_pt": "Universitas Yudharta Pasuruan",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "92/AK.03.05/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "30 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Veteran Bangun Nusantara",
+    "nama_pt": "Universitas Veteran Bangun Nusantara",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "046/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "28 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Subang",
+    "nama_pt": "Universitas Subang",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "144/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "28 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Peradaban",
+    "nama_pt": "Universitas Peradaban",
+    "nama_prodi": "Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "176/AK.03.01/2025",
+    "tgl_sk": "14 Juli 2025",
+    "tgl_expired": "26 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Abdul Azis Lamadjido",
+    "nama_pt": "Universitas Abdul Azis Lamadjido",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "142/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "26 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Veteran Bangun Nusantara",
+    "nama_pt": "Universitas Veteran Bangun Nusantara",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "247/AK.03.01/2025",
+    "tgl_sk": "27 Oktober 2025",
+    "tgl_expired": "26 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Madako Tolitoli",
+    "nama_pt": "Universitas Madako Tolitoli",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "249/AK.03.01/2025",
+    "tgl_sk": "27 Oktober 2025",
+    "tgl_expired": "26 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Subang",
+    "nama_pt": "Universitas Subang",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "175/AK.03.01/2025",
+    "tgl_sk": "14 Juli 2025",
+    "tgl_expired": "26 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Abdul Azis Lamadjido",
+    "nama_pt": "Universitas Abdul Azis Lamadjido",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "231/AK.03.01/2025",
+    "tgl_sk": "6 Oktober 2025",
+    "tgl_expired": "25 April 2026"
+  },
+  {
+    "nama_pt_raw": "Akademi Komunikasi Media Radio Dan TV Jakarta",
+    "nama_pt": "Akademi Komunikasi Media Radio Dan TV Jakarta",
+    "nama_prodi": "Hubungan Masyarakat",
+    "jenjang": "D3",
+    "peringkat": "B",
+    "nomor_sk": "256/AK.03.01/2025",
+    "tgl_sk": "27 Oktober 2025",
+    "tgl_expired": "24 April 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Agama Hindu Negeri Jawa Dwipa Klaten Jawa Tengah",
+    "nama_pt": "Sekolah Tinggi Agama Hindu Negeri Jawa Dwipa Klaten Jawa Tengah",
+    "nama_prodi": "Ilmu Komunikasi Hindu",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "85/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "22 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Darma Agung",
+    "nama_pt": "Universitas Darma Agung",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "037/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "21 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sebelas Maret",
+    "nama_pt": "Universitas Sebelas Maret",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "072/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "21 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Darma Agung",
+    "nama_pt": "Universitas Darma Agung",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "227/AK.03.01/2025",
+    "tgl_sk": "3 Oktober 2025",
+    "tgl_expired": "20 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Sebelas Maret",
+    "nama_pt": "Universitas Sebelas Maret",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "234/AK.03.01/2025",
+    "tgl_sk": "7 Oktober 2025",
+    "tgl_expired": "20 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Jember",
+    "nama_pt": "Universitas Jember",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "173/AK.03.01/2025",
+    "tgl_sk": "14 Juli 2025",
+    "tgl_expired": "19 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Darma Agung",
+    "nama_pt": "Universitas Darma Agung",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "163/AK.03.01/2025",
+    "tgl_sk": "14 Juli 2025",
+    "tgl_expired": "19 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pembangunan Nasional Veteran Jawa Timur",
+    "nama_pt": "Universitas Pembangunan Nasional Veteran Jawa Timur",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "140/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "18 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Pembangunan Nasional Veteran Jawa Timur",
+    "nama_pt": "Universitas Pembangunan Nasional Veteran Jawa Timur",
+    "nama_prodi": "Magister Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Baik",
+    "nomor_sk": "229/AK.03.01/2025",
+    "tgl_sk": "6 Oktober 2025",
+    "tgl_expired": "17 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Halu Oleo",
+    "nama_pt": "Universitas Halu Oleo",
+    "nama_prodi": "Ilmu Kesejahteraan Sosial",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "009/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "14 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Administrasi Perkantoran",
+    "jenjang": "D3",
+    "peringkat": "Unggul",
+    "nomor_sk": "052/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "14 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Jambi",
+    "nama_pt": "Universitas Jambi",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "84/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "14 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Halu Oleo",
+    "nama_pt": "Universitas Halu Oleo",
+    "nama_prodi": "Ilmu Kesejahteraan Sosial",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "225/AK.03.01/2025",
+    "tgl_sk": "3 Oktober 2025",
+    "tgl_expired": "13 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Kristen Indonesia Maluku",
+    "nama_pt": "Universitas Kristen Indonesia Maluku",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "226/AK.03.01/2025",
+    "tgl_sk": "3 Oktober 2025",
+    "tgl_expired": "13 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Administrasi Perkantoran",
+    "jenjang": "D3",
+    "peringkat": "A",
+    "nomor_sk": "232/AK.03.01/2025",
+    "tgl_sk": "7 Oktober 2025",
+    "tgl_expired": "13 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Presiden",
+    "nama_pt": "Universitas Presiden",
+    "nama_prodi": "Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "75/AK.03.05/2025",
+    "tgl_sk": "13 Oktober 2025",
+    "tgl_expired": "13 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Pendidikan Nasional",
+    "nama_pt": "Universitas Pendidikan Nasional",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "66/AK.03.05/2025",
+    "tgl_sk": "13 Oktober 2025",
+    "tgl_expired": "13 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Swadaya Gunung Jati",
+    "nama_pt": "Universitas Swadaya Gunung Jati",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "A",
+    "nomor_sk": "248/AK.03.01/2025",
+    "tgl_sk": "27 Oktober 2025",
+    "tgl_expired": "12 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Tanjungpura",
+    "nama_pt": "Universitas Tanjungpura",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "291/AK.03.01/2025",
+    "tgl_sk": "7 November 2025",
+    "tgl_expired": "12 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Jambi",
+    "nama_pt": "Universitas Jambi",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "124/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "12 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Magister Kajian Budaya dan Media",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "136/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "7 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Selamat Sri",
+    "nama_pt": "Universitas Selamat Sri",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "148/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "7 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Magister Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "230/AK.03.01/2025",
+    "tgl_sk": "6 Oktober 2025",
+    "tgl_expired": "7 Oktober 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Mulawarman",
+    "nama_pt": "Universitas Mulawarman",
+    "nama_prodi": "Ilmu Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "001/AK.03.05/2026",
+    "tgl_sk": "9 Januari 2026",
+    "tgl_expired": "7 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Pendidikan Ganesha",
+    "nama_pt": "Universitas Pendidikan Ganesha",
+    "nama_prodi": "Perpustakaan",
+    "jenjang": "D3",
+    "peringkat": "Unggul",
+    "nomor_sk": "008/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "7 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Andalas",
+    "nama_pt": "Universitas Andalas",
+    "nama_prodi": "Pembangunan Wilayah Dan Pedesaan",
+    "jenjang": "S2",
+    "peringkat": "A",
+    "nomor_sk": "337/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "6 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pendidikan Ganesha",
+    "nama_pt": "Universitas Pendidikan Ganesha",
+    "nama_prodi": "Perpustakaan",
+    "jenjang": "D3",
+    "peringkat": "B",
+    "nomor_sk": "233/AK.03.01/2025",
+    "tgl_sk": "7 Oktober 2025",
+    "tgl_expired": "6 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Magister Kajian Budaya dan Media",
+    "jenjang": "S2",
+    "peringkat": "A",
+    "nomor_sk": "151/AK.03.01/2025",
+    "tgl_sk": "14 Juli 2025",
+    "tgl_expired": "5 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Mulawarman",
+    "nama_pt": "Universitas Mulawarman",
+    "nama_prodi": "Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "152/AK.03.01/2025",
+    "tgl_sk": "14 Juli 2025",
+    "tgl_expired": "5 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Selamat Sri",
+    "nama_pt": "Universitas Selamat Sri",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "160/AK.03.01/2025",
+    "tgl_sk": "14 Juli 2025",
+    "tgl_expired": "5 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia Timur",
+    "nama_pt": "Universitas Indonesia Timur",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "250/AK.03.01/2025",
+    "tgl_sk": "27 Oktober 2025",
+    "tgl_expired": "5 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pattimura",
+    "nama_pt": "Universitas Pattimura",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "149/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "1 Oktober 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Wanita Internasional",
+    "nama_pt": "Universitas Wanita Internasional",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "235/AK.03.01/2025",
+    "tgl_sk": "7 Oktober 2025",
+    "tgl_expired": "30 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Ahmad Dahlan",
+    "nama_pt": "Universitas Ahmad Dahlan",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "69/AK.03.05/2025",
+    "tgl_sk": "13 Oktober 2025",
+    "tgl_expired": "30 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Nurtanio Bandung",
+    "nama_pt": "Universitas Nurtanio Bandung",
+    "nama_prodi": "Ilmu Administrasi",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "205/AK.03.01/2025",
+    "tgl_sk": "4 September 2025",
+    "tgl_expired": "29 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Nurtanio Bandung",
+    "nama_pt": "Universitas Nurtanio Bandung",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "206/AK.03.01/2025",
+    "tgl_sk": "4 September 2025",
+    "tgl_expired": "29 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Wijaya Putra",
+    "nama_pt": "Universitas Wijaya Putra",
+    "nama_prodi": "Ilmu Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "207/AK.03.01/2025",
+    "tgl_sk": "4 September 2025",
+    "tgl_expired": "29 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Slamet Riyadi",
+    "nama_pt": "Universitas Slamet Riyadi",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "208/AK.03.01/2025",
+    "tgl_sk": "4 September 2025",
+    "tgl_expired": "29 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Jember",
+    "nama_pt": "Universitas Jember",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "209/AK.03.01/2025",
+    "tgl_sk": "4 September 2025",
+    "tgl_expired": "29 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Nurul Jadid",
+    "nama_pt": "Universitas Nurul Jadid",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam (KPI)",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "210/AK.03.01/2025",
+    "tgl_sk": "4 September 2025",
+    "tgl_expired": "29 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Panji Sakti Singaraja",
+    "nama_pt": "Universitas Panji Sakti Singaraja",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "217/AK.03.01/2025",
+    "tgl_sk": "20 September 2025",
+    "tgl_expired": "29 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pattimura",
+    "nama_pt": "Universitas Pattimura",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "162/AK.03.01/2025",
+    "tgl_sk": "14 Juli 2025",
+    "tgl_expired": "29 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Ahmad Dahlan",
+    "nama_pt": "Universitas Ahmad Dahlan",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "136/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "28 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Mulawarman",
+    "nama_pt": "Universitas Mulawarman",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "212/AK.03.01/2025",
+    "tgl_sk": "15 September 2025",
+    "tgl_expired": "28 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pelita Harapan",
+    "nama_pt": "Universitas Pelita Harapan",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "190/AK.03.01/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "27 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Handayani Makassar",
+    "nama_pt": "Universitas Handayani Makassar",
+    "nama_prodi": "Adminsitrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "239/AK.03.01/2025",
+    "tgl_sk": "7 Oktober 2025",
+    "tgl_expired": "26 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Handayani Makassar",
+    "nama_pt": "Universitas Handayani Makassar",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "052/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "26 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia Membangun",
+    "nama_pt": "Universitas Indonesia Membangun",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "02/AK.03.03.A/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "25 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas 17 Agustus 1945 Semarang",
+    "nama_pt": "Universitas 17 Agustus 1945 Semarang",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "129/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "23 September 2030"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Administrasi Bala Putra Dewa",
+    "nama_pt": "Sekolah Tinggi Ilmu Administrasi Bala Putra Dewa",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "003/AK.03.05/2026",
+    "tgl_sk": "9 Januari 2026",
+    "tgl_expired": "23 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Trunodjoyo Madura",
+    "nama_pt": "Universitas Trunodjoyo Madura",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "35/AK.03.02/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "22 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas 17 Agustus 1945 Semarang",
+    "nama_pt": "Universitas 17 Agustus 1945 Semarang",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "127/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "21 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Bengkulu",
+    "nama_pt": "Universitas Muhammadiyah Bengkulu",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "158/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "21 September 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Media Digital Emtek",
+    "nama_pt": "Institut Media Digital Emtek",
+    "nama_prodi": "Komunikasi Massa",
+    "jenjang": "D3",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "057/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "21 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Manajemen dan Kebijakan Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "049/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "21 September 2030"
+  },
+  {
+    "nama_pt_raw": "STIA Bala Putra Dewa",
+    "nama_pt": "STIA Bala Putra Dewa",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "125/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "21 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Prof Dr Moestopo (Beragama)",
+    "nama_pt": "Universitas Prof Dr Moestopo (Beragama)",
+    "nama_prodi": "Ilmu Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "124/AK.03.05/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "21 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Jenderal Soedirman",
+    "nama_pt": "Universitas Jenderal Soedirman",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "126/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "19 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Bengkulu",
+    "nama_pt": "Universitas Muhammadiyah Bengkulu",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "139/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "19 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Bengkulu",
+    "nama_pt": "Universitas Muhammadiyah Bengkulu",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "139/AK.03.01/2025",
+    "tgl_sk": "23 Juni 2025",
+    "tgl_expired": "19 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Tribakti Lirboyo Kediri",
+    "nama_pt": "Universitas Islam Tribakti Lirboyo Kediri",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "214/AK.03.01/2025",
+    "tgl_sk": "15 September 2025",
+    "tgl_expired": "19 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Prof Dr Moestopo (Beragama)",
+    "nama_pt": "Universitas Prof Dr Moestopo (Beragama)",
+    "nama_prodi": "Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "155/AK.03.01/2025",
+    "tgl_sk": "14 Juli 2025",
+    "tgl_expired": "19 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Tribakti Lirboyo Kediri",
+    "nama_pt": "Universitas Islam Tribakti Lirboyo Kediri",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "048/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "19 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Manajemen dan Kebijakan Publik",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "195/AK.03.01/2025",
+    "tgl_sk": "2 September 2025",
+    "tgl_expired": "19 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Media Digital Emtek",
+    "nama_pt": "Institut Media Digital Emtek",
+    "nama_prodi": "Komunikasi Massa",
+    "jenjang": "D3",
+    "peringkat": "B",
+    "nomor_sk": "201/AK.03.01/2025",
+    "tgl_sk": "4 September 2025",
+    "tgl_expired": "19 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Padjadjaran",
+    "nama_pt": "Universitas Padjadjaran",
+    "nama_prodi": "Ilmu Administrasi",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "007/AK.03.05/2026",
+    "tgl_sk": "9 Januari 2026",
+    "tgl_expired": "17 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Sidoarjo",
+    "nama_pt": "Universitas Muhammadiyah Sidoarjo",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "103/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "17 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Jambi",
+    "nama_pt": "Universitas Jambi",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "71/AK.03.05/2025",
+    "tgl_sk": "13 Oktober 2025",
+    "tgl_expired": "16 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia Timur",
+    "nama_pt": "Universitas Indonesia Timur",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "017/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "16 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Surakarta",
+    "nama_pt": "Universitas Muhammadiyah Surakarta",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "83/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "16 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Dehasen Bengkulu",
+    "nama_pt": "Universitas Dehasen Bengkulu",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "111/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "16 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Makassar",
+    "nama_pt": "Universitas Muhammadiyah Makassar",
+    "nama_prodi": "Ilmu Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "074/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "16 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Makassar",
+    "nama_pt": "Universitas Muhammadiyah Makassar",
+    "nama_prodi": "Ilmu Administasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "046/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "14 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Mercu Buana",
+    "nama_pt": "Universitas Mercu Buana",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "101/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "14 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Teknologi Surabaya",
+    "nama_pt": "Universitas Teknologi Surabaya",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "54/AK.03.05/2025",
+    "tgl_sk": "10 September 2025",
+    "tgl_expired": "10 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Airlangga",
+    "nama_pt": "Universitas Airlangga",
+    "nama_prodi": "Ilmu Sosial",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "51/AK.03.05/2025",
+    "tgl_sk": "10 September 2025",
+    "tgl_expired": "10 September 2030"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Administrasi Tabalong",
+    "nama_pt": "Sekolah Tinggi Ilmu Administrasi Tabalong",
+    "nama_prodi": "Ilmu Administrasi Niaga",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "52/AK.03.05/2025",
+    "tgl_sk": "10 September 2025",
+    "tgl_expired": "10 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Luwuk",
+    "nama_pt": "Universitas Muhammadiyah Luwuk",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "53/AK.03.05/2025",
+    "tgl_sk": "10 September 2025",
+    "tgl_expired": "10 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas 17 Agustus 1945 Surabaya",
+    "nama_pt": "Universitas 17 Agustus 1945 Surabaya",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "47/AK.03.05/2025",
+    "tgl_sk": "10 September 2025",
+    "tgl_expired": "10 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Wanita Internasional",
+    "nama_pt": "Universitas Wanita Internasional",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "075/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "10 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Bumi Hijrah Tidore",
+    "nama_pt": "Universitas Bumi Hijrah Tidore",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "120/AK.03.05/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "9 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Sumatera Utara",
+    "nama_pt": "Universitas Muhammadiyah Sumatera Utara",
+    "nama_prodi": "Ilmu Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "038/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "9 September 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Ilmu Sosial Dan Ilmu Politik Jakarta",
+    "nama_pt": "Institut Ilmu Sosial Dan Ilmu Politik Jakarta",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "99/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "5 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Darul `ulum",
+    "nama_pt": "Universitas Islam Darul `ulum",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "002/AK.03.05/2026",
+    "tgl_sk": "9 Januari 2026",
+    "tgl_expired": "5 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas 17 Agustus 1945 Cirebon",
+    "nama_pt": "Universitas 17 Agustus 1945 Cirebon",
+    "nama_prodi": "Ilmu Administrasi Niaga",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "005/AK.03.05/2026",
+    "tgl_sk": "9 Januari 2026",
+    "tgl_expired": "5 September 2030"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Administrasi YPPT Priatim Tasikmalaya",
+    "nama_pt": "Sekolah Tinggi Ilmu Administrasi YPPT Priatim Tasikmalaya",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "010/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "5 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Wijaya Kusuma Surabaya",
+    "nama_pt": "Universitas Wijaya Kusuma Surabaya",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "79/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "5 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Saintek Muhammadiyah",
+    "nama_pt": "Universitas Saintek Muhammadiyah",
+    "nama_prodi": "Film dan Televisi",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "047/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "5 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Brawijaya",
+    "nama_pt": "Universitas Brawijaya",
+    "nama_prodi": "Ilmu Perpustakaan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "74/AK.03.05/2025",
+    "tgl_sk": "13 Oktober 2025",
+    "tgl_expired": "5 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Syekh-Yusuf",
+    "nama_pt": "Universitas Islam Syekh-Yusuf",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "067/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "5 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Antasari Banjarmasin",
+    "nama_pt": "Universitas Islam Negeri Antasari Banjarmasin",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "107/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "5 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Agama dan Lintas Budaya",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "45/AK.03.05/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "3 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Proklamasi  45",
+    "nama_pt": "Universitas Proklamasi  45",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "044/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "3 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Brawijaya",
+    "nama_pt": "Universitas Brawijaya",
+    "nama_prodi": "Ilmu Perpustakaan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "045/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "3 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Ilmu Sosiologi",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "39/AK.03.05/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "3 September 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Komunikasi Dan Bisnis LSPR",
+    "nama_pt": "Institut Komunikasi Dan Bisnis LSPR",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "40/AK.03.05/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "3 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sanata Dharma",
+    "nama_pt": "Universitas Sanata Dharma",
+    "nama_prodi": "Kajian Budaya",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "41/AK.03.05/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "3 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Jenderal Soedirman",
+    "nama_pt": "Universitas Jenderal Soedirman",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "42/AK.03.05/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "3 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "43/AK.03.05/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "3 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Selamat Sri",
+    "nama_pt": "Universitas Selamat Sri",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "44/AK.03.05/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "3 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Pelita Harapan",
+    "nama_pt": "Universitas Pelita Harapan",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "46/AK.03.05/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "3 September 2030"
+  },
+  {
+    "nama_pt_raw": "STISIPOL Raja Haji",
+    "nama_pt": "STISIPOL Raja Haji",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "48/AK.03.05/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "3 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Atma Jaya Yogyakarta",
+    "nama_pt": "Universitas Atma Jaya Yogyakarta",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "49/AK.03.05/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "3 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Informatika Dan Bisnis Indonesia",
+    "nama_pt": "Universitas Informatika Dan Bisnis Indonesia",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "50/AK.03.05/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "3 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Hasanuddin",
+    "nama_pt": "Universitas Hasanuddin",
+    "nama_prodi": "Jender dan Pembangunan",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "57/AK.03.05/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "2 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Palangka Raya",
+    "nama_pt": "Universitas Palangka Raya",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "050/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "2 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Saintek Muhammadiyah",
+    "nama_pt": "Universitas Saintek Muhammadiyah",
+    "nama_prodi": "Sains Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "003/AK.03.03.A/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "2 September 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Ponorogo",
+    "nama_pt": "Universitas Muhammadiyah Ponorogo",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "127/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "31 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Palangka Raya",
+    "nama_pt": "Universitas Muhammadiyah Palangka Raya",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "020/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "31 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Palangka Raya",
+    "nama_pt": "Universitas Palangka Raya",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "021/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "31 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia Timur",
+    "nama_pt": "Universitas Indonesia Timur",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "022/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "31 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Saintek Muhammadiyah",
+    "nama_pt": "Universitas Saintek Muhammadiyah",
+    "nama_prodi": "Sains Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "024/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "31 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Doktor Sosiologi",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "67/AK.03.05/2025",
+    "tgl_sk": "13 Oktober 2025",
+    "tgl_expired": "31 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Bina Mandiri Gorontalo",
+    "nama_pt": "Universitas Bina Mandiri Gorontalo",
+    "nama_prodi": "Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "004/AK.03.03.A/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "30 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Hindu Negeri I Gusti Bagus Sugriwa Denpasar",
+    "nama_pt": "Universitas Hindu Negeri I Gusti Bagus Sugriwa Denpasar",
+    "nama_prodi": "Ilmu Komunikasi Hindu",
+    "jenjang": "S3",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "002/AK.03.03.A/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "30 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Langlang Buana",
+    "nama_pt": "Universitas Langlang Buana",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "015/AK.03.01/2026",
+    "tgl_sk": "27 Februari 2026",
+    "tgl_expired": "29 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Hindu Negeri I Gusti Bagus Sugriwa Denpasar",
+    "nama_pt": "Universitas Hindu Negeri I Gusti Bagus Sugriwa Denpasar",
+    "nama_prodi": "Ilmu Komunikasi Hindu",
+    "jenjang": "S3",
+    "peringkat": "Baik",
+    "nomor_sk": "068/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "28 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pertahanan",
+    "nama_pt": "Universitas Pertahanan",
+    "nama_prodi": "Strategi Pertahanan Darat",
+    "jenjang": "S2",
+    "peringkat": "A",
+    "nomor_sk": "026/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "25 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pertahanan",
+    "nama_pt": "Universitas Pertahanan",
+    "nama_prodi": "Strategi Pertahanan Udara",
+    "jenjang": "S2",
+    "peringkat": "A",
+    "nomor_sk": "027/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "25 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Abdurrab",
+    "nama_pt": "Universitas Abdurrab",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "32/AK.03.05/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "25 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas 17 Agustus 1945 Semarang",
+    "nama_pt": "Universitas 17 Agustus 1945 Semarang",
+    "nama_prodi": "Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "35/AK.03.05/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "25 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Ilmu Sosial dan Manajemen STIAMI",
+    "nama_pt": "Institut Ilmu Sosial dan Manajemen STIAMI",
+    "nama_prodi": "Ilmu Administrasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "37/AK.03.05/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "25 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Administrasi Pancamarga Palu",
+    "nama_pt": "Sekolah Tinggi Ilmu Administrasi Pancamarga Palu",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "34/AK.03.05/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "25 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Penyuluhan dan Komunikasi Pembangunan",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "38/AK.03.05/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "25 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Wijaya Kusuma Surabaya",
+    "nama_pt": "Universitas Wijaya Kusuma Surabaya",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "31/AK.03.05/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "25 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sriwijaya",
+    "nama_pt": "Universitas Sriwijaya",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "30/AK.03.05/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "25 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Cenderawasih",
+    "nama_pt": "Universitas Cenderawasih",
+    "nama_prodi": "Antropologi Sosial",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "29/AK.03.05/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "25 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Teknologi Yogyakarta",
+    "nama_pt": "Universitas Teknologi Yogyakarta",
+    "nama_prodi": "Ilmu Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "36/AK.03.05/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "25 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Jenderal Soedirman",
+    "nama_pt": "Universitas Jenderal Soedirman",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "33/AK.03.05/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "25 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Duta Bangsa Surakarta",
+    "nama_pt": "Universitas Duta Bangsa Surakarta",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "28/AK.03.02/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "20 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Garut",
+    "nama_pt": "Universitas Garut",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "141/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "19 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Palangka Raya",
+    "nama_pt": "Universitas Muhammadiyah Palangka Raya",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "006/AK.03.05/2026",
+    "tgl_sk": "9 Januari 2026",
+    "tgl_expired": "19 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "STIA Bala Putra Dewa",
+    "nama_pt": "STIA Bala Putra Dewa",
+    "nama_prodi": "Administrasi",
+    "jenjang": "D3",
+    "peringkat": "Unggul",
+    "nomor_sk": "93/AK.03.05/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "19 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Bengkulu",
+    "nama_pt": "Universitas Bengkulu",
+    "nama_prodi": "Kesejahteraan Sosial",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "016/AK.03.01/2026",
+    "tgl_sk": "27 Januari 2026",
+    "tgl_expired": "17 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Jayabaya",
+    "nama_pt": "Universitas Jayabaya",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "032/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "17 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Nusantara",
+    "nama_pt": "Universitas Islam Nusantara",
+    "nama_prodi": "Ilmu Perpustakaan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "073/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "17 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Jayabaya",
+    "nama_pt": "Universitas Jayabaya",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "018/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "15 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Nusantara",
+    "nama_pt": "Universitas Islam Nusantara",
+    "nama_prodi": "Ilmu Perpustakaan",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "019/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "15 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Okmin Papua",
+    "nama_pt": "Universitas Okmin Papua",
+    "nama_prodi": "Antropologi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "62/AK.03.05/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "11 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Pertahanan",
+    "nama_pt": "Universitas Pertahanan",
+    "nama_prodi": "Strategi Pertahanan Laut",
+    "jenjang": "S2",
+    "peringkat": "A",
+    "nomor_sk": "028/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "11 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Sebelas Maret",
+    "nama_pt": "Universitas Sebelas Maret",
+    "nama_prodi": "Penyuluhan Pembangunan/Pemberdayaan Masyarakat",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "029/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "11 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Malikussaleh",
+    "nama_pt": "Universitas Malikussaleh",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "017/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "10 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Kemandirian Nusantara",
+    "nama_pt": "Institut Kemandirian Nusantara",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "07/AK.03.03.A/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "9 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Tribhuwana Tungga Dewi",
+    "nama_pt": "Universitas Tribhuwana Tungga Dewi",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "88/AK.03.05/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "9 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Bengkulu",
+    "nama_pt": "Universitas Muhammadiyah Bengkulu",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "19/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "STISIP Bina Putera Banjar",
+    "nama_pt": "STISIP Bina Putera Banjar",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "27/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Jakarta",
+    "nama_pt": "Universitas Muhammadiyah Jakarta",
+    "nama_prodi": "Ilmu Kesejahteraan Sosial",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "17/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Merdeka Malang",
+    "nama_pt": "Universitas Merdeka Malang",
+    "nama_prodi": "Ilmu Sosial",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "21/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Kristen Satya Wacana",
+    "nama_pt": "Universitas Kristen Satya Wacana",
+    "nama_prodi": "Studi Pembangunan",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "22/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Negeri Jakarta",
+    "nama_pt": "Universitas Negeri Jakarta",
+    "nama_prodi": "Hubungan Masyarakat dan Komunikasi Digital",
+    "jenjang": "D4",
+    "peringkat": "Unggul",
+    "nomor_sk": "16/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Kalimantan Muhammad Arsyad Al Banjari Banjarmasin",
+    "nama_pt": "Universitas Islam Kalimantan Muhammad Arsyad Al Banjari Banjarmasin",
+    "nama_prodi": "Ilmu Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "23/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas W R Supratman",
+    "nama_pt": "Universitas W R Supratman",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "09/AK.03.02/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "IAIN Ambon",
+    "nama_pt": "IAIN Ambon",
+    "nama_prodi": "Pemikiran Politik Islam",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "11/AK.03.02/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Padjadjaran",
+    "nama_pt": "Universitas Padjadjaran",
+    "nama_prodi": "Doktor Ilmu Komunikasi",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "18/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Ilmu Sosial dan Manajemen STIAMI",
+    "nama_pt": "Institut Ilmu Sosial dan Manajemen STIAMI",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "25/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Cenderawasih",
+    "nama_pt": "Universitas Cenderawasih",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "24/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas 17 Agustus 1945 Semarang",
+    "nama_pt": "Universitas 17 Agustus 1945 Semarang",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "28/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas KH. Bahaudin Mudhary Madura",
+    "nama_pt": "Universitas KH. Bahaudin Mudhary Madura",
+    "nama_prodi": "Kajian Film, Televisi dan Media",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "10/AK.03.02/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Maritim Raja Ali Haji (UMRAH)",
+    "nama_pt": "Universitas Maritim Raja Ali Haji (UMRAH)",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "12/AK.03.02/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Malang",
+    "nama_pt": "Universitas Muhammadiyah Malang",
+    "nama_prodi": "Studi Pemerintahan",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "013/AK.03.02/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Magister Ilmu Hubungan Internasional",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "20/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Administrasi Adabiah",
+    "nama_pt": "Sekolah Tinggi Ilmu Administrasi Adabiah",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "26/AK.03.05/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "8 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Kepolisian",
+    "nama_pt": "Sekolah Tinggi Ilmu Kepolisian",
+    "nama_prodi": "Ilmu Kepolisian",
+    "jenjang": "S2",
+    "peringkat": "A",
+    "nomor_sk": "030/AK.03.01/2026",
+    "tgl_sk": "28 Januari 2026",
+    "tgl_expired": "7 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Bina Nusantara",
+    "nama_pt": "Universitas Bina Nusantara",
+    "nama_prodi": "Hubungan Masyarakat (Kampus Kota Malang)",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "109/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "6 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sunan Gresik",
+    "nama_pt": "Universitas Sunan Gresik",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "16/AK.03.02/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "5 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sunan Gresik",
+    "nama_pt": "Universitas Sunan Gresik",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "17/AK.03.02/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "5 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Riau",
+    "nama_pt": "Universitas Islam Riau",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "126/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "3 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Brawijaya",
+    "nama_pt": "Universitas Brawijaya",
+    "nama_prodi": "Ilmu Administrasi",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "72/AK.03.05/2025",
+    "tgl_sk": "13 Oktober 2025",
+    "tgl_expired": "3 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Ilmu Sosial Dan Ilmu Politik Jakarta",
+    "nama_pt": "Institut Ilmu Sosial Dan Ilmu Politik Jakarta",
+    "nama_prodi": "Ilmu Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "115/AK.03.05/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "3 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Sunan Gunung Djati",
+    "nama_pt": "Universitas Islam Negeri Sunan Gunung Djati",
+    "nama_prodi": "Ilmu Perpustakaan dan Informasi Islam",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "08/AK.03.03.A/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "2 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Udayana",
+    "nama_pt": "Universitas Udayana",
+    "nama_prodi": "Perpustakaan dan Sains Informasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "019/AK.03.02/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "1 Agustus 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Harkat Negeri",
+    "nama_pt": "Universitas Harkat Negeri",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "32/AK.03.02/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "31 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Nahdlatul Ulama Purwokerto",
+    "nama_pt": "Universitas Nahdlatul Ulama Purwokerto",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "113/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "29 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Prof Dr Hazairin SH",
+    "nama_pt": "Universitas Prof Dr Hazairin SH",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "59/AK.03.05/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "29 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Syarif Hidayatullah",
+    "nama_pt": "Universitas Islam Negeri Syarif Hidayatullah",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S3",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "012/AK.03.02/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "29 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Riau",
+    "nama_pt": "Universitas Riau",
+    "nama_prodi": "Ilmu Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "122/AK.03.05/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "29 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sjakhyakirti",
+    "nama_pt": "Universitas Sjakhyakirti",
+    "nama_prodi": "Ilmu Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "009/AK.03.01/2026",
+    "tgl_sk": "13 Januari 2026",
+    "tgl_expired": "27 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Administrasi Tabalong",
+    "nama_pt": "Sekolah Tinggi Ilmu Administrasi Tabalong",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "56/AK.03.05/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "26 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Lambung Mangkurat",
+    "nama_pt": "Universitas Lambung Mangkurat",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "114/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "22 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Merdeka Malang",
+    "nama_pt": "Universitas Merdeka Malang",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "14/AK.03.05/2025",
+    "tgl_sk": "21 Juli 2025",
+    "tgl_expired": "21 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Mbojo Bima",
+    "nama_pt": "Universitas Mbojo Bima",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "09/AK.03.05/2025",
+    "tgl_sk": "21 Juli 2025",
+    "tgl_expired": "21 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Riau",
+    "nama_pt": "Universitas Riau",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "11/AK.03.05/2025",
+    "tgl_sk": "21 Juli 2025",
+    "tgl_expired": "21 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Kajian WIlayah Jepang",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "12/AK.03.05/2025",
+    "tgl_sk": "21 Juli 2025",
+    "tgl_expired": "21 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Hang Tuah",
+    "nama_pt": "Universitas Hang Tuah",
+    "nama_prodi": "Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "13/AK.03.05/2025",
+    "tgl_sk": "21 Juli 2025",
+    "tgl_expired": "21 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Kepemimpinan dan Inovasi Kebijakan",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "10/AK.03.05/2025",
+    "tgl_sk": "21 Juli 2025",
+    "tgl_expired": "21 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Pendidikan Nasional",
+    "nama_pt": "Universitas Pendidikan Nasional",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "15/AK.03.05/2025",
+    "tgl_sk": "21 Juli 2025",
+    "tgl_expired": "21 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Ratu Samban",
+    "nama_pt": "Universitas Ratu Samban",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "004/AK.03.01/2026",
+    "tgl_sk": "8 Januari 2026",
+    "tgl_expired": "20 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Sumatera Utara",
+    "nama_pt": "Universitas Sumatera Utara",
+    "nama_prodi": "Antropologi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "36/AK.03.02/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "19 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Bosowa",
+    "nama_pt": "Universitas Bosowa",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S3",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "25/AK.03.02/2025",
+    "tgl_sk": "13 Oktober 2025",
+    "tgl_expired": "16 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Politeknik Piksi Ganesha",
+    "nama_pt": "Politeknik Piksi Ganesha",
+    "nama_prodi": "Administrasi Keuangan",
+    "jenjang": "D3",
+    "peringkat": "Unggul",
+    "nomor_sk": "08/AK.03.05/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Cirebon",
+    "nama_pt": "Universitas Muhammadiyah Cirebon",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "07/AK.03.05/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Politeknik Haji Anwar Sanusi",
+    "nama_pt": "Politeknik Haji Anwar Sanusi",
+    "nama_prodi": "Hubungan Masyarakat Komunikasi digital",
+    "jenjang": "D4",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "07/AK.03.02/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sulawesi Tenggara",
+    "nama_pt": "Universitas Sulawesi Tenggara",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "02/AK.03.02/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Brawijaya",
+    "nama_pt": "Universitas Brawijaya",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "05/AK.03.05/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Negeri Malang",
+    "nama_pt": "Universitas Negeri Malang",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "01/AK.03.03.A/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Rokania",
+    "nama_pt": "Universitas Rokania",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "03/AK.03.02/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Sultanah Nahrasiyah Lhokseumawe",
+    "nama_pt": "Universitas Islam Negeri Sultanah Nahrasiyah Lhokseumawe",
+    "nama_prodi": "Ilmu Perpustakaan dan Informasi Islam",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "04/AK.03.02/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Andi Djemma",
+    "nama_pt": "Universitas Andi Djemma",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "08/AK.03.02/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Rokania",
+    "nama_pt": "Universitas Rokania",
+    "nama_prodi": "Sains Kepolisian",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "05/AK.03.02/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "STIA Nusantara Sakti Sungai Penuh",
+    "nama_pt": "STIA Nusantara Sakti Sungai Penuh",
+    "nama_prodi": "Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "06/AK.03.05/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Nasional",
+    "nama_pt": "Universitas Nasional",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S3",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "06/AK.03.02/2025",
+    "tgl_sk": "3 Juli 2025",
+    "tgl_expired": "3 Juli 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sebelas Maret",
+    "nama_pt": "Universitas Sebelas Maret",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "94/AK.03.05/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "30 Juni 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sjakhyakirti",
+    "nama_pt": "Universitas Sjakhyakirti",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "131/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "29 Juni 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas W R Supratman",
+    "nama_pt": "Universitas W R Supratman",
+    "nama_prodi": "Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "150/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "29 Juni 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Indonesia",
+    "nama_pt": "Universitas Indonesia",
+    "nama_prodi": "Kriminologi",
+    "jenjang": "S3",
+    "peringkat": "Unggul",
+    "nomor_sk": "70/AK.03.05/2025",
+    "tgl_sk": "13 Oktober 2025",
+    "tgl_expired": "29 Juni 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Teknologi Pagar Alam",
+    "nama_pt": "Institut Teknologi Pagar Alam",
+    "nama_prodi": "Kesejahteraan Sosial",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "04/AK.03.03.A/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "28 Juni 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas W R Supratman",
+    "nama_pt": "Universitas W R Supratman",
+    "nama_prodi": "Administrasi Bisnis",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "303/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "27 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Sidenreng Rappang",
+    "nama_pt": "Universitas Muhammadiyah Sidenreng Rappang",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S3",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "18/AK.03.02/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "26 Juni 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Lampung",
+    "nama_pt": "Universitas Muhammadiyah Lampung",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "135/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "24 Juni 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Cahaya Prima",
+    "nama_pt": "Universitas Cahaya Prima",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "01/AK.03.03.B/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "8 Juni 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Darussalam Ambon",
+    "nama_pt": "Universitas Darussalam Ambon",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "024/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "8 Juni 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Darussalam Ambon",
+    "nama_pt": "Universitas Darussalam Ambon",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "316/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "7 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Darussalam Ambon",
+    "nama_pt": "Universitas Darussalam Ambon",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "317/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "7 Juni 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Sahid",
+    "nama_pt": "Universitas Sahid",
+    "nama_prodi": "Penyiaran",
+    "jenjang": "D3",
+    "peringkat": "Unggul",
+    "nomor_sk": "026/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "1 Juni 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gunadarma",
+    "nama_pt": "Universitas Gunadarma",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S3",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "03/AK.03.03.A/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "31 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sahid",
+    "nama_pt": "Universitas Sahid",
+    "nama_prodi": "PENYIARAN",
+    "jenjang": "D3",
+    "peringkat": "B",
+    "nomor_sk": "219/AK.03.01/2025",
+    "tgl_sk": "22 September 2025",
+    "tgl_expired": "30 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas PGRI Palangka Raya",
+    "nama_pt": "Universitas PGRI Palangka Raya",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "334/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "30 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Magister Politik dan Pemerintahan",
+    "jenjang": "S2",
+    "peringkat": "A",
+    "nomor_sk": "336/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "30 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Padjadjaran",
+    "nama_pt": "Universitas Padjadjaran",
+    "nama_prodi": "Magister Administrasi Bisnis",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "01/AK.03.05/2025",
+    "tgl_sk": "29 Mei 2025",
+    "tgl_expired": "29 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Andi Djemma",
+    "nama_pt": "Universitas Andi Djemma",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "02/AK.03.05/2025",
+    "tgl_sk": "29 Mei 2025",
+    "tgl_expired": "29 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Bakrie",
+    "nama_pt": "Universitas Bakrie",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "03/AK.03.05/2025",
+    "tgl_sk": "29 Mei 2025",
+    "tgl_expired": "29 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Cirebon",
+    "nama_pt": "Universitas Muhammadiyah Cirebon",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "04/AK.03.05/2025",
+    "tgl_sk": "29 Mei 2025",
+    "tgl_expired": "29 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Lancang Kuning",
+    "nama_pt": "Universitas Lancang Kuning",
+    "nama_prodi": "Kebijakan Publik",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "01/AK.03.02/2025",
+    "tgl_sk": "29 Mei 2025",
+    "tgl_expired": "29 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Teknologi Bisnis dan Administrasi Al Gazali Barru",
+    "nama_pt": "Institut Teknologi Bisnis dan Administrasi Al Gazali Barru",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "20/AK.03.02/2025",
+    "tgl_sk": "10 September 2025",
+    "tgl_expired": "27 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Institut Ilmu Sosial dan Bisnis Andi Sapada",
+    "nama_pt": "Institut Ilmu Sosial dan Bisnis Andi Sapada",
+    "nama_prodi": "Kriminologi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "24/AK.03.02/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "27 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Lakidende Unaaha",
+    "nama_pt": "Universitas Lakidende Unaaha",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "006/AK.03.02/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "27 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gunadarma",
+    "nama_pt": "Universitas Gunadarma",
+    "nama_prodi": "Ilmu Komunikasi (Kampus Kabupaten Penajam Paser Utara)",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "011/AK.03.03.A/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "17 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Surakarta",
+    "nama_pt": "Universitas Muhammadiyah Surakarta",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "30/AK.03.02/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "16 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Surakarta",
+    "nama_pt": "Universitas Muhammadiyah Surakarta",
+    "nama_prodi": "Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "31/AK.03.02/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "16 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gunadarma",
+    "nama_pt": "Universitas Gunadarma",
+    "nama_prodi": "Ilmu Komunikasi (Kampus Kabupaten Penajam Paser Utara)",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "260/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "15 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pasundan",
+    "nama_pt": "Universitas Pasundan",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "257/AK.03.01/2025",
+    "tgl_sk": "27 Oktober 2025",
+    "tgl_expired": "14 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Katolik Parahyangan",
+    "nama_pt": "Universitas Katolik Parahyangan",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "059/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "13 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Katolik Parahyangan",
+    "nama_pt": "Universitas Katolik Parahyangan",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "273/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "11 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Slamet Riyadi",
+    "nama_pt": "Universitas Slamet Riyadi",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "031/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "11 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Hasanuddin",
+    "nama_pt": "Universitas Hasanuddin",
+    "nama_prodi": "Komunikasi Digital",
+    "jenjang": "D4",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "22/AK.03.02/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "10 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Slamet Riyadi",
+    "nama_pt": "Universitas Slamet Riyadi",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "268/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "9 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Magister Pengkajian Amerika",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "119/AK.03.05/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "6 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Pasundan",
+    "nama_pt": "Universitas Pasundan",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "128/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "6 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Ilmu Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "61/AK.03.05/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "6 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Mataram",
+    "nama_pt": "Universitas Muhammadiyah Mataram",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "011/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "6 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Semarang",
+    "nama_pt": "Universitas Semarang",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "019/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "6 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Surakarta",
+    "nama_pt": "Universitas Surakarta",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "015/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "6 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Sunan Kalijaga",
+    "nama_pt": "Universitas Islam Negeri Sunan Kalijaga",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "042/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "6 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Atma Jaya Yogyakarta",
+    "nama_pt": "Universitas Atma Jaya Yogyakarta",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "96/AK.03.05/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "6 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Pasundan",
+    "nama_pt": "Universitas Pasundan",
+    "nama_prodi": "Ilmu Kesejahteraan Sosial",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "102/AK.03.05/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "6 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Achmad Yani Banjarmasin",
+    "nama_pt": "Universitas Achmad Yani Banjarmasin",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "061/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "6 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Katolik Parahyangan",
+    "nama_pt": "Universitas Katolik Parahyangan",
+    "nama_prodi": "Studi Pembangunan",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "298/AK.03.01/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "5 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Jakarta",
+    "nama_pt": "Universitas Jakarta",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "328/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Lampung",
+    "nama_pt": "Universitas Muhammadiyah Lampung",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "155/AK.03.05/2025",
+    "tgl_sk": "23 Desember 2025",
+    "tgl_expired": "4 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Achmad Yani Banjarmasin",
+    "nama_pt": "Universitas Achmad Yani Banjarmasin",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "251/AK.03.01/2025",
+    "tgl_sk": "27 Oktober 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas 45 Mataram",
+    "nama_pt": "Universitas 45 Mataram",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "267/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Mataram",
+    "nama_pt": "Universitas Muhammadiyah Mataram",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "269/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Pembangunan Sosial dan Kesejahteraan",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "272/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Palopo",
+    "nama_pt": "Universitas Islam Negeri Palopo",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "013/AK.03.05/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "4 Mei 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Semarang",
+    "nama_pt": "Universitas Semarang",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "274/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Sunan Kalijaga",
+    "nama_pt": "Universitas Islam Negeri Sunan Kalijaga",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "279/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Surakarta",
+    "nama_pt": "Universitas Surakarta",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Baik Sekali",
+    "nomor_sk": "280/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "285/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Abdurachman Saleh Situbondo",
+    "nama_pt": "Universitas Abdurachman Saleh Situbondo",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "290/AK.03.01/2025",
+    "tgl_sk": "7 November 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Iskandar Muda",
+    "nama_pt": "Universitas Iskandar Muda",
+    "nama_prodi": "Pembangunan Sosial",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "293/AK.03.01/2025",
+    "tgl_sk": "7 November 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Makassar",
+    "nama_pt": "Universitas Muhammadiyah Makassar",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "294/AK.03.01/2025",
+    "tgl_sk": "7 November 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Iskandar Muda",
+    "nama_pt": "Universitas Iskandar Muda",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "295/AK.03.01/2025",
+    "tgl_sk": "7 November 2025",
+    "tgl_expired": "4 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Lampung",
+    "nama_pt": "Universitas Muhammadiyah Lampung",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "263/AK.03.01/2025",
+    "tgl_sk": "28 Oktober 2025",
+    "tgl_expired": "2 Mei 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Sunan Gunung Djati",
+    "nama_pt": "Universitas Islam Negeri Sunan Gunung Djati",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "015/AK.03.02/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "23 April 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Al-Ihya Kuningan",
+    "nama_pt": "Universitas Islam Al-Ihya Kuningan",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "043/AK.03.01/2026",
+    "tgl_sk": "25 Februari 2026",
+    "tgl_expired": "20 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Prof Dr Hafiz MPH",
+    "nama_pt": "Universitas Prof Dr Hafiz MPH",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "23/AK.03.02/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "15 April 2030"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Pembangunan Masyarakat Desa APMD",
+    "nama_pt": "Sekolah Tinggi Pembangunan Masyarakat Desa APMD",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "228/AK.03.01/2025",
+    "tgl_sk": "6 Oktober 2025",
+    "tgl_expired": "11 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Dayanu Ikhsanuddin",
+    "nama_pt": "Universitas Dayanu Ikhsanuddin",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "246/AK.03.01/2025",
+    "tgl_sk": "27 Oktober 2025",
+    "tgl_expired": "10 April 2026"
+  },
+  {
+    "nama_pt_raw": "STISIP Syamsul Ulum",
+    "nama_pt": "STISIP Syamsul Ulum",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "071/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "8 April 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Bunda Mulia",
+    "nama_pt": "Universitas Bunda Mulia",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "134/AK.03.05/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "8 April 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Sumatera Utara",
+    "nama_pt": "Universitas Sumatera Utara",
+    "nama_prodi": "Ilmu Kesejahteraan Sosial",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "021/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "8 April 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Surya",
+    "nama_pt": "Universitas Surya",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi",
+    "nomor_sk": "97/AK.03.05/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "8 April 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Gadjah Mada",
+    "nama_pt": "Universitas Gadjah Mada",
+    "nama_prodi": "Magister Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "040/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "8 April 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Bandar Lampung",
+    "nama_pt": "Universitas Bandar Lampung",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "070/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "8 April 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Kristen Indonesia",
+    "nama_pt": "Universitas Kristen Indonesia",
+    "nama_prodi": "Ilmu Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "118/AK.03.05/2025",
+    "tgl_sk": "28 November 2025",
+    "tgl_expired": "8 April 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Bunda Mulia",
+    "nama_pt": "Universitas Bunda Mulia",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "222/AK.03.01/2025",
+    "tgl_sk": "3 Oktober 2025",
+    "tgl_expired": "7 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Kristen Indonesia",
+    "nama_pt": "Universitas Kristen Indonesia",
+    "nama_prodi": "Hubungan Internasional",
+    "jenjang": "S1",
+    "peringkat": "A",
+    "nomor_sk": "223/AK.03.01/2025",
+    "tgl_sk": "3 Oktober 2025",
+    "tgl_expired": "7 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Bandar Lampung",
+    "nama_pt": "Universitas Bandar Lampung",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "224/AK.03.01/2025",
+    "tgl_sk": "3 Oktober 2025",
+    "tgl_expired": "7 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Sumatera Utara",
+    "nama_pt": "Universitas Sumatera Utara",
+    "nama_prodi": "Ilmu Kesejahteraan Sosial",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "240/AK.03.01/2025",
+    "tgl_sk": "7 Oktober 2025",
+    "tgl_expired": "7 April 2026"
+  },
+  {
+    "nama_pt_raw": "STISIP Syamsul Ulum",
+    "nama_pt": "STISIP Syamsul Ulum",
+    "nama_prodi": "Ilmu Administrasi Negara",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "345/AK.03.01/2025",
+    "tgl_sk": "27 Desember 2025",
+    "tgl_expired": "6 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Krisnadwipayana",
+    "nama_pt": "Universitas Krisnadwipayana",
+    "nama_prodi": "Ilmu Administrasi",
+    "jenjang": "S2",
+    "peringkat": "Unggul",
+    "nomor_sk": "025/AK.03.05/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "2 April 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Krisnadwipayana",
+    "nama_pt": "Universitas Krisnadwipayana",
+    "nama_prodi": "Ilmu Administrasi",
+    "jenjang": "S2",
+    "peringkat": "A",
+    "nomor_sk": "220/AK.03.01/2025",
+    "tgl_sk": "25 Oktober 2025",
+    "tgl_expired": "1 April 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pramita Indonesia",
+    "nama_pt": "Universitas Pramita Indonesia",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "332/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "28 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pramita Indonesia",
+    "nama_pt": "Universitas Pramita Indonesia",
+    "nama_prodi": "Ilmu Pemerintahan",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "058/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "28 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Bosowa",
+    "nama_pt": "Universitas Bosowa",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "26/AK.03.02/2025",
+    "tgl_sk": "22 Oktober 2025",
+    "tgl_expired": "22 Maret 2030"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Komunikasi Profesi Indonesia",
+    "nama_pt": "Sekolah Tinggi Ilmu Komunikasi Profesi Indonesia",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "346/AK.03.01/2025",
+    "tgl_sk": "27 Desember 2025",
+    "tgl_expired": "21 Maret 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Komunikasi Profesi Indonesia",
+    "nama_pt": "Sekolah Tinggi Ilmu Komunikasi Profesi Indonesia",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "063/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "21 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pasundan",
+    "nama_pt": "Universitas Pasundan",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "73/AK.03.05/2025",
+    "tgl_sk": "13 Oktober 2025",
+    "tgl_expired": "19 Maret 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Merdeka Malang",
+    "nama_pt": "Universitas Merdeka Malang",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "64/AK.03.05/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "16 Maret 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Atma Jaya Yogyakarta",
+    "nama_pt": "Universitas Atma Jaya Yogyakarta",
+    "nama_prodi": "Sosiologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "65/AK.03.05/2025",
+    "tgl_sk": "27 September 2025",
+    "tgl_expired": "16 Maret 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Iskandar Muda",
+    "nama_pt": "Universitas Iskandar Muda",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "B",
+    "nomor_sk": "050/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "15 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Singaperbangsa Karawang",
+    "nama_pt": "Universitas Singaperbangsa Karawang",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "011/AK.03.02/2026",
+    "tgl_sk": "12 Februari 2026",
+    "tgl_expired": "15 Maret 2030"
+  },
+  {
+    "nama_pt_raw": "STIDKI Al-AZIZ Batam",
+    "nama_pt": "STIDKI Al-AZIZ Batam",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "049/AK.03.01/2026",
+    "tgl_sk": "26 Februari 2026",
+    "tgl_expired": "14 September 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Pembangunan Nasional Veteran Jakarta",
+    "nama_pt": "Universitas Pembangunan Nasional Veteran Jakarta",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "047/AK.03.05/2026",
+    "tgl_sk": "20 Februari 2026",
+    "tgl_expired": "28 Februari 2030"
+  },
+  {
+    "nama_pt_raw": "Politeknik STIA LAN Makassar",
+    "nama_pt": "Politeknik STIA LAN Makassar",
+    "nama_prodi": "Administrasi Pembangunan Negara",
+    "jenjang": "S2",
+    "peringkat": "B",
+    "nomor_sk": "005/AK.03.01/2026",
+    "tgl_sk": "8 Januari 2026",
+    "tgl_expired": "27 Juli 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Negeri Padang",
+    "nama_pt": "Universitas Negeri Padang",
+    "nama_prodi": "Antropologi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "018/AK.03.02/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "15 Januari 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Negeri Manado",
+    "nama_pt": "Universitas Negeri Manado",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S3",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "19/AK.03.02/2025",
+    "tgl_sk": "3 September 2025",
+    "tgl_expired": "11 Januari 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Komputer Indonesia",
+    "nama_pt": "Universitas Komputer Indonesia",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "29/AK.03.02/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "11 Januari 2030"
+  },
+  {
+    "nama_pt_raw": "Universitas Papua",
+    "nama_pt": "Universitas Papua",
+    "nama_prodi": "Antropologi",
+    "jenjang": "S1",
+    "peringkat": "Unggul",
+    "nomor_sk": "063/AK.03.05/2026",
+    "tgl_sk": "2 Maret 2026",
+    "tgl_expired": "4 Desember 2029"
+  },
+  {
+    "nama_pt_raw": "Universitas Papua",
+    "nama_pt": "Universitas Papua",
+    "nama_prodi": "Antropologi",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "314/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "2 Desember 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Muhammadiyah Papua",
+    "nama_pt": "Universitas Muhammadiyah Papua",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S2",
+    "peringkat": "Baik",
+    "nomor_sk": "330/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "22 November 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Ilmu Administrasi Madani",
+    "nama_pt": "Sekolah Tinggi Ilmu Administrasi Madani",
+    "nama_prodi": "Administrasi Publik",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "321/AK.03.01/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "5 November 2026"
+  },
+  {
+    "nama_pt_raw": "Sekolah Tinggi Agama Islam Persatuan Islam Jakarta",
+    "nama_pt": "Sekolah Tinggi Agama Islam Persatuan Islam Jakarta",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "301/AK.03.01/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "31 Oktober 2026"
+  },
+  {
+    "nama_pt_raw": "Universitas Hasanuddin",
+    "nama_pt": "Universitas Hasanuddin",
+    "nama_prodi": "Ilmu Perpustakaan dan Sains Informasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "007/AK.03.02/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "17 Oktober 2029"
+  },
+  {
+    "nama_pt_raw": "Institut Media Digital Emtek",
+    "nama_pt": "Institut Media Digital Emtek",
+    "nama_prodi": "Kajian Film, Televisi dan Media",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "27/AK.03.02/2025",
+    "tgl_sk": "30 Oktober 2025",
+    "tgl_expired": "15 Oktober 2029"
+  },
+  {
+    "nama_pt_raw": "Politeknik Elbajo Commodus",
+    "nama_pt": "Politeknik Elbajo Commodus",
+    "nama_prodi": "Manajemen Sumber Daya Manusia Sektor Publik",
+    "jenjang": "D4",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "33/AK.03.02/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "7 September 2029"
+  },
+  {
+    "nama_pt_raw": "Institut Pariwisata Tedja Indonesia",
+    "nama_pt": "Institut Pariwisata Tedja Indonesia",
+    "nama_prodi": "Hubungan Masyarakat",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "15/AK.03.02/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "4 September 2029"
+  },
+  {
+    "nama_pt_raw": "Universitas Pembangunan Indonesia Manado",
+    "nama_pt": "Universitas Pembangunan Indonesia Manado",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S1",
+    "peringkat": "Baik",
+    "nomor_sk": "300/AK.03.01/2025",
+    "tgl_sk": "17 November 2025",
+    "tgl_expired": "26 Agustus 2026"
+  },
+  {
+    "nama_pt_raw": "Institut Agama Islam Negeri Kerinci",
+    "nama_pt": "Institut Agama Islam Negeri Kerinci",
+    "nama_prodi": "Pemikiran  Politik Islam",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "21/AK.03.02/2025",
+    "tgl_sk": "10 September 2025",
+    "tgl_expired": "22 Mei 2029"
+  },
+  {
+    "nama_pt_raw": "Universitas Hasanuddin",
+    "nama_pt": "Universitas Hasanuddin",
+    "nama_prodi": "Kriminologi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "008/AK.03.02/2026",
+    "tgl_sk": "26 Januari 2026",
+    "tgl_expired": "7 Maret 2029"
+  },
+  {
+    "nama_pt_raw": "Institut Agama Islam Suryani Taher",
+    "nama_pt": "Institut Agama Islam Suryani Taher",
+    "nama_prodi": "Komunikasi dan Penyiaran Islam",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "003/AK.03.02/2026",
+    "tgl_sk": "9 Januari 2026",
+    "tgl_expired": "3 Maret 2029"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Syarif Hidayatullah",
+    "nama_pt": "Universitas Islam Negeri Syarif Hidayatullah",
+    "nama_prodi": "Ilmu Politik",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "13/AK.03.02/2025",
+    "tgl_sk": "8 Agustus 2025",
+    "tgl_expired": "11 Januari 2029"
+  },
+  {
+    "nama_pt_raw": "Universitas Islam Negeri Syarif Hidayatullah",
+    "nama_pt": "Universitas Islam Negeri Syarif Hidayatullah",
+    "nama_prodi": "Magister Sosiologi",
+    "jenjang": "S2",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "14/AK.03.02/2025",
+    "tgl_sk": "25 Agustus 2025",
+    "tgl_expired": "11 Januari 2029"
+  },
+  {
+    "nama_pt_raw": "Institut Agama Kristen Negeri Ambon",
+    "nama_pt": "Institut Agama Kristen Negeri Ambon",
+    "nama_prodi": "Ilmu Komunikasi",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "34/AK.03.02/2025",
+    "tgl_sk": "16 Desember 2025",
+    "tgl_expired": "23 Mei 2028"
+  },
+  {
+    "nama_pt_raw": "STT ARASTAMAR WAMENA",
+    "nama_pt": "STT ARASTAMAR WAMENA",
+    "nama_prodi": "Sosiologi Agama",
+    "jenjang": "S1",
+    "peringkat": "Terakreditasi Sementara",
+    "nomor_sk": "001/AK.03.02/2026",
+    "tgl_sk": "9 Januari 2026",
+    "tgl_expired": "22 Januari 2027"
+  }
+]

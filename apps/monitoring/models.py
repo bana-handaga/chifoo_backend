@@ -148,9 +148,10 @@ class IsiLaporan(models.Model):
 
 class SnapshotLaporan(models.Model):
     """Snapshot perhitungan performa PT — satu baris per sesi generate."""
-    dibuat_pada = models.DateTimeField(auto_now_add=True)
-    keterangan   = models.CharField(max_length=200, blank=True)
-    total_pt     = models.IntegerField(default=0)
+    dibuat_pada        = models.DateTimeField(auto_now_add=True)
+    keterangan         = models.CharField(max_length=200, blank=True)
+    total_pt           = models.IntegerField(default=0)
+    total_pt_non_aktif = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['-dibuat_pada']
@@ -165,21 +166,69 @@ class SnapshotPerPT(models.Model):
     snapshot          = models.ForeignKey(SnapshotLaporan, on_delete=models.CASCADE, related_name='per_pt')
     perguruan_tinggi  = models.ForeignKey(PerguruanTinggi, on_delete=models.CASCADE)
 
-    # Prodi
-    total_prodi       = models.IntegerField(default=0)
-    prodi_per_jenjang = models.JSONField(default=dict)   # {"S1": 10, "S2": 3, …}
+    # ── Prodi per jenjang ──────────────────────────────────────────
+    total_prodi          = models.IntegerField(default=0)
+    prodi_aktif          = models.IntegerField(default=0)
+    prodi_non_aktif      = models.IntegerField(default=0)
+    prodi_s1             = models.IntegerField(default=0)
+    prodi_s2             = models.IntegerField(default=0)
+    prodi_s3             = models.IntegerField(default=0)
+    prodi_d3             = models.IntegerField(default=0)
+    prodi_d4             = models.IntegerField(default=0)
+    prodi_profesi        = models.IntegerField(default=0)
+    prodi_sp1            = models.IntegerField(default=0)
+    prodi_jenjang_lainnya = models.IntegerField(default=0)
 
-    # Dosen profil (dari ProfilDosen)
-    total_dosen       = models.IntegerField(default=0)
-    dosen_pria        = models.IntegerField(default=0)
-    dosen_wanita      = models.IntegerField(default=0)
-    dosen_per_jabatan    = models.JSONField(default=dict) # {"Profesor": 5, "Lektor": 40, …}
-    dosen_per_pendidikan = models.JSONField(default=dict) # {"s3": 20, "s2": 50, …}
-    dosen_per_status     = models.JSONField(default=dict) # {"Aktif": 100, …}
-    dosen_per_ikatan     = models.JSONField(default=dict) # {"tetap": 80, "tidak_tetap": 20}
+    # ── Dosen — ringkasan ──────────────────────────────────────────
+    total_dosen          = models.IntegerField(default=0)
+    dosen_with_detail    = models.IntegerField(default=0)   # jabatan_fungsional terisi
+    dosen_no_detail      = models.IntegerField(default=0)   # jabatan_fungsional kosong
+    dosen_pria           = models.IntegerField(default=0)
+    dosen_wanita         = models.IntegerField(default=0)
+    dosen_gender_no_info = models.IntegerField(default=0)
 
-    # Mahasiswa aktif — 7 semester terakhir
-    mhs_tren = models.JSONField(default=list)  # [{"periode": "2024/2025 Ganjil", "total": 1000}, …]
+    # ── Dosen per jabatan fungsional ───────────────────────────────
+    dosen_profesor        = models.IntegerField(default=0)
+    dosen_lektor_kepala   = models.IntegerField(default=0)
+    dosen_lektor          = models.IntegerField(default=0)
+    dosen_asisten_ahli    = models.IntegerField(default=0)
+    dosen_jabatan_lainnya = models.IntegerField(default=0)
+
+    # ── Dosen per pendidikan tertinggi ─────────────────────────────
+    dosen_pend_s3         = models.IntegerField(default=0)
+    dosen_pend_s2         = models.IntegerField(default=0)
+    dosen_pend_s1         = models.IntegerField(default=0)
+    dosen_pend_profesi    = models.IntegerField(default=0)
+    dosen_pend_lainnya    = models.IntegerField(default=0)
+
+    # ── Dosen per status kepegawaian ───────────────────────────────
+    dosen_aktif           = models.IntegerField(default=0)
+    dosen_tugas_belajar   = models.IntegerField(default=0)
+    dosen_ijin_belajar    = models.IntegerField(default=0)
+    dosen_cuti            = models.IntegerField(default=0)
+    dosen_status_lainnya  = models.IntegerField(default=0)
+
+    # ── Dosen per ikatan kerja ─────────────────────────────────────
+    dosen_tetap           = models.IntegerField(default=0)
+    dosen_tidak_tetap     = models.IntegerField(default=0)
+    dosen_dtpk            = models.IntegerField(default=0)   # Tetap Perjanjian Kerja
+    dosen_ikatan_lainnya  = models.IntegerField(default=0)
+
+    # ── Mahasiswa aktif — 7 semester terakhir (sem_1=terlama, sem_7=terbaru) ──
+    mhs_label_1  = models.CharField(max_length=30, blank=True)
+    mhs_sem_1    = models.IntegerField(default=0)
+    mhs_label_2  = models.CharField(max_length=30, blank=True)
+    mhs_sem_2    = models.IntegerField(default=0)
+    mhs_label_3  = models.CharField(max_length=30, blank=True)
+    mhs_sem_3    = models.IntegerField(default=0)
+    mhs_label_4  = models.CharField(max_length=30, blank=True)
+    mhs_sem_4    = models.IntegerField(default=0)
+    mhs_label_5  = models.CharField(max_length=30, blank=True)
+    mhs_sem_5    = models.IntegerField(default=0)
+    mhs_label_6  = models.CharField(max_length=30, blank=True)
+    mhs_sem_6    = models.IntegerField(default=0)
+    mhs_label_7  = models.CharField(max_length=30, blank=True)
+    mhs_sem_7    = models.IntegerField(default=0)
 
     class Meta:
         unique_together = [('snapshot', 'perguruan_tinggi')]

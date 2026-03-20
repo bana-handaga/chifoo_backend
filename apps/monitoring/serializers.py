@@ -110,20 +110,48 @@ class NotifikasiSerializer(serializers.ModelSerializer):
 
 
 class SnapshotPerPTSerializer(serializers.ModelSerializer):
-    pt_id       = serializers.IntegerField(source='perguruan_tinggi_id')
-    pt_kode     = serializers.CharField(source='perguruan_tinggi.kode_pt')
-    pt_nama     = serializers.CharField(source='perguruan_tinggi.nama')
-    pt_singkatan = serializers.CharField(source='perguruan_tinggi.singkatan')
+    pt_id           = serializers.IntegerField(source='perguruan_tinggi_id')
+    pt_kode         = serializers.CharField(source='perguruan_tinggi.kode_pt')
+    pt_nama         = serializers.CharField(source='perguruan_tinggi.nama')
+    pt_singkatan    = serializers.CharField(source='perguruan_tinggi.singkatan')
+    pt_jenis        = serializers.CharField(source='perguruan_tinggi.jenis')
+    pt_organisasi   = serializers.CharField(source='perguruan_tinggi.organisasi_induk')
+    pt_akreditasi   = serializers.CharField(source='perguruan_tinggi.akreditasi_institusi')
+    pt_aktif        = serializers.BooleanField(source='perguruan_tinggi.is_active')
 
     class Meta:
         model  = SnapshotPerPT
         fields = [
             'pt_id', 'pt_kode', 'pt_nama', 'pt_singkatan',
-            'total_prodi', 'prodi_per_jenjang',
-            'total_dosen', 'dosen_pria', 'dosen_wanita',
-            'dosen_per_jabatan', 'dosen_per_pendidikan',
-            'dosen_per_status', 'dosen_per_ikatan',
-            'mhs_tren',
+            'pt_jenis', 'pt_organisasi', 'pt_akreditasi', 'pt_aktif',
+            # prodi
+            'total_prodi',
+            'prodi_aktif', 'prodi_non_aktif',
+            'prodi_s1', 'prodi_s2', 'prodi_s3',
+            'prodi_d3', 'prodi_d4', 'prodi_profesi', 'prodi_sp1',
+            'prodi_jenjang_lainnya',
+            # dosen ringkasan
+            'total_dosen', 'dosen_with_detail', 'dosen_no_detail',
+            'dosen_pria', 'dosen_wanita', 'dosen_gender_no_info',
+            # jabatan
+            'dosen_profesor', 'dosen_lektor_kepala', 'dosen_lektor',
+            'dosen_asisten_ahli', 'dosen_jabatan_lainnya',
+            # pendidikan
+            'dosen_pend_s3', 'dosen_pend_s2', 'dosen_pend_s1',
+            'dosen_pend_profesi', 'dosen_pend_lainnya',
+            # status
+            'dosen_aktif', 'dosen_tugas_belajar', 'dosen_ijin_belajar',
+            'dosen_cuti', 'dosen_status_lainnya',
+            # ikatan kerja
+            'dosen_tetap', 'dosen_tidak_tetap', 'dosen_dtpk', 'dosen_ikatan_lainnya',
+            # tren mahasiswa
+            'mhs_label_1', 'mhs_sem_1',
+            'mhs_label_2', 'mhs_sem_2',
+            'mhs_label_3', 'mhs_sem_3',
+            'mhs_label_4', 'mhs_sem_4',
+            'mhs_label_5', 'mhs_sem_5',
+            'mhs_label_6', 'mhs_sem_6',
+            'mhs_label_7', 'mhs_sem_7',
         ]
 
 
@@ -132,10 +160,10 @@ class SnapshotLaporanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = SnapshotLaporan
-        fields = ['id', 'dibuat_pada', 'keterangan', 'total_pt', 'per_pt']
+        fields = ['id', 'dibuat_pada', 'keterangan', 'total_pt', 'total_pt_non_aktif', 'per_pt']
 
 
 class SnapshotLaporanListSerializer(serializers.ModelSerializer):
     class Meta:
         model  = SnapshotLaporan
-        fields = ['id', 'dibuat_pada', 'keterangan', 'total_pt']
+        fields = ['id', 'dibuat_pada', 'keterangan', 'total_pt', 'total_pt_non_aktif']

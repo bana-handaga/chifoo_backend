@@ -93,7 +93,7 @@ class PT10Pagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 500
 
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen
 from .serializers import _get_periode_aktif
 from apps.monitoring.models import PeriodePelaporan
 from .serializers import (
@@ -295,6 +295,11 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
                   .values('singkatan', 'nama', 'dsn_total')[:7]
             )
 
+        total_dosen_with_detail = ProfilDosen.objects.filter(
+            perguruan_tinggi_id__in=pt_ids,
+            jabatan_fungsional__gt='',
+        ).count()
+
         return Response({
             'total_pt': total_pt,
             'total_muhammadiyah': total_muhammadiyah,
@@ -304,6 +309,7 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             'periode_label': periode_label,
             'total_dosen': total_dosen,
             'total_dosen_tetap': total_dosen_tetap,
+            'total_dosen_with_detail': total_dosen_with_detail,
             'tahun_dosen': tahun_dosen,
             'per_jenis': list(per_jenis),
             'per_akreditasi': list(per_akreditasi),
@@ -519,12 +525,12 @@ class ProgramStudiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
                 key = (r['program_studi__nama'].lower(), r['program_studi__jenjang'])
                 mhs_map[key] = mhs_map.get(key, 0) + (r['total'] or 0)
 
-            # Dosen tetap
+            # Dosen tetap + tidak tetap
             for r in (DataDosen.objects
                       .filter(program_studi_id__in=prodi_ids,
                               tahun_akademik=ta, semester=periode.semester)
                       .values('program_studi__nama', 'program_studi__jenjang')
-                      .annotate(total=Sum('dosen_tetap'))):
+                      .annotate(total=Sum('dosen_tetap') + Sum('dosen_tidak_tetap'))):
                 key = (r['program_studi__nama'].lower(), r['program_studi__jenjang'])
                 dsn_map[key] = dsn_map.get(key, 0) + (r['total'] or 0)
 
@@ -582,10 +588,29 @@ def dosen_stats(request):
     qs = ProfilDosen.objects.all()
 
     total         = qs.count()
-    total_tetap   = qs.filter(ikatan_kerja='tetap').count()
+    total_tetap       = qs.filter(ikatan_kerja='tetap').count()
+    total_tidak_tetap = qs.filter(ikatan_kerja='tidak_tetap').count()
+    total_dtpk        = qs.filter(ikatan_kerja='dtpk').count()
     total_profesor = qs.filter(jabatan_fungsional='Profesor').count()
     total_s3      = qs.filter(pendidikan_tertinggi='s3').count()
-    total_aktif   = qs.filter(status='Aktif').count()
+    total_aktif         = qs.filter(status='Aktif').count()
+    total_tugas_belajar = qs.filter(status='TUGAS BELAJAR').count()
+    total_ijin_belajar  = qs.filter(status='IJIN BELAJAR').count()
+    total_cuti          = qs.filter(status='CUTI').count()
+
+    # S3 luar negeri / dalam negeri dari RiwayatPendidikanDosen
+    total_s3_ln = RiwayatPendidikanDosen.objects.filter(jenjang='S3', is_luar_negeri=True).count()
+    total_s3_dn = RiwayatPendidikanDosen.objects.filter(jenjang='S3', is_luar_negeri=False).count()
+
+    # Profesor dengan S3 LN / DN
+    prof_s3_ln = ProfilDosen.objects.filter(
+        jabatan_fungsional='Profesor',
+        riwayat_pendidikan__jenjang='S3', riwayat_pendidikan__is_luar_negeri=True
+    ).distinct().count()
+    prof_s3_dn = ProfilDosen.objects.filter(
+        jabatan_fungsional='Profesor',
+        riwayat_pendidikan__jenjang='S3', riwayat_pendidikan__is_luar_negeri=False
+    ).distinct().count()
 
     # Distribusi jabatan fungsional
     per_jabatan_raw = (
@@ -638,10 +663,19 @@ def dosen_stats(request):
 
     return Response({
         'total_dosen':    total,
-        'total_tetap':    total_tetap,
+        'total_tetap':       total_tetap,
+        'total_tidak_tetap': total_tidak_tetap,
+        'total_dtpk':        total_dtpk,
         'total_profesor': total_profesor,
+        'prof_s3_ln':     prof_s3_ln,
+        'prof_s3_dn':     prof_s3_dn,
         'total_s3':       total_s3,
-        'total_aktif':    total_aktif,
+        'total_s3_ln':    total_s3_ln,
+        'total_s3_dn':    total_s3_dn,
+        'total_aktif':          total_aktif,
+        'total_tugas_belajar':  total_tugas_belajar,
+        'total_ijin_belajar':   total_ijin_belajar,
+        'total_cuti':           total_cuti,
         'per_jabatan':    per_jabatan,
         'per_pendidikan': per_pendidikan,
         'per_jk':         {'L': per_jk.get('L', 0), 'P': per_jk.get('P', 0)},
@@ -657,6 +691,8 @@ def dosen_search(request):
     """Pencarian profil dosen dengan filter nama, PT, jabatan, pendidikan, status."""
     nama       = request.query_params.get('nama', '').strip()
     pt_kode    = request.query_params.get('pt_kode', '').strip()
+    pt_nama    = request.query_params.get('pt_nama', '').strip()
+    prodi_nama = request.query_params.get('prodi_nama', '').strip()
     jabatan    = request.query_params.get('jabatan', '').strip()
     pendidikan = request.query_params.get('pendidikan', '').strip()
     status     = request.query_params.get('status', '').strip()
@@ -665,7 +701,7 @@ def dosen_search(request):
 
     ALLOWED_SORT = {
         'nama', 'jabatan_fungsional', 'pendidikan_tertinggi',
-        'program_studi_nama', 'perguruan_tinggi__nama',
+        'program_studi_nama', 'perguruan_tinggi__nama', 'status',
     }
     ordering_raw = request.query_params.get('ordering', 'nama')
     desc = ordering_raw.startswith('-')
@@ -683,6 +719,10 @@ def dosen_search(request):
         qs = qs.filter(nama__icontains=nama)
     if pt_kode:
         qs = qs.filter(perguruan_tinggi__kode_pt=pt_kode)
+    if pt_nama:
+        qs = qs.filter(perguruan_tinggi__nama__icontains=pt_nama)
+    if prodi_nama:
+        qs = qs.filter(program_studi_nama__icontains=prodi_nama)
     if jabatan:
         qs = qs.filter(jabatan_fungsional=jabatan)
     if pendidikan:
@@ -708,6 +748,77 @@ def dosen_search(request):
         'pt_nama':           r.perguruan_tinggi.nama,
         'pt_kode':           r.perguruan_tinggi.kode_pt,
         'pt_singkatan':      r.perguruan_tinggi.singkatan,
+    } for r in results]
+
+    return Response({
+        'total':     total,
+        'page':      page,
+        'page_size': page_size,
+        'results':   data,
+    })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def riwayat_pendidikan_search(request):
+    """Pencarian riwayat pendidikan dosen dengan filter jenjang, nama dosen, PT dosen, PT asal."""
+    nama_dosen   = request.query_params.get('nama_dosen', '').strip()
+    jenjang      = request.query_params.get('jenjang', '').strip()
+    pt_dosen     = request.query_params.get('pt_dosen', '').strip()
+    pt_asal      = request.query_params.get('pt_asal', '').strip()
+    prodi_dosen  = request.query_params.get('prodi_dosen', '').strip()
+    luar_negeri  = request.query_params.get('luar_negeri', '').strip()  # '1' atau '0'
+    page        = max(1, int(request.query_params.get('page', 1)))
+    page_size   = min(int(request.query_params.get('page_size', 50)), 5000)
+
+    ALLOWED_SORT = {
+        'profil_dosen__nama', 'jenjang', 'tahun_lulus',
+        'perguruan_tinggi_asal', 'profil_dosen__perguruan_tinggi__nama',
+    }
+    ordering_raw   = request.query_params.get('ordering', 'profil_dosen__nama')
+    desc           = ordering_raw.startswith('-')
+    ordering_field = ordering_raw.lstrip('-')
+    if ordering_field not in ALLOWED_SORT:
+        ordering_field = 'profil_dosen__nama'
+        desc = False
+    ordering = ('-' if desc else '') + ordering_field
+
+    qs = RiwayatPendidikanDosen.objects.select_related(
+        'profil_dosen', 'profil_dosen__perguruan_tinggi', 'profil_dosen__program_studi'
+    ).exclude(profil_dosen__nama__regex=r'^[\.\-\s]+')
+
+    if jenjang:
+        qs = qs.filter(jenjang=jenjang)
+    if nama_dosen:
+        qs = qs.filter(profil_dosen__nama__icontains=nama_dosen)
+    if pt_dosen:
+        qs = qs.filter(profil_dosen__perguruan_tinggi__nama__icontains=pt_dosen)
+    if prodi_dosen:
+        qs = qs.filter(profil_dosen__program_studi_nama__icontains=prodi_dosen)
+    if pt_asal:
+        qs = qs.filter(perguruan_tinggi_asal__icontains=pt_asal)
+    if luar_negeri == '1':
+        qs = qs.filter(is_luar_negeri=True)
+    elif luar_negeri == '0':
+        qs = qs.filter(is_luar_negeri=False)
+
+    total   = qs.count()
+    offset  = (page - 1) * page_size
+    results = qs.order_by(ordering)[offset: offset + page_size]
+
+    data = [{
+        'id':                    r.id,
+        'nidn':                  r.profil_dosen.nidn or '',
+        'nama_dosen':            r.profil_dosen.nama,
+        'jabatan_fungsional':    r.profil_dosen.jabatan_fungsional,
+        'program_studi_nama':    r.profil_dosen.program_studi_nama,
+        'pt_nama':               r.profil_dosen.perguruan_tinggi.nama,
+        'pt_singkatan':          r.profil_dosen.perguruan_tinggi.singkatan,
+        'perguruan_tinggi_asal': r.perguruan_tinggi_asal,
+        'gelar':                 r.gelar,
+        'jenjang':               r.jenjang,
+        'tahun_lulus':           r.tahun_lulus,
+        'is_luar_negeri':        r.is_luar_negeri,
     } for r in results]
 
     return Response({
