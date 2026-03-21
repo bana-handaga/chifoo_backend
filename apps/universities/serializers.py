@@ -271,6 +271,5 @@ class SintaJurnalSerializer(serializers.ModelSerializer):
 
 
 class SintaJurnalListSerializer(SintaJurnalSerializer):
-    """Serializer ringan untuk list — logo dihilangkan untuk performa."""
-    class Meta(SintaJurnalSerializer.Meta):
-        fields = [f for f in SintaJurnalSerializer.Meta.fields if f != 'logo_base64']
+    """Sama dengan SintaJurnalSerializer — logo disertakan untuk ditampilkan."""
+    pass
