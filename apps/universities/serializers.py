@@ -43,6 +43,8 @@ class ProgramStudiSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data['jenjang_display'] = instance.get_jenjang_display()
         data['akreditasi_display'] = instance.get_akreditasi_display()
+        pt = instance.perguruan_tinggi
+        data['perguruan_tinggi_nama'] = (pt.singkatan or pt.nama) if pt else ''
         return data
 
     def _get_ta(self):

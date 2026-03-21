@@ -322,8 +322,14 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def tren_mahasiswa(self, request):
-        """Tren mahasiswa aktif 12 semester terakhir, opsional per PT."""
-        # Ambil 12 semester terakhir: ganjil (1) sebelum genap (2) dalam tahun yang sama
+        """
+        Tren mahasiswa aktif 12 semester terakhir.
+        Params:
+          pt_id[]    - filter PT (bisa multiple)
+          prodi_id[] - filter Prodi (bisa multiple)
+          mode       - 'gabung' | 'perbandingan'
+          filter_by  - 'pt' | 'prodi' (konteks perbandingan, default 'pt')
+        """
         sem_order = Case(
             When(semester='ganjil', then=Value(1)),
             When(semester='genap', then=Value(2)),
@@ -332,45 +338,233 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         )
         semesters = list(
             DataMahasiswa.objects
+            .exclude(tahun_akademik='2017/2018')
             .values('tahun_akademik', 'semester')
             .distinct()
             .annotate(sem_order=sem_order)
-            .order_by('-tahun_akademik', '-sem_order')[:12]
+            .order_by('tahun_akademik', 'sem_order')
         )
-        semesters = list(reversed(semesters))  # urut lama → baru (kronologis)
         labels = [f"{s['tahun_akademik']} {s['semester'].capitalize()}" for s in semesters]
 
-        pt_ids_param = request.query_params.getlist('pt_id')
-        mode = request.query_params.get('mode', 'gabung')  # 'gabung' | 'perbandingan'
+        pt_ids    = request.query_params.getlist('pt_id')
+        prodi_ids = request.query_params.getlist('prodi_id')
+        mode      = request.query_params.get('mode', 'gabung')
+        filter_by = request.query_params.get('filter_by', 'pt')  # 'pt' | 'prodi'
+        metric    = request.query_params.get('metric', 'aktif')  # 'aktif'|'baru'|'lulus'|'dropout'
 
-        if mode == 'perbandingan' and pt_ids_param:
-            # Satu dataset per PT
+        METRIC_FIELD = {
+            'aktif':   'mahasiswa_aktif',
+            'baru':    'mahasiswa_baru',
+            'lulus':   'mahasiswa_lulus',
+            'dropout': 'mahasiswa_dropout',
+        }
+        metric_field = METRIC_FIELD.get(metric, 'mahasiswa_aktif')
+
+        def _base_qs(s, extra_filter=None):
+            qs = DataMahasiswa.objects.filter(
+                tahun_akademik=s['tahun_akademik'],
+                semester=s['semester'],
+            )
+            if pt_ids:
+                qs = qs.filter(perguruan_tinggi_id__in=pt_ids)
+            if prodi_ids:
+                qs = qs.filter(program_studi_id__in=prodi_ids)
+            if extra_filter:
+                qs = qs.filter(**extra_filter)
+            return qs.aggregate(total=Sum(metric_field))['total'] or 0
+
+        if mode == 'perbandingan':
             datasets = []
-            for pt_id in pt_ids_param:
-                try:
-                    pt = PerguruanTinggi.objects.get(pk=pt_id)
-                except PerguruanTinggi.DoesNotExist:
-                    continue
-                data_points = []
-                for s in semesters:
-                    total = DataMahasiswa.objects.filter(
-                        perguruan_tinggi_id=pt_id,
-                        tahun_akademik=s['tahun_akademik'],
-                        semester=s['semester'],
-                    ).aggregate(total=Sum('mahasiswa_aktif'))['total'] or 0
-                    data_points.append(total)
-                datasets.append({'pt_id': pt.id, 'nama': pt.singkatan or pt.nama, 'data': data_points})
+            if filter_by == 'prodi':
+                from apps.universities.models import ProgramStudi
+                if not prodi_ids:
+                    # auto-pilih top 10 prodi berdasarkan total mahasiswa aktif
+                    top_qs = ProgramStudi.objects.filter(is_active=True)
+                    if pt_ids:
+                        top_qs = top_qs.filter(perguruan_tinggi_id__in=pt_ids)
+                    top_qs = top_qs.annotate(
+                        total_mhs=Sum(f'data_mahasiswa__{metric_field}')
+                    ).order_by('-total_mhs')[:10]
+                    prodi_ids = [str(p.id) for p in top_qs]
+                for pid in prodi_ids:
+                    try:
+                        prodi = ProgramStudi.objects.select_related('perguruan_tinggi').get(pk=pid)
+                    except ProgramStudi.DoesNotExist:
+                        continue
+                    label = f"{prodi.nama} ({prodi.jenjang}) — {prodi.perguruan_tinggi.singkatan or ''}"
+                    data_points = []
+                    for s in semesters:
+                        qs = DataMahasiswa.objects.filter(
+                            program_studi_id=pid,
+                            tahun_akademik=s['tahun_akademik'],
+                            semester=s['semester'],
+                        )
+                        if pt_ids:
+                            qs = qs.filter(perguruan_tinggi_id__in=pt_ids)
+                        data_points.append(qs.aggregate(total=Sum(metric_field))['total'] or 0)
+                    datasets.append({'label': label, 'data': data_points})
+            elif pt_ids:  # filter_by == 'pt'
+                for pt_id in pt_ids:
+                    try:
+                        pt = PerguruanTinggi.objects.get(pk=pt_id)
+                    except PerguruanTinggi.DoesNotExist:
+                        continue
+                    data_points = []
+                    for s in semesters:
+                        qs = DataMahasiswa.objects.filter(
+                            perguruan_tinggi_id=pt_id,
+                            tahun_akademik=s['tahun_akademik'],
+                            semester=s['semester'],
+                        )
+                        if prodi_ids:
+                            qs = qs.filter(program_studi_id__in=prodi_ids)
+                        data_points.append(qs.aggregate(total=Sum(metric_field))['total'] or 0)
+                    datasets.append({'label': pt.singkatan or pt.nama, 'data': data_points})
+            if not datasets:
+                # fallback gabung
+                data_points = [_base_qs(s) for s in semesters]
+                datasets = [{'label': 'Semua PT', 'data': data_points}]
             return Response({'labels': labels, 'datasets': datasets, 'mode': 'perbandingan'})
         else:
-            # Mode gabung: total semua PT
-            data_points = []
-            for s in semesters:
-                total = DataMahasiswa.objects.filter(
-                    tahun_akademik=s['tahun_akademik'],
-                    semester=s['semester'],
-                ).aggregate(total=Sum('mahasiswa_aktif'))['total'] or 0
-                data_points.append(total)
-            return Response({'labels': labels, 'datasets': [{'nama': 'Semua PT', 'data': data_points}], 'mode': 'gabung'})
+            # Mode gabung
+            data_points = [_base_qs(s) for s in semesters]
+            label = 'Semua PT'
+            if pt_ids and len(pt_ids) == 1:
+                try:
+                    pt = PerguruanTinggi.objects.get(pk=pt_ids[0])
+                    label = pt.singkatan or pt.nama
+                except PerguruanTinggi.DoesNotExist:
+                    pass
+            elif pt_ids:
+                label = f'{len(pt_ids)} PT (gabung)'
+            if prodi_ids:
+                label += f' · {len(prodi_ids)} Prodi'
+            return Response({'labels': labels, 'datasets': [{'label': label, 'data': data_points}], 'mode': 'gabung'})
+
+    @action(detail=False, methods=['get'])
+    def estimasi_mahasiswa(self, request):
+        """
+        Estimasi mahasiswa baru / lulus per tahun akademik.
+        Rumus: baru_est(T) = Σ [ aktif_ganjil(T, jenjang) / masa_studi(jenjang) ]
+                lulus_est(T) = baru_est(T - 4)
+        Params:
+          metric    - 'baru' | 'lulus'  (default: 'baru')
+          pt_id[]   - filter PT
+          prodi_id[]- filter Prodi
+          mode      - 'gabung' | 'perbandingan'
+          filter_by - 'pt' | 'prodi'
+        """
+        MASA_STUDI = {
+            's1': 4, 's2': 2, 's3': 3,
+            'd4': 4, 'd3': 3, 'd2': 2, 'd1': 1,
+            'profesi': 1,
+        }
+        DEFAULT_MS = 4
+
+        pt_ids    = request.query_params.getlist('pt_id')
+        prodi_ids = request.query_params.getlist('prodi_id')
+        mode      = request.query_params.get('mode', 'gabung')
+        filter_by = request.query_params.get('filter_by', 'pt')
+        metric    = request.query_params.get('metric', 'baru')  # 'baru' | 'lulus'
+
+        # Tahun akademik ganjil yang tersedia (exclude 2017/2018)
+        tahun_list = list(
+            DataMahasiswa.objects
+            .filter(semester='ganjil')
+            .exclude(tahun_akademik='2017/2018')
+            .values_list('tahun_akademik', flat=True)
+            .distinct()
+            .order_by('tahun_akademik')
+        )
+
+        def _baru_est(tahun, extra_filter=None):
+            """Hitung estimasi mahasiswa baru untuk satu tahun akademik."""
+            qs = DataMahasiswa.objects.filter(
+                semester='ganjil',
+                tahun_akademik=tahun,
+                mahasiswa_aktif__gt=0,
+            )
+            if pt_ids:
+                qs = qs.filter(perguruan_tinggi_id__in=pt_ids)
+            if prodi_ids:
+                qs = qs.filter(program_studi_id__in=prodi_ids)
+            if extra_filter:
+                qs = qs.filter(**extra_filter)
+            rows = qs.values('program_studi__jenjang').annotate(total=Sum('mahasiswa_aktif'))
+            total = 0
+            for r in rows:
+                ms = MASA_STUDI.get(r['program_studi__jenjang'] or '', DEFAULT_MS)
+                total += round(r['total'] / ms)
+            return total
+
+        def _lulus_est(tahun, extra_filter=None):
+            thn = int(tahun[:4])
+            thn_masuk = f'{thn - DEFAULT_MS}/{thn - DEFAULT_MS + 1}'
+            if thn_masuk not in tahun_list:
+                return 0
+            return _baru_est(thn_masuk, extra_filter)
+
+        def _data_for(tahun, extra_filter=None):
+            return _baru_est(tahun, extra_filter) if metric == 'baru' else _lulus_est(tahun, extra_filter)
+
+        labels = tahun_list
+
+        if mode == 'perbandingan':
+            datasets = []
+            if filter_by == 'prodi':
+                from apps.universities.models import ProgramStudi
+                if not prodi_ids:
+                    top_qs = ProgramStudi.objects.filter(is_active=True)
+                    if pt_ids:
+                        top_qs = top_qs.filter(perguruan_tinggi_id__in=pt_ids)
+                    top_qs = top_qs.annotate(
+                        total_mhs=Sum('data_mahasiswa__mahasiswa_aktif')
+                    ).order_by('-total_mhs')[:10]
+                    prodi_ids = [str(p.id) for p in top_qs]
+                for pid in prodi_ids:
+                    try:
+                        prodi = ProgramStudi.objects.select_related('perguruan_tinggi').get(pk=pid)
+                    except ProgramStudi.DoesNotExist:
+                        continue
+                    lbl = f"{prodi.nama} ({prodi.jenjang}) — {prodi.perguruan_tinggi.singkatan or ''}"
+                    data_points = [_data_for(t, {'program_studi_id': pid}) for t in tahun_list]
+                    datasets.append({'label': lbl, 'data': data_points})
+            elif pt_ids:
+                for pt_id in pt_ids:
+                    try:
+                        pt = PerguruanTinggi.objects.get(pk=pt_id)
+                    except PerguruanTinggi.DoesNotExist:
+                        continue
+                    data_points = [_data_for(t, {'perguruan_tinggi_id': pt_id}) for t in tahun_list]
+                    datasets.append({'label': pt.singkatan or pt.nama, 'data': data_points})
+            if not datasets:
+                datasets = [{'label': 'Semua PT (gabung)', 'data': [_data_for(t) for t in tahun_list]}]
+        else:
+            data_points = [_data_for(t) for t in tahun_list]
+            if pt_ids and len(pt_ids) == 1:
+                try:
+                    pt = PerguruanTinggi.objects.get(pk=pt_ids[0])
+                    label = pt.singkatan or pt.nama
+                except PerguruanTinggi.DoesNotExist:
+                    label = 'Semua PT'
+            elif pt_ids:
+                label = f'{len(pt_ids)} PT (gabung)'
+            else:
+                label = 'Semua PT'
+            if prodi_ids:
+                label += f' · {len(prodi_ids)} Prodi'
+            datasets = [{'label': label, 'data': data_points}]
+
+        suffix = ' *(estimasi)'
+        for ds in datasets:
+            ds['label'] += suffix
+
+        return Response({
+            'labels':   labels,
+            'datasets': datasets,
+            'metric':   metric,
+            'note':     'Angka adalah estimasi statistik, bukan data pelaporan PDDikti.',
+        })
 
     @action(detail=False, methods=['get'])
     def sebaran_peta(self, request):
@@ -391,7 +585,7 @@ class ProgramStudiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
     serializer_class = ProgramStudiSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['perguruan_tinggi', 'jenjang', 'akreditasi', 'is_active']
-    search_fields = ['nama', 'kode_prodi']
+    search_fields = ['nama', 'kode_prodi', 'perguruan_tinggi__nama', 'perguruan_tinggi__singkatan']
 
     @action(detail=False, methods=['get'])
     def pt_list(self, request):
@@ -405,9 +599,9 @@ class ProgramStudiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
     def _pt_list_inner(self, request):
         nama    = request.query_params.get('nama', '').strip()
         jenjang = request.query_params.get('jenjang', '').strip()
-        if not nama:
-            return Response([])
-        qs = ProgramStudi.objects.filter(is_active=True, nama__icontains=nama)
+        qs = ProgramStudi.objects.filter(is_active=True)
+        if nama:
+            qs = qs.filter(nama__icontains=nama)
         if jenjang:
             qs = qs.filter(jenjang=jenjang)
         rows = list(
