@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 from django.db.models import Sum
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, SintaJurnal
 
 
 class WilayahSerializer(serializers.ModelSerializer):
@@ -240,3 +240,37 @@ class PerguruanTinggiDetailSerializer(serializers.ModelSerializer):
     def get_periode_aktif_label(self, obj):
         periode = _get_periode_aktif()
         return periode.nama if periode else None
+
+
+class SintaJurnalSerializer(serializers.ModelSerializer):
+    perguruan_tinggi_nama = serializers.SerializerMethodField()
+    perguruan_tinggi_singkatan = serializers.SerializerMethodField()
+    perguruan_tinggi_kode = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SintaJurnal
+        fields = [
+            'id', 'sinta_id', 'nama', 'p_issn', 'e_issn',
+            'akreditasi', 'subject_area', 'afiliasi_teks',
+            'impact', 'h5_index', 'sitasi_5yr', 'sitasi_total',
+            'is_scopus', 'is_garuda',
+            'url_website', 'url_scholar', 'url_editor', 'url_garuda',
+            'logo_base64', 'scraped_at',
+            'perguruan_tinggi', 'perguruan_tinggi_nama',
+            'perguruan_tinggi_singkatan', 'perguruan_tinggi_kode',
+        ]
+
+    def get_perguruan_tinggi_nama(self, obj):
+        return obj.perguruan_tinggi.nama if obj.perguruan_tinggi else ''
+
+    def get_perguruan_tinggi_singkatan(self, obj):
+        return obj.perguruan_tinggi.singkatan if obj.perguruan_tinggi else ''
+
+    def get_perguruan_tinggi_kode(self, obj):
+        return obj.perguruan_tinggi.kode_pt if obj.perguruan_tinggi else ''
+
+
+class SintaJurnalListSerializer(SintaJurnalSerializer):
+    """Serializer ringan untuk list — logo dihilangkan untuk performa."""
+    class Meta(SintaJurnalSerializer.Meta):
+        fields = [f for f in SintaJurnalSerializer.Meta.fields if f != 'logo_base64']

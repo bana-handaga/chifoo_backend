@@ -14,10 +14,16 @@ Alur:
      Identifier stabil: NIDN (bukan URL)
 
 Usage:
+    # Default: profil + riwayat pendidikan
     python utils/scrape_pddikti_detaildosen.py --nama "YULIA FITRI" --pt "UNIVERSITAS MUHAMMADIYAH RIAU"
     python utils/scrape_pddikti_detaildosen.py --nama "YULIA FITRI" --pt "UNIVERSITAS MUHAMMADIYAH RIAU" --nidn "1007078501"
-    python utils/scrape_pddikti_detaildosen.py --nama "YULIA FITRI" --pt "UNIVERSITAS MUHAMMADIYAH RIAU" --nidn "1007078501" --nuptk "2039763664230363" --pendidikan "S2" --status "Aktif"
-    python utils/scrape_pddikti_detaildosen.py --debug   # tampilkan browser (tidak headless)
+
+    # --full: semua data (mengajar, penelitian, pengabdian, publikasi, HKI)
+    python utils/scrape_pddikti_detaildosen.py --nama "YULIA FITRI" --pt "UNIVERSITAS MUHAMMADIYAH RIAU" --nidn "1007078501" --full
+    python utils/scrape_pddikti_detaildosen.py --nama "YULIA FITRI" --pt "UNIVERSITAS MUHAMMADIYAH RIAU" --nidn "1007078501" --nuptk "2039763664230363" --pendidikan "S2" --status "Aktif" --full
+
+    # --debug: tampilkan browser (tidak headless)
+    python utils/scrape_pddikti_detaildosen.py --nama "YULIA FITRI" --pt "UNIVERSITAS MUHAMMADIYAH RIAU" --debug
 """
 
 import os
@@ -68,14 +74,25 @@ def wait_text_loaded(driver, timeout=10):
     time.sleep(2)
 
 
+def _el_text(el):
+    """Ambil teks elemen — gunakan textContent agar bekerja untuk elemen non-visible."""
+    txt = el.text.strip()
+    if not txt:
+        try:
+            txt = (el.get_attribute("textContent") or "").strip()
+        except Exception:
+            pass
+    return txt
+
+
 def get_table_as_list(table_el):
     """Konversi elemen tabel ke list of dict."""
     rows = table_el.find_elements(By.TAG_NAME, "tr")
     if not rows:
         return []
-    headers = [th.text.strip() for th in rows[0].find_elements(By.TAG_NAME, "th")]
-    if not headers:
-        headers = [td.text.strip() for td in rows[0].find_elements(By.TAG_NAME, "td")]
+    headers = [_el_text(th) for th in rows[0].find_elements(By.TAG_NAME, "th")]
+    if not headers or all(h == "" for h in headers):
+        headers = [_el_text(td) for td in rows[0].find_elements(By.TAG_NAME, "td")]
     result = []
     for row in rows[1:]:
         cells = row.find_elements(By.TAG_NAME, "td")
@@ -84,7 +101,7 @@ def get_table_as_list(table_el):
         row_dict = {}
         for i, cell in enumerate(cells):
             key = headers[i] if i < len(headers) else f"col_{i}"
-            row_dict[key] = cell.text.strip()
+            row_dict[key] = _el_text(cell)
         result.append(row_dict)
     return result
 
@@ -190,7 +207,10 @@ def scrape_tables_on_page(driver, label_hint="", container=None):
         if not rows:
             continue
 
-        headers = [th.text.strip() for th in rows[0].find_elements(By.TAG_NAME, "th")]
+        headers = [_el_text(th) for th in rows[0].find_elements(By.TAG_NAME, "th")]
+        if not headers or all(h == "" for h in headers):
+            # Coba ambil header dari td baris pertama (beberapa tabel pakai td di thead)
+            headers = [_el_text(td) for td in rows[0].find_elements(By.TAG_NAME, "td")]
         if not headers or all(h == "" for h in headers):
             continue  # skip tabel tanpa header
 
@@ -259,7 +279,7 @@ def find_and_click_tab(driver, keywords):
 
 def scrape_detail_dosen(driver, detail_url, url_pencarian="",
                         nuptk_input="", pendidikan_input="", status_input="",
-                        profile_only=False):
+                        full=False):
     print(f"\n[2] Membuka detail dosen: {detail_url[:80]}...")
     driver.get(detail_url)
     wait_text_loaded(driver, timeout=15)
@@ -282,50 +302,80 @@ def scrape_detail_dosen(driver, detail_url, url_pencarian="",
     # 2a. Profil — ambil dari body text via regex
     # Termasuk: NUPTK, Pendidikan (terakhir), Status
     # ------------------------------------------------------------------
-    profil_keys = [
-        "NIDN", "NUPTK", "NIP", "Nama", "Jenis Kelamin", "Tanggal Lahir",
-        "Program Studi", "Perguruan Tinggi",
-        "Jabatan Fungsional", "Pendidikan Tertinggi",
-        "Ikatan Kerja", "Status Aktif", "Status",
-    ]
+    # Mapping label di website → key canonical yang disimpan di JSON
+    # Website saat ini: "Pendidikan Terakhir", "Status Ikatan Kerja", "Status Aktivitas"
+    profil_keys_map = {
+        "Nama":                  "Nama",
+        "Jenis Kelamin":         "Jenis Kelamin",
+        "Perguruan Tinggi":      "Perguruan Tinggi",
+        "Program Studi":         "Program Studi",
+        "Jabatan Fungsional":    "Jabatan Fungsional",
+        "Pendidikan Terakhir":   "Pendidikan Tertinggi",   # label baru → key lama
+        "Pendidikan Tertinggi":  "Pendidikan Tertinggi",
+        "Status Ikatan Kerja":   "Ikatan Kerja",           # label baru → key lama
+        "Ikatan Kerja":          "Ikatan Kerja",
+        "Status Aktivitas":      "Status Aktif",           # label baru → key lama
+        "Status Aktif":          "Status Aktif",
+        "Status":                "Status Aktif",
+        "NIDN":                  "NIDN",
+        "NUPTK":                 "NUPTK",
+        "NIP":                   "NIP",
+        "Tanggal Lahir":         "Tanggal Lahir",
+    }
     page_text = driver.find_element(By.TAG_NAME, "body").text
-    for key in profil_keys:
-        pattern = rf"(?:^|\n){re.escape(key)}\s*[:\n]\s*([^\n]+)"
+    for label, canonical_key in profil_keys_map.items():
+        if canonical_key in data["profil"]:
+            continue  # sudah diisi oleh label lain
+        pattern = rf"(?:^|\n){re.escape(label)}\s*[:\n]\s*([^\n]+)"
         m = re.search(pattern, page_text, re.IGNORECASE | re.MULTILINE)
         if m:
-            data["profil"][key] = m.group(1).strip()
+            data["profil"][canonical_key] = m.group(1).strip()
 
     # Isi dari input argumen jika tidak ditemukan di halaman
     if nuptk_input and "NUPTK" not in data["profil"]:
         data["profil"]["NUPTK"] = nuptk_input
     if pendidikan_input and "Pendidikan Tertinggi" not in data["profil"]:
         data["profil"]["Pendidikan Tertinggi"] = pendidikan_input
-    if status_input and "Status" not in data["profil"]:
-        data["profil"]["Status"] = status_input
+    if status_input and "Status Aktif" not in data["profil"]:
+        data["profil"]["Status Aktif"] = status_input
 
     print(f"[2a] Profil: {data['profil']}")
 
-    if profile_only:
-        print("[2b-2f] profile_only=True — skip semua tab")
+    # ------------------------------------------------------------------
+    # 2b. Riwayat Pendidikan — halaman awal (selalu discrape)
+    # Hanya ambil tabel yang punya kolom "Gelar" atau "Jenjang" (bukan tabel mengajar)
+    # ------------------------------------------------------------------
+    print("[2b] Scrape riwayat pendidikan...")
+    for item in scrape_tables_on_page(driver, "pendidikan"):
+        h_lower = " ".join(item["headers"]).lower()
+        # Tabel pendidikan: harus punya "gelar" atau "jenjang"
+        # Tabel mengajar: punya "nama mata kuliah"/"kode kelas" → di-skip
+        if any(k in h_lower for k in ["gelar", "jenjang"]) and \
+           not any(k in h_lower for k in ["mata kuliah", "kode kelas", "nama kelas"]):
+            data["riwayat_pendidikan"].extend(item["rows"])
+
+    if not full:
+        print("[2c-2g] Mode default — hanya profil + riwayat pendidikan")
         return data
 
     # ------------------------------------------------------------------
-    # 2b. Tab default (halaman awal) — riwayat pendidikan & penelitian
+    # 2c. Penelitian — tab Penelitian
     # ------------------------------------------------------------------
-    print("[2b] Scrape tab default (riwayat pendidikan, penelitian)...")
-    for item in scrape_tables_on_page(driver, "default"):
-        h_lower = " ".join(item["headers"]).lower()
-        if any(k in h_lower for k in ["perguruan tinggi", "gelar", "jenjang"]):
-            data["riwayat_pendidikan"].extend(item["rows"])
-        elif any(k in h_lower for k in ["penelitian", "judul penelitian"]):
-            data["penelitian"].extend(item["rows"])
-        else:
-            data["raw_sections"][f"default_{len(data['raw_sections'])}"] = item["rows"]
+    print("[2c] Mencari tab Penelitian...")
+    clicked = find_and_click_tab(driver, ["penelitian"])
+    if clicked:
+        for item in scrape_tables_on_page(driver, "penelitian"):
+            h_lower = " ".join(item["headers"]).lower()
+            if any(k in h_lower for k in ["judul penelitian", "penelitian"]) and \
+               not any(k in h_lower for k in ["mata kuliah", "kode kelas", "pengabdian", "karya"]):
+                data["penelitian"].extend(item["rows"])
+    else:
+        print("  Tab Penelitian tidak ditemukan.")
 
     # ------------------------------------------------------------------
-    # 2c. Tab Riwayat Mengajar — ada dropdown/pilihan per semester
+    # 2d. Tab Riwayat Mengajar — semester dirender sekaligus di DOM
     # ------------------------------------------------------------------
-    print("[2c] Mencari tab Riwayat Mengajar...")
+    print("[2d] Mencari tab Riwayat Mengajar...")
     clicked = find_and_click_tab(driver, ["riwayat mengajar", "mengajar"])
     if clicked:
         time.sleep(3)
@@ -340,151 +390,114 @@ def scrape_detail_dosen(driver, detail_url, url_pencarian="",
 
         SEM_PATTERN = re.compile(r"\d{4}/\d{4}\s+(Ganjil|Genap)", re.IGNORECASE)
 
-        def _collect_semester_items(root):
-            """Cari semua elemen clickable yang labelnya semester akademik."""
-            found = []
-            seen = set()
-            for tag in ["li", "button", "div", "span", "a", "option"]:
-                for el in root.find_elements(By.TAG_NAME, tag):
-                    try:
-                        txt = el.text.strip()
-                        if SEM_PATTERN.match(txt) and txt not in seen and el.is_displayed():
-                            found.append((txt, el))
-                            seen.add(txt)
-                    except Exception:
-                        continue
-            return found
-
-        def _scrape_mengajar_native_select(root):
-            """Coba native <select> terlebih dulu."""
-            selects = root.find_elements(By.TAG_NAME, "select")
-            if not selects:
-                return False
-            sel = SeleniumSelect(selects[0])
-            options = [(o.get_attribute("value"), o.text.strip())
-                       for o in sel.options if o.get_attribute("value")]
-            if not options:
-                return False
-            print(f"  Native select: {len(options)} semester")
-            for val, sem_label in options:
-                try:
-                    SeleniumSelect((get_active_tabpanel(driver) or driver)
-                                   .find_elements(By.TAG_NAME, "select")[0]).select_by_value(val)
-                    time.sleep(3)
-                    active = get_active_tabpanel(driver) or driver
-                    rows = []
-                    for it in scrape_tables_on_page(driver, f"mengajar_{sem_label}", container=active):
-                        rows.extend(it["rows"])
-                    if rows:
-                        data["riwayat_mengajar"][sem_label] = rows
-                except Exception as e:
-                    print(f"  [WARN] native select '{sem_label}': {e}")
-            return True
-
+        # Header kolom tabel mengajar
         MENGAJAR_HEADERS = ["mata kuliah", "sks", "kelas", "matkul",
-                            "nama mata kuliah", "kode mata kuliah", "nama matakuliah"]
-        BUKAN_MENGAJAR  = ["judul penelitian", "judul pengabdian", "judul karya",
-                            "perguruan tinggi", "gelar akademik"]
+                            "nama mata kuliah", "kode mata kuliah", "nama matakuliah",
+                            "kode kelas", "nama kelas"]
 
-        def _wait_for_mengajar_table(timeout=15):
-            """Poll sampai muncul tabel dengan header mengajar, atau timeout."""
-            deadline = time.time() + timeout
-            while time.time() < deadline:
-                for tbl in driver.find_elements(By.TAG_NAME, "table"):
-                    rows = tbl.find_elements(By.TAG_NAME, "tr")
-                    if not rows:
-                        continue
-                    ths = [th.text.strip().lower() for th in rows[0].find_elements(By.TAG_NAME, "th")]
-                    if any(k in " ".join(ths) for k in MENGAJAR_HEADERS):
-                        return True
-                time.sleep(1)
-            return False
+        def _tbl_headers_lower(tbl):
+            """Baca header tabel (textContent) sebagai lowercase list."""
+            rows = tbl.find_elements(By.TAG_NAME, "tr")
+            if not rows:
+                return []
+            ths = [_el_text(th) for th in rows[0].find_elements(By.TAG_NAME, "th")]
+            if not ths or all(h == "" for h in ths):
+                ths = [_el_text(td) for td in rows[0].find_elements(By.TAG_NAME, "td")]
+            return [h.lower() for h in ths if h]
 
-        def _scrape_mengajar_custom_dropdown(root):
-            """Klik tiap item semester dari custom dropdown/list."""
-            sem_items = _collect_semester_items(root)
-            if not sem_items:
-                return False
-            print(f"  Custom dropdown: {len(sem_items)} semester — {[s[0] for s in sem_items]}")
-            for sem_label, el in sem_items:
+        def _is_mengajar_tbl(tbl):
+            ths = _tbl_headers_lower(tbl)
+            return any(k in " ".join(ths) for k in MENGAJAR_HEADERS)
+
+        # Strategi: website merender SEMUA semester sekaligus di DOM.
+        # Kumpulkan label semester (single-line) dan tabel mengajar secara paralel,
+        # lalu pasangkan berdasarkan urutan.
+        sem_labels = []
+        seen_sem = set()
+        for tag in ["li", "button", "div", "span", "a"]:
+            for el in driver.find_elements(By.TAG_NAME, tag):
                 try:
-                    old_count = len(driver.find_elements(By.TAG_NAME, "table"))
-                    driver.execute_script("arguments[0].scrollIntoView(true);", el)
-                    driver.execute_script("arguments[0].click();", el)
-                    # Poll sampai tabel mengajar muncul, maks 15 detik
-                    found = _wait_for_mengajar_table(timeout=15)
-                    # Scroll untuk trigger lazy load
-                    driver.execute_script("window.scrollTo(0, document.body.scrollHeight * 0.6);")
-                    if not found:
-                        time.sleep(2)  # satu tunggu lagi setelah scroll
-                    # Scan SEMUA tabel di halaman, filter by header mengajar
-                    rows = []
-                    for it in scrape_tables_on_page(driver, f"mengajar_{sem_label}"):
-                        h_lower = " ".join(it["headers"]).lower()
-                        if any(k in h_lower for k in BUKAN_MENGAJAR):
-                            continue
-                        if any(k in h_lower for k in MENGAJAR_HEADERS):
-                            rows.extend(it["rows"])
-                    if rows:
-                        data["riwayat_mengajar"][sem_label] = rows
-                        print(f"    {sem_label}: {len(rows)} baris")
-                    else:
-                        print(f"    {sem_label}: kosong")
-                except Exception as e:
-                    print(f"  [WARN] custom click '{sem_label}': {e}")
-            return True
+                    txt = el.text.strip()
+                    if "\n" not in txt and SEM_PATTERN.match(txt) and txt not in seen_sem and el.is_displayed():
+                        sem_labels.append(txt)
+                        seen_sem.add(txt)
+                except Exception:
+                    continue
+            if sem_labels:
+                break  # ambil dari tag pertama yang berhasil
 
-        root = panel if panel else driver
-        if not _scrape_mengajar_native_select(root):
-            if not _scrape_mengajar_custom_dropdown(root):
-                # Fallback: scrape langsung tabel dalam panel
-                items = scrape_tables_on_page(driver, "mengajar", container=root)
-                for it in items:
-                    h_lower = " ".join(it["headers"]).lower()
-                    if any(k in h_lower for k in ["mata kuliah", "sks", "kelas", "matkul",
-                                                   "nama mata kuliah", "kode mata kuliah"]):
-                        data["riwayat_mengajar"]["default"] = data["riwayat_mengajar"].get("default", [])
-                        data["riwayat_mengajar"]["default"].extend(it["rows"])
+        mengajar_tbls = [tbl for tbl in driver.find_elements(By.TAG_NAME, "table")
+                         if _is_mengajar_tbl(tbl)]
+
+        print(f"  Semester labels: {sem_labels}")
+        print(f"  Tabel mengajar ditemukan: {len(mengajar_tbls)}")
+
+        if sem_labels and mengajar_tbls:
+            # Pasangkan berdasarkan urutan (jumlah boleh beda — ambil min)
+            for idx, sem_label in enumerate(sem_labels):
+                if idx >= len(mengajar_tbls):
+                    break
+                rows = get_table_as_list(mengajar_tbls[idx])
+                if rows:
+                    data["riwayat_mengajar"][sem_label] = rows
+                    print(f"    {sem_label}: {len(rows)} matkul")
+                else:
+                    print(f"    {sem_label}: kosong")
+        elif mengajar_tbls:
+            # Tabel ada tapi tidak ada label semester → simpan sebagai "default"
+            all_rows = []
+            for tbl in mengajar_tbls:
+                all_rows.extend(get_table_as_list(tbl))
+            if all_rows:
+                data["riwayat_mengajar"]["default"] = all_rows
+                print(f"  Mengajar (tanpa label): {len(all_rows)} matkul")
+
         if not data["riwayat_mengajar"]:
             print("  Tidak ada data mengajar.")
     else:
         print("  Tab Riwayat Mengajar tidak ditemukan.")
 
     # ------------------------------------------------------------------
-    # 2d. Tab Pengabdian Masyarakat
+    # 2e. Tab Pengabdian Masyarakat
     # ------------------------------------------------------------------
-    print("[2d] Mencari tab Pengabdian Masyarakat...")
+    print("[2e] Mencari tab Pengabdian Masyarakat...")
     clicked = find_and_click_tab(driver, ["pengabdian"])
     if clicked:
         for item in scrape_tables_on_page(driver, "pengabdian"):
-            data["pengabdian"].extend(item["rows"])
+            h_lower = " ".join(item["headers"]).lower()
+            if "judul pengabdian" in h_lower or "pengabdian masyarakat" in h_lower:
+                data["pengabdian"].extend(item["rows"])
     else:
         print("  Tab Pengabdian tidak ditemukan.")
 
     # ------------------------------------------------------------------
-    # 2e. Tab Publikasi Karya
+    # 2f. Tab Publikasi Karya
     # ------------------------------------------------------------------
-    print("[2e] Mencari tab Publikasi Karya...")
+    print("[2f] Mencari tab Publikasi Karya...")
     clicked = find_and_click_tab(driver, ["publikasi"])
     if clicked:
         for item in scrape_tables_on_page(driver, "publikasi"):
-            data["publikasi"].extend(item["rows"])
+            h_lower = " ".join(item["headers"]).lower()
+            if "judul karya" in h_lower or "jenis karya" in h_lower:
+                data["publikasi"].extend(item["rows"])
     else:
         print("  Tab Publikasi tidak ditemukan.")
 
     # ------------------------------------------------------------------
-    # 2f. Tab HKI / Paten
+    # 2g. Tab HKI / Paten
     # ------------------------------------------------------------------
-    print("[2f] Mencari tab HKI/Paten...")
+    print("[2g] Mencari tab HKI/Paten...")
     clicked = find_and_click_tab(driver, ["hki", "paten", "hak kekayaan"])
     if clicked:
         for item in scrape_tables_on_page(driver, "hki"):
-            data["hki_paten"].extend(item["rows"])
+            h_lower = " ".join(item["headers"]).lower()
+            if any(k in h_lower for k in ["hki", "paten", "hak kekayaan", "judul hki"]):
+                data["hki_paten"].extend(item["rows"])
     else:
         print("  Tab HKI/Paten tidak ditemukan.")
 
     # ------------------------------------------------------------------
-    # 2g. Ambil daftar semua tab yang ada (untuk analisis)
+    # 2h. Ambil daftar semua tab yang ada (untuk analisis)
     # ------------------------------------------------------------------
     all_tabs = []
     for tag in ["button", "li"]:
@@ -516,8 +529,8 @@ def main():
     parser.add_argument("--nuptk",      default="",    help="NUPTK dosen (dari data homebase prodi)")
     parser.add_argument("--pendidikan", default="",    help="Pendidikan terakhir, e.g. S2, S3")
     parser.add_argument("--status",     default="",    help="Status dosen, e.g. Aktif")
-    parser.add_argument("--profile-only", action="store_true", help="Hanya ambil profil utama, skip semua tab")
-    parser.add_argument("--debug",        action="store_true", help="Tampilkan browser (tidak headless)")
+    parser.add_argument("--full",  action="store_true", help="Scrape semua data (mengajar, penelitian, pengabdian, publikasi, HKI)")
+    parser.add_argument("--debug", action="store_true", help="Tampilkan browser (tidak headless)")
     args = parser.parse_args()
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -550,7 +563,7 @@ def main():
             nuptk_input      = args.nuptk,
             pendidikan_input = args.pendidikan,
             status_input     = args.status,
-            profile_only     = args.profile_only,
+            full             = args.full,
         )
         data["input"] = {
             "nama": args.nama, "pt": args.pt,

@@ -222,6 +222,10 @@ def run_batch(dosen_list, args):
     failed_existing = load_failed()
     failed_nidn_set = {e.get("uid", e.get("nidn","")) for e in failed_existing}
 
+    max_consecutive_fail = getattr(args, 'max_fail', 10)
+    consecutive_fail = 0
+    aborted = False
+
     driver = init_driver(headless=True)
     newly_failed = []
     success_count = 0
@@ -256,7 +260,7 @@ def run_batch(dosen_list, args):
                     nuptk_input      = dosen.get("nuptk", ""),
                     pendidikan_input = dosen.get("pendidikan", ""),
                     status_input     = dosen.get("status", ""),
-                    profile_only     = getattr(args, 'profile_only', False),
+                    full             = getattr(args, 'full', False),
                 )
                 data["input"] = {
                     "nama":        nama,
@@ -281,6 +285,7 @@ def run_batch(dosen_list, args):
                     f"publikasi:{len(data['publikasi'])} "
                     f"hki:{len(data['hki_paten'])}")
                 success_count += 1
+                consecutive_fail = 0  # reset counter setelah sukses
 
                 # Hapus dari failed list jika sebelumnya gagal
                 if uid in failed_nidn_set:
@@ -292,7 +297,8 @@ def run_batch(dosen_list, args):
 
             except Exception as e:
                 err_msg = str(e)
-                log(f"  → GAGAL: {err_msg[:120]}")
+                consecutive_fail += 1
+                log(f"  → GAGAL [{consecutive_fail}/{max_consecutive_fail} berturut]: {err_msg[:120]}")
                 newly_failed.append({
                     "uid":       uid,
                     "uid_type":  dosen.get("uid_type", ""),
@@ -306,6 +312,12 @@ def run_batch(dosen_list, args):
                     "error":     err_msg[:200],
                     "ts":        datetime.now().isoformat(),
                 })
+
+                # Batalkan seluruh proses jika gagal berturut-turut melebihi batas
+                if consecutive_fail >= max_consecutive_fail:
+                    log(f"\n[ABORT] {consecutive_fail} kegagalan berturut-turut — proses dihentikan.")
+                    aborted = True
+                    break
 
                 # Restart driver jika browser crash
                 if "session" in err_msg.lower() or "webdriver" in err_msg.lower():
@@ -331,7 +343,8 @@ def run_batch(dosen_list, args):
             save_failed(all_failed)
             log(f"Failed list disimpan: {len(all_failed)} entri → {FAILED_FILE}")
 
-        log(f"\nSelesai. Berhasil: {success_count} | Gagal baru: {len(newly_failed)} | Skip: {skipped}")
+        status_label = "DIBATALKAN" if aborted else "Selesai"
+        log(f"\n{status_label}. Berhasil: {success_count} | Gagal baru: {len(newly_failed)} | Skip: {skipped}")
 
 
 # ---------------------------------------------------------------------------
@@ -344,11 +357,14 @@ def main():
     parser.add_argument("--retry-failed", action="store_true", help="Retry dosen yang sebelumnya gagal")
     parser.add_argument("--dry-run",      action="store_true", help="Tampilkan daftar tanpa scrape")
     parser.add_argument("--limit",        type=int, default=0, help="Batasi jumlah scrape (untuk testing)")
-    parser.add_argument("--profile-only", action="store_true", help="Hanya ambil profil utama, skip semua tab (lebih cepat)")
+    parser.add_argument("--full",     action="store_true", help="Scrape semua data (mengajar, penelitian, pengabdian, publikasi, HKI). Default: hanya profil + riwayat pendidikan")
+    parser.add_argument("--max-fail", type=int, default=10, dest="max_fail", help="Batalkan proses jika gagal berturut-turut sebanyak N kali (default: 10)")
     parser.add_argument("--shard",        type=int, default=0, help="Index shard (0-based), untuk paralel. e.g. 0")
     parser.add_argument("--total-shards", type=int, default=1, help="Total shard, e.g. 2 untuk 2 proses paralel")
     parser.add_argument("--status",       action="store_true", help="Tampilkan ringkasan progress lalu keluar")
     args = parser.parse_args()
+
+    args.profile_only = False  # tidak dipakai lagi, dihapus dari detaildosen
 
     DOSEN_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -356,10 +372,7 @@ def main():
         print_status()
         return
 
-    if getattr(args, 'profile_only', False):
-        log_suffix = " [profile-only]"
-    else:
-        log_suffix = " [full]"
+    log_suffix = " [full]" if args.full else " [default: profil+pendidikan]"
 
     if args.retry_failed:
         failed = load_failed()

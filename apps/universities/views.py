@@ -93,14 +93,15 @@ class PT10Pagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 500
 
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal
 from django.db.models import OuterRef, Subquery
 from .serializers import _get_periode_aktif
 from apps.monitoring.models import PeriodePelaporan
 from .serializers import (
     WilayahSerializer, PerguruanTinggiListSerializer,
     PerguruanTinggiDetailSerializer, ProgramStudiSerializer,
-    DataMahasiswaSerializer, DataDosenSerializer
+    DataMahasiswaSerializer, DataDosenSerializer,
+    SintaJurnalSerializer, SintaJurnalListSerializer,
 )
 
 
@@ -1357,3 +1358,54 @@ def prodi_daftar(request):
         'sem_choices':  sem_choices,
         'results':      data,
     })
+
+
+class PT20Pagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
+    max_page_size = 200
+
+
+class SintaJurnalViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSet):
+    queryset = SintaJurnal.objects.select_related('perguruan_tinggi').order_by('-impact', 'nama')
+    pagination_class = PT20Pagination
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = {
+        'akreditasi':       ['exact', 'in'],
+        'is_scopus':        ['exact'],
+        'is_garuda':        ['exact'],
+        'perguruan_tinggi': ['exact'],
+        'subject_area':     ['icontains'],
+    }
+    search_fields = ['nama', 'p_issn', 'e_issn', 'afiliasi_teks', 'perguruan_tinggi__nama', 'perguruan_tinggi__singkatan']
+    ordering_fields = ['impact', 'h5_index', 'sitasi_total', 'sitasi_5yr', 'nama', 'akreditasi']
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return SintaJurnalListSerializer
+        return SintaJurnalSerializer
+
+    @action(detail=False, methods=['get'], url_path='stats')
+    def stats(self, request):
+        """Statistik ringkas: total, distribusi akreditasi, scopus, garuda."""
+        from django.db.models import Count
+        qs = SintaJurnal.objects.all()
+
+        pt_id = request.query_params.get('perguruan_tinggi')
+        if pt_id:
+            qs = qs.filter(perguruan_tinggi=pt_id)
+
+        total = qs.count()
+        scopus = qs.filter(is_scopus=True).count()
+        garuda = qs.filter(is_garuda=True).count()
+        distrib = list(
+            qs.values('akreditasi')
+              .annotate(jumlah=Count('id'))
+              .order_by('akreditasi')
+        )
+        return Response({
+            'total': total,
+            'scopus': scopus,
+            'garuda': garuda,
+            'distribusi_akreditasi': distrib,
+        })

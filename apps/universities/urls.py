@@ -6,7 +6,7 @@ from .views import (
     WilayahViewSet, PerguruanTinggiViewSet,
     ProgramStudiViewSet, DataMahasiswaViewSet, DataDosenViewSet,
     banpt_prodi_search, dosen_stats, dosen_search, riwayat_pendidikan_search,
-    prodi_distribusi, prodi_daftar,
+    prodi_distribusi, prodi_daftar, SintaJurnalViewSet,
 )
 
 router = DefaultRouter()
@@ -15,6 +15,7 @@ router.register(r'perguruan-tinggi', PerguruanTinggiViewSet, basename='perguruan
 router.register(r'program-studi', ProgramStudiViewSet, basename='program-studi')
 router.register(r'data-mahasiswa', DataMahasiswaViewSet, basename='data-mahasiswa')
 router.register(r'data-dosen', DataDosenViewSet, basename='data-dosen')
+router.register(r'sinta-jurnal', SintaJurnalViewSet, basename='sinta-jurnal')
 
 urlpatterns = [
     path('', include(router.urls)),
