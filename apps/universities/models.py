@@ -565,7 +565,9 @@ class SintaJurnal(models.Model):
     e_issn        = models.CharField(max_length=20, blank=True, verbose_name='E-ISSN')
     akreditasi    = models.CharField(max_length=2, choices=Akreditasi.choices, blank=True,
                                      db_index=True, verbose_name='Akreditasi')
-    subject_area  = models.CharField(max_length=200, blank=True, verbose_name='Subject Area')
+    subject_area  = models.CharField(max_length=200, blank=True, verbose_name='Subject Area (SINTA)')
+    wcu_area      = models.CharField(max_length=200, blank=True, verbose_name='WCU Subject Area',
+                                     help_text='Kelompok bidang sesuai standar WCU/QS (diisi manual atau ML)')
     afiliasi_teks = models.CharField(max_length=300, blank=True, verbose_name='Afiliasi (teks)')
 
     # Statistik

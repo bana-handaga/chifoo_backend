@@ -1376,9 +1376,10 @@ class SintaJurnalViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
         'is_garuda':        ['exact'],
         'perguruan_tinggi': ['exact'],
         'subject_area':     ['icontains'],
+        'wcu_area':         ['icontains'],
     }
     search_fields = ['nama', 'p_issn', 'e_issn', 'afiliasi_teks', 'perguruan_tinggi__nama', 'perguruan_tinggi__singkatan']
-    ordering_fields = ['impact', 'h5_index', 'sitasi_total', 'sitasi_5yr', 'nama', 'akreditasi']
+    ordering_fields = ['impact', 'h5_index', 'sitasi_total', 'sitasi_5yr', 'nama', 'akreditasi', 'perguruan_tinggi__nama', 'wcu_area']
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -1387,7 +1388,7 @@ class SintaJurnalViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
 
     @action(detail=False, methods=['get'], url_path='stats')
     def stats(self, request):
-        """Statistik ringkas: total, distribusi akreditasi, scopus, garuda."""
+        """Statistik ringkas: total, distribusi akreditasi, scopus, garuda, wcu_area."""
         from django.db.models import Count
         qs = SintaJurnal.objects.all()
 
@@ -1395,7 +1396,7 @@ class SintaJurnalViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
         if pt_id:
             qs = qs.filter(perguruan_tinggi=pt_id)
 
-        total = qs.count()
+        total  = qs.count()
         scopus = qs.filter(is_scopus=True).count()
         garuda = qs.filter(is_garuda=True).count()
         distrib = list(
@@ -1403,9 +1404,28 @@ class SintaJurnalViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
               .annotate(jumlah=Count('id'))
               .order_by('akreditasi')
         )
+
+        # Distribusi WCU — hitung per tag (bisa multi-value)
+        WCU_ORDER = [
+            'Natural Sciences', 'Engineering & Technology',
+            'Life Sciences & Medicine', 'Social Sciences & Management',
+            'Arts & Humanities',
+        ]
+        wcu_counter = {g: 0 for g in WCU_ORDER}
+        for val in qs.values_list('wcu_area', flat=True):
+            for part in (val or '').split(','):
+                p = part.strip()
+                if p in wcu_counter:
+                    wcu_counter[p] += 1
+        distribusi_wcu = [
+            {'wcu_area': g, 'jumlah': wcu_counter[g]}
+            for g in WCU_ORDER if wcu_counter[g] > 0
+        ]
+
         return Response({
             'total': total,
             'scopus': scopus,
             'garuda': garuda,
             'distribusi_akreditasi': distrib,
+            'distribusi_wcu': distribusi_wcu,
         })

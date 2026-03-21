@@ -251,7 +251,7 @@ class SintaJurnalSerializer(serializers.ModelSerializer):
         model = SintaJurnal
         fields = [
             'id', 'sinta_id', 'nama', 'p_issn', 'e_issn',
-            'akreditasi', 'subject_area', 'afiliasi_teks',
+            'akreditasi', 'subject_area', 'wcu_area', 'afiliasi_teks',
             'impact', 'h5_index', 'sitasi_5yr', 'sitasi_total',
             'is_scopus', 'is_garuda',
             'url_website', 'url_scholar', 'url_editor', 'url_garuda',
