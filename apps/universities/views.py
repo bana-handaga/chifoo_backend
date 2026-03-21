@@ -447,25 +447,40 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         Estimasi mahasiswa baru / lulus per tahun akademik.
         Rumus: baru_est(T) = Σ [ aktif_ganjil(T, jenjang) / masa_studi(jenjang) ]
                 lulus_est(T) = baru_est(T - 4)
+
+        Catatan: jenjang 'profesi' (PPG, Ners, Apoteker, dll) DIKECUALIKAN dari estimasi baru
+        karena merupakan sertifikasi profesional (bukan mahasiswa baru masuk PT), dan
+        sejak 2022 jumlahnya meledak karena program PPG Daljab sehingga mendistorsi estimasi.
+
         Params:
-          metric    - 'baru' | 'lulus'  (default: 'baru')
-          pt_id[]   - filter PT
-          prodi_id[]- filter Prodi
-          mode      - 'gabung' | 'perbandingan'
-          filter_by - 'pt' | 'prodi'
+          metric          - 'baru' | 'lulus'  (default: 'baru')
+          pt_id[]         - filter PT
+          prodi_id[]      - filter Prodi
+          mode            - 'gabung' | 'perbandingan'
+          filter_by       - 'pt' | 'prodi'
+          include_profesi - 'true' | 'false'  (default: 'false')
+                            false = profesi (PPG/Ners) dikecualikan karena bukan mahasiswa baru PT
+                            true  = profesi diikutkan untuk perbandingan / analisis dampak
         """
-        MASA_STUDI = {
+        MASA_STUDI_TANPA_PROFESI = {
+            's1': 4, 's2': 2, 's3': 3,
+            'd4': 4, 'd3': 3, 'd2': 2, 'd1': 1,
+        }
+        MASA_STUDI_DENGAN_PROFESI = {
             's1': 4, 's2': 2, 's3': 3,
             'd4': 4, 'd3': 3, 'd2': 2, 'd1': 1,
             'profesi': 1,
         }
         DEFAULT_MS = 4
 
-        pt_ids    = request.query_params.getlist('pt_id')
-        prodi_ids = request.query_params.getlist('prodi_id')
-        mode      = request.query_params.get('mode', 'gabung')
-        filter_by = request.query_params.get('filter_by', 'pt')
-        metric    = request.query_params.get('metric', 'baru')  # 'baru' | 'lulus'
+        pt_ids          = request.query_params.getlist('pt_id')
+        prodi_ids       = request.query_params.getlist('prodi_id')
+        mode            = request.query_params.get('mode', 'gabung')
+        filter_by       = request.query_params.get('filter_by', 'pt')
+        metric          = request.query_params.get('metric', 'baru')
+        include_profesi = request.query_params.get('include_profesi', 'false').lower() == 'true'
+
+        MASA_STUDI = MASA_STUDI_DENGAN_PROFESI if include_profesi else MASA_STUDI_TANPA_PROFESI
 
         # Tahun akademik ganjil yang tersedia (exclude 2017/2018)
         tahun_list = list(
@@ -484,6 +499,8 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
                 tahun_akademik=tahun,
                 mahasiswa_aktif__gt=0,
             )
+            if not include_profesi:
+                qs = qs.exclude(program_studi__jenjang='profesi')
             if pt_ids:
                 qs = qs.filter(perguruan_tinggi_id__in=pt_ids)
             if prodi_ids:
@@ -564,6 +581,103 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             'datasets': datasets,
             'metric':   metric,
             'note':     'Angka adalah estimasi statistik, bukan data pelaporan PDDikti.',
+        })
+
+    @action(detail=False, methods=['get'])
+    def ringkasan_mahasiswa(self, request):
+        """
+        Ringkasan tren per tahun akademik: aktif (semester ganjil) + estimasi baru + estimasi lulus.
+        Semua dataset menggunakan sumbu X yang sama (tahun akademik ganjil).
+        Params:
+          pt_id[]         - filter PT (tepat 1)
+          prodi_id[]      - filter Prodi (tepat 1)
+          filter_by       - 'pt' | 'prodi'
+          include_profesi - 'true' | 'false'  (default: 'false')
+        """
+        MASA_STUDI_TANPA_PROFESI = {
+            's1': 4, 's2': 2, 's3': 3,
+            'd4': 4, 'd3': 3, 'd2': 2, 'd1': 1,
+        }
+        MASA_STUDI_DENGAN_PROFESI = {
+            's1': 4, 's2': 2, 's3': 3,
+            'd4': 4, 'd3': 3, 'd2': 2, 'd1': 1,
+            'profesi': 1,
+        }
+        DEFAULT_MS = 4
+
+        pt_ids          = request.query_params.getlist('pt_id')
+        prodi_ids       = request.query_params.getlist('prodi_id')
+        filter_by       = request.query_params.get('filter_by', 'pt')
+        include_profesi = request.query_params.get('include_profesi', 'false').lower() == 'true'
+
+        MASA_STUDI = MASA_STUDI_DENGAN_PROFESI if include_profesi else MASA_STUDI_TANPA_PROFESI
+
+        # Tahun akademik ganjil (exclude 2017/2018 karena data tidak lengkap)
+        tahun_list = list(
+            DataMahasiswa.objects
+            .filter(semester='ganjil')
+            .exclude(tahun_akademik='2017/2018')
+            .values_list('tahun_akademik', flat=True)
+            .distinct()
+            .order_by('tahun_akademik')
+        )
+
+        def _base_filter(tahun):
+            qs = DataMahasiswa.objects.filter(semester='ganjil', tahun_akademik=tahun)
+            if pt_ids:
+                qs = qs.filter(perguruan_tinggi_id__in=pt_ids)
+            if prodi_ids:
+                qs = qs.filter(program_studi_id__in=prodi_ids)
+            return qs
+
+        def _aktif(tahun):
+            return _base_filter(tahun).aggregate(total=Sum('mahasiswa_aktif'))['total'] or 0
+
+        def _baru_est(tahun):
+            qs = _base_filter(tahun).filter(mahasiswa_aktif__gt=0)
+            if not include_profesi:
+                qs = qs.exclude(program_studi__jenjang='profesi')
+            rows = qs.values('program_studi__jenjang').annotate(total=Sum('mahasiswa_aktif'))
+            total = 0
+            for r in rows:
+                ms = MASA_STUDI.get(r['program_studi__jenjang'] or '', DEFAULT_MS)
+                total += round(r['total'] / ms)
+            return total
+
+        def _lulus_est(tahun):
+            thn = int(tahun[:4])
+            thn_masuk = f'{thn - DEFAULT_MS}/{thn - DEFAULT_MS + 1}'
+            if thn_masuk not in tahun_list:
+                return 0
+            return _baru_est(thn_masuk)
+
+        # Buat label nama dataset
+        label_name = 'Semua PT'
+        if filter_by == 'prodi' and prodi_ids:
+            try:
+                prodi = ProgramStudi.objects.select_related('perguruan_tinggi').get(pk=prodi_ids[0])
+                label_name = f"{prodi.nama} ({prodi.jenjang}) — {prodi.perguruan_tinggi.singkatan}"
+            except ProgramStudi.DoesNotExist:
+                pass
+        elif pt_ids:
+            try:
+                pt = PerguruanTinggi.objects.get(pk=pt_ids[0])
+                label_name = pt.singkatan or pt.nama
+            except PerguruanTinggi.DoesNotExist:
+                pass
+
+        aktif_data = [_aktif(t)    for t in tahun_list]
+        baru_data  = [_baru_est(t) for t in tahun_list]
+        lulus_data = [_lulus_est(t) if _lulus_est(t) > 0 else None for t in tahun_list]
+
+        return Response({
+            'labels': tahun_list,
+            'datasets': [
+                {'label': f'{label_name} — Aktif',       'data': aktif_data},
+                {'label': f'{label_name} — Est. Baru',   'data': baru_data},
+                {'label': f'{label_name} — Est. Lulus',  'data': lulus_data},
+            ],
+            'note': 'Aktif = data semester ganjil. Baru/Lulus = estimasi statistik.',
         })
 
     @action(detail=False, methods=['get'])
