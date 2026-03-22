@@ -316,10 +316,7 @@ class SintaAfiliasiListSerializer(serializers.ModelSerializer):
 
     def get_pt_logo(self, obj):
         logo = obj.perguruan_tinggi.logo
-        if not logo:
-            return ''
-        request = self.context.get('request')
-        return request.build_absolute_uri(logo.url) if request else logo.url
+        return logo.url if logo else ''
 
     class Meta:
         model = SintaAfiliasi
