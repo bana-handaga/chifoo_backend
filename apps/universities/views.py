@@ -93,7 +93,7 @@ class PT10Pagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 500
 
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal, SintaAfiliasi
 from django.db.models import OuterRef, Subquery
 from .serializers import _get_periode_aktif
 from apps.monitoring.models import PeriodePelaporan
@@ -102,6 +102,7 @@ from .serializers import (
     PerguruanTinggiDetailSerializer, ProgramStudiSerializer,
     DataMahasiswaSerializer, DataDosenSerializer,
     SintaJurnalSerializer, SintaJurnalListSerializer,
+    SintaAfiliasiListSerializer, SintaAfiliasiDetailSerializer,
 )
 
 
@@ -1428,4 +1429,77 @@ class SintaJurnalViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
             'garuda': garuda,
             'distribusi_akreditasi': distrib,
             'distribusi_wcu': distribusi_wcu,
+        })
+
+
+class SintaAfiliasiViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSet):
+    """
+    Endpoint profil afiliasi SINTA per Perguruan Tinggi.
+
+    List  : GET /api/sinta-afiliasi/
+    Detail: GET /api/sinta-afiliasi/{id}/
+    Stats : GET /api/sinta-afiliasi/stats/
+    """
+    queryset = (
+        SintaAfiliasi.objects
+        .select_related('perguruan_tinggi', 'cluster')
+        .prefetch_related('trend_tahunan', 'wcu_tahunan')
+        .order_by('-sinta_score_overall')
+    )
+    filter_backends  = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = {
+        'cluster__cluster_name': ['exact', 'icontains'],
+    }
+    search_fields   = [
+        'nama_sinta', 'singkatan_sinta',
+        'perguruan_tinggi__nama', 'perguruan_tinggi__singkatan',
+        'perguruan_tinggi__kota', 'perguruan_tinggi__provinsi',
+    ]
+    ordering_fields = [
+        'sinta_score_overall', 'sinta_score_3year',
+        'scopus_dokumen', 'scopus_sitasi',
+        'gscholar_dokumen', 'gscholar_sitasi',
+        'garuda_dokumen',
+        'jumlah_authors',
+        'cluster__total_score',
+        'nama_sinta',
+    ]
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return SintaAfiliasiDetailSerializer
+        return SintaAfiliasiListSerializer
+
+    @action(detail=False, methods=['get'], url_path='stats')
+    def stats(self, request):
+        """Statistik agregat seluruh PTMA di SINTA."""
+        from django.db.models import Avg, Max, Count as DCount
+        qs = SintaAfiliasi.objects.all()
+
+        total_pt      = qs.count()
+        total_authors = qs.aggregate(t=Sum('jumlah_authors'))['t'] or 0
+        total_scopus  = qs.aggregate(t=Sum('scopus_dokumen'))['t'] or 0
+        total_gscholar= qs.aggregate(t=Sum('gscholar_dokumen'))['t'] or 0
+        total_garuda  = qs.aggregate(t=Sum('garuda_dokumen'))['t'] or 0
+        avg_score     = qs.aggregate(a=Avg('sinta_score_overall'))['a'] or 0
+        max_score     = qs.aggregate(m=Max('sinta_score_overall'))['m'] or 0
+
+        # Distribusi cluster
+        from .models import SintaCluster
+        cluster_dist = list(
+            SintaCluster.objects
+            .values('cluster_name')
+            .annotate(jumlah=DCount('id'))
+            .order_by('cluster_name')
+        )
+
+        return Response({
+            'total_pt':       total_pt,
+            'total_authors':  total_authors,
+            'total_scopus':   int(total_scopus),
+            'total_gscholar': int(total_gscholar),
+            'total_garuda':   int(total_garuda),
+            'avg_score':      round(avg_score),
+            'max_score':      max_score,
+            'distribusi_cluster': cluster_dist,
         })

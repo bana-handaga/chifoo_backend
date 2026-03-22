@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 from django.db.models import Sum
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, SintaJurnal
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, SintaJurnal, SintaAfiliasi, SintaTrendTahunan, SintaWcuTahunan, SintaCluster
 
 
 class WilayahSerializer(serializers.ModelSerializer):
@@ -273,3 +273,71 @@ class SintaJurnalSerializer(serializers.ModelSerializer):
 class SintaJurnalListSerializer(SintaJurnalSerializer):
     """Sama dengan SintaJurnalSerializer — logo disertakan untuk ditampilkan."""
     pass
+
+
+# ─── SINTA Afiliasi ──────────────────────────────────────────────────────────
+
+class SintaClusterMinSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SintaCluster
+        fields = [
+            'cluster_name', 'total_score', 'periode',
+            'score_publication', 'score_hki', 'score_kelembagaan',
+            'score_research', 'score_community_service', 'score_sdm',
+        ]
+
+
+class SintaTrendTahunanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SintaTrendTahunan
+        fields = ['jenis', 'tahun', 'jumlah', 'research_article', 'research_conference', 'research_others']
+
+
+class SintaWcuTahunanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SintaWcuTahunan
+        fields = [
+            'tahun', 'overall',
+            'natural_sciences', 'engineering_technology',
+            'life_sciences_medicine', 'social_sciences_management', 'arts_humanities',
+        ]
+
+
+class SintaAfiliasiListSerializer(serializers.ModelSerializer):
+    """Serializer ringkas untuk daftar/ranking — tidak menyertakan logo & trend."""
+    pt_nama       = serializers.CharField(source='perguruan_tinggi.nama', read_only=True)
+    pt_singkatan  = serializers.CharField(source='perguruan_tinggi.singkatan', read_only=True)
+    pt_kota       = serializers.CharField(source='perguruan_tinggi.kota', read_only=True)
+    pt_provinsi   = serializers.CharField(source='perguruan_tinggi.provinsi', read_only=True)
+    pt_kode       = serializers.CharField(source='perguruan_tinggi.kode_pt', read_only=True)
+    pt_akreditasi = serializers.CharField(source='perguruan_tinggi.akreditasi_institusi', read_only=True)
+    cluster       = SintaClusterMinSerializer(read_only=True)
+
+    class Meta:
+        model = SintaAfiliasi
+        fields = [
+            'id', 'sinta_id', 'sinta_kode', 'nama_sinta', 'singkatan_sinta',
+            'lokasi_sinta', 'sinta_profile_url',
+            'jumlah_authors', 'jumlah_departments', 'jumlah_journals',
+            'sinta_score_overall', 'sinta_score_3year',
+            'sinta_score_productivity', 'sinta_score_productivity_3year',
+            'scopus_dokumen', 'scopus_sitasi', 'scopus_dokumen_disitasi', 'scopus_sitasi_per_peneliti',
+            'scopus_q1', 'scopus_q2', 'scopus_q3', 'scopus_q4', 'scopus_noq',
+            'gscholar_dokumen', 'gscholar_sitasi', 'gscholar_dokumen_disitasi', 'gscholar_sitasi_per_peneliti',
+            'wos_dokumen', 'wos_sitasi', 'wos_dokumen_disitasi', 'wos_sitasi_per_peneliti',
+            'garuda_dokumen', 'garuda_sitasi', 'garuda_dokumen_disitasi', 'garuda_sitasi_per_peneliti',
+            'sinta_last_update', 'scraped_at',
+            'pt_nama', 'pt_singkatan', 'pt_kota', 'pt_provinsi', 'pt_kode', 'pt_akreditasi',
+            'cluster',
+        ]
+
+
+class SintaAfiliasiDetailSerializer(SintaAfiliasiListSerializer):
+    """Detail lengkap — termasuk logo, trend tahunan, dan data WCU."""
+    trend_tahunan = SintaTrendTahunanSerializer(many=True, read_only=True)
+    wcu_tahunan   = SintaWcuTahunanSerializer(many=True, read_only=True)
+
+    class Meta(SintaAfiliasiListSerializer.Meta):
+        fields = SintaAfiliasiListSerializer.Meta.fields + [
+            'logo_base64', 'trend_tahunan', 'wcu_tahunan',
+        ]
