@@ -103,9 +103,10 @@ from .serializers import (
     DataMahasiswaSerializer, DataDosenSerializer,
     SintaJurnalSerializer, SintaJurnalListSerializer,
     SintaAfiliasiListSerializer, SintaAfiliasiDetailSerializer,
-    SintaDepartemenSerializer,
+    SintaDepartemenListSerializer, SintaDepartemenDetailSerializer,
     SintaAuthorListSerializer, SintaAuthorDetailSerializer,
 )
+SintaDepartemenSerializer = SintaDepartemenListSerializer  # legacy alias
 
 
 class PublicReadAdminWriteMixin:
@@ -1524,7 +1525,7 @@ class SintaDepartemenViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelVi
         .select_related('afiliasi__perguruan_tinggi')
         .order_by('-sinta_score_overall')
     )
-    serializer_class = SintaDepartemenSerializer
+    serializer_class = SintaDepartemenListSerializer
     filter_backends  = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = {
         'afiliasi__sinta_kode': ['exact'],
@@ -1539,9 +1540,22 @@ class SintaDepartemenViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelVi
     ]
     ordering_fields = [
         'sinta_score_overall', 'sinta_score_3year',
+        'sinta_score_productivity', 'sinta_score_productivity_3year',
         'jumlah_authors', 'nama',
+        'scopus_artikel', 'scopus_sitasi',
         'afiliasi__nama_sinta',
     ]
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return SintaDepartemenDetailSerializer
+        return SintaDepartemenListSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action == 'retrieve':
+            qs = qs.prefetch_related('authors')
+        return qs
 
     @action(detail=False, methods=['get'], url_path='stats')
     def stats(self, request):

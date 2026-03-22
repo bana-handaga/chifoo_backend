@@ -1,7 +1,7 @@
 """Serializers for Universities app"""
 
 from rest_framework import serializers
-from django.db.models import Sum
+from django.db.models import Sum, Count, Max, Avg
 from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, SintaJurnal, SintaAfiliasi, SintaTrendTahunan, SintaWcuTahunan, SintaCluster, SintaDepartemen, SintaAuthor, SintaAuthorTrend
 
 
@@ -352,10 +352,9 @@ class SintaAfiliasiDetailSerializer(SintaAfiliasiListSerializer):
 # SintaDepartemen
 # ---------------------------------------------------------------------------
 
-class SintaDepartemenSerializer(serializers.ModelSerializer):
-    """Serializer untuk departemen (program studi) per PT di SINTA."""
+class SintaDepartemenListSerializer(serializers.ModelSerializer):
+    """Serializer ringkas untuk daftar/ranking departemen."""
 
-    # Info PT induk
     afiliasi_id    = serializers.IntegerField(source='afiliasi.id', read_only=True)
     pt_singkatan   = serializers.CharField(source='afiliasi.perguruan_tinggi.singkatan', read_only=True)
     pt_nama        = serializers.CharField(source='afiliasi.perguruan_tinggi.nama', read_only=True)
@@ -369,8 +368,90 @@ class SintaDepartemenSerializer(serializers.ModelSerializer):
             'afiliasi_id', 'sinta_id_pt', 'pt_kode', 'pt_singkatan', 'pt_nama',
             'nama', 'jenjang', 'kode_dept', 'url_profil',
             'sinta_score_overall', 'sinta_score_3year',
+            'sinta_score_productivity', 'sinta_score_productivity_3year',
             'jumlah_authors',
+            'scopus_artikel', 'scopus_sitasi',
+            'gscholar_artikel', 'gscholar_sitasi',
+            'wos_artikel', 'wos_sitasi',
         ]
+
+
+class SintaDepartemenDetailSerializer(SintaDepartemenListSerializer):
+    """Detail lengkap departemen dengan kuartil, radar, trend, dan agregat author."""
+
+    top_authors         = serializers.SerializerMethodField()
+    bidang_distribution = serializers.SerializerMethodField()
+    author_stats        = serializers.SerializerMethodField()
+
+    class Meta(SintaDepartemenListSerializer.Meta):
+        fields = SintaDepartemenListSerializer.Meta.fields + [
+            'scopus_q1', 'scopus_q2', 'scopus_q3', 'scopus_q4', 'scopus_noq',
+            'research_conference', 'research_articles', 'research_others',
+            'trend_scopus',
+            'top_authors', 'bidang_distribution', 'author_stats',
+        ]
+
+    def get_top_authors(self, obj):
+        """Top 5 author berdasarkan sinta_score_overall."""
+        authors = (
+            obj.authors
+            .select_related('afiliasi__perguruan_tinggi')
+            .order_by('-sinta_score_overall')[:5]
+        )
+        return [
+            {
+                'id': a.id,
+                'sinta_id': a.sinta_id,
+                'nama': a.nama,
+                'foto_url': a.foto_url,
+                'sinta_score_overall': a.sinta_score_overall,
+                'scopus_artikel': a.scopus_artikel,
+                'scopus_h_index': a.scopus_h_index,
+                'bidang_keilmuan': a.bidang_keilmuan,
+            }
+            for a in authors
+        ]
+
+    def get_bidang_distribution(self, obj):
+        """Distribusi bidang keilmuan dari author di departemen ini."""
+        from collections import Counter
+        counter = Counter()
+        for a in obj.authors.values_list('bidang_keilmuan', flat=True):
+            if isinstance(a, list):
+                for b in a:
+                    if b:
+                        counter[b] += 1
+        return [{'bidang': k, 'jumlah': v} for k, v in counter.most_common(10)]
+
+    def get_author_stats(self, obj):
+        """Statistik agregat dari author yang terhubung ke departemen ini."""
+        from django.db.models import Avg, Max, Sum as DSum
+        agg = obj.authors.aggregate(
+            total=Count('id'),
+            avg_score=Avg('sinta_score_overall'),
+            max_score=Max('sinta_score_overall'),
+            total_scopus_artikel=DSum('scopus_artikel'),
+            total_scopus_sitasi=DSum('scopus_sitasi'),
+            avg_h_index=Avg('scopus_h_index'),
+            max_h_index=Max('scopus_h_index'),
+            total_gscholar_artikel=DSum('gscholar_artikel'),
+            total_wos_artikel=DSum('wos_artikel'),
+        )
+        return {
+            'total_authors_linked': agg['total'] or 0,
+            'avg_sinta_score': round(agg['avg_score'] or 0, 1),
+            'max_sinta_score': agg['max_score'] or 0,
+            'total_scopus_artikel': agg['total_scopus_artikel'] or 0,
+            'total_scopus_sitasi': agg['total_scopus_sitasi'] or 0,
+            'avg_h_index': round(agg['avg_h_index'] or 0, 1),
+            'max_h_index': agg['max_h_index'] or 0,
+            'total_gscholar_artikel': agg['total_gscholar_artikel'] or 0,
+            'total_wos_artikel': agg['total_wos_artikel'] or 0,
+        }
+
+
+# Alias for backwards compatibility
+SintaDepartemenSerializer = SintaDepartemenListSerializer
 
 
 # ---------------------------------------------------------------------------
