@@ -311,7 +311,15 @@ class SintaAfiliasiListSerializer(serializers.ModelSerializer):
     pt_provinsi   = serializers.CharField(source='perguruan_tinggi.provinsi', read_only=True)
     pt_kode       = serializers.CharField(source='perguruan_tinggi.kode_pt', read_only=True)
     pt_akreditasi = serializers.CharField(source='perguruan_tinggi.akreditasi_institusi', read_only=True)
+    pt_logo       = serializers.SerializerMethodField()
     cluster       = SintaClusterMinSerializer(read_only=True)
+
+    def get_pt_logo(self, obj):
+        logo = obj.perguruan_tinggi.logo
+        if not logo:
+            return ''
+        request = self.context.get('request')
+        return request.build_absolute_uri(logo.url) if request else logo.url
 
     class Meta:
         model = SintaAfiliasi
@@ -327,7 +335,7 @@ class SintaAfiliasiListSerializer(serializers.ModelSerializer):
             'wos_dokumen', 'wos_sitasi', 'wos_dokumen_disitasi', 'wos_sitasi_per_peneliti',
             'garuda_dokumen', 'garuda_sitasi', 'garuda_dokumen_disitasi', 'garuda_sitasi_per_peneliti',
             'sinta_last_update', 'scraped_at',
-            'pt_nama', 'pt_singkatan', 'pt_kota', 'pt_provinsi', 'pt_kode', 'pt_akreditasi',
+            'pt_nama', 'pt_singkatan', 'pt_kota', 'pt_provinsi', 'pt_kode', 'pt_akreditasi', 'pt_logo',
             'cluster',
         ]
 
