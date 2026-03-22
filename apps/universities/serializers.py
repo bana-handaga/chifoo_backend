@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 from django.db.models import Sum
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, SintaJurnal, SintaAfiliasi, SintaTrendTahunan, SintaWcuTahunan, SintaCluster
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, SintaJurnal, SintaAfiliasi, SintaTrendTahunan, SintaWcuTahunan, SintaCluster, SintaDepartemen, SintaAuthor, SintaAuthorTrend
 
 
 class WilayahSerializer(serializers.ModelSerializer):
@@ -345,4 +345,75 @@ class SintaAfiliasiDetailSerializer(SintaAfiliasiListSerializer):
     class Meta(SintaAfiliasiListSerializer.Meta):
         fields = SintaAfiliasiListSerializer.Meta.fields + [
             'logo_base64', 'trend_tahunan', 'wcu_tahunan',
+        ]
+
+
+# ---------------------------------------------------------------------------
+# SintaDepartemen
+# ---------------------------------------------------------------------------
+
+class SintaDepartemenSerializer(serializers.ModelSerializer):
+    """Serializer untuk departemen (program studi) per PT di SINTA."""
+
+    # Info PT induk
+    afiliasi_id    = serializers.IntegerField(source='afiliasi.id', read_only=True)
+    pt_singkatan   = serializers.CharField(source='afiliasi.perguruan_tinggi.singkatan', read_only=True)
+    pt_nama        = serializers.CharField(source='afiliasi.perguruan_tinggi.nama', read_only=True)
+    pt_kode        = serializers.CharField(source='afiliasi.sinta_kode', read_only=True)
+    sinta_id_pt    = serializers.CharField(source='afiliasi.sinta_id', read_only=True)
+
+    class Meta:
+        model  = SintaDepartemen
+        fields = [
+            'id',
+            'afiliasi_id', 'sinta_id_pt', 'pt_kode', 'pt_singkatan', 'pt_nama',
+            'nama', 'jenjang', 'kode_dept', 'url_profil',
+            'sinta_score_overall', 'sinta_score_3year',
+            'jumlah_authors',
+        ]
+
+
+# ---------------------------------------------------------------------------
+# SintaAuthor
+# ---------------------------------------------------------------------------
+
+class SintaAuthorTrendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = SintaAuthorTrend
+        fields = ['jenis', 'tahun', 'jumlah']
+
+
+class SintaAuthorListSerializer(serializers.ModelSerializer):
+    """Serializer ringkas untuk daftar/ranking author."""
+    pt_singkatan  = serializers.CharField(source='afiliasi.perguruan_tinggi.singkatan', read_only=True, default='')
+    pt_kode       = serializers.CharField(source='afiliasi.sinta_kode', read_only=True, default='')
+    dept_nama     = serializers.CharField(source='departemen.nama', read_only=True, default='')
+    dept_jenjang  = serializers.CharField(source='departemen.jenjang', read_only=True, default='')
+
+    class Meta:
+        model  = SintaAuthor
+        fields = [
+            'id', 'sinta_id', 'nama', 'url_profil', 'foto_url',
+            'pt_kode', 'pt_singkatan', 'dept_nama', 'dept_jenjang',
+            'sinta_score_overall', 'sinta_score_3year',
+            'scopus_artikel', 'scopus_sitasi', 'scopus_h_index',
+            'gscholar_h_index', 'bidang_keilmuan',
+        ]
+
+
+class SintaAuthorDetailSerializer(SintaAuthorListSerializer):
+    """Detail lengkap termasuk semua statistik dan tren."""
+    trend = SintaAuthorTrendSerializer(many=True, read_only=True)
+
+    class Meta(SintaAuthorListSerializer.Meta):
+        fields = SintaAuthorListSerializer.Meta.fields + [
+            'affil_score', 'affil_score_3year',
+            'scopus_cited_doc', 'scopus_i10_index', 'scopus_g_index',
+            'gscholar_artikel', 'gscholar_sitasi', 'gscholar_cited_doc',
+            'gscholar_i10_index', 'gscholar_g_index',
+            'wos_artikel', 'wos_sitasi', 'wos_cited_doc',
+            'wos_h_index', 'wos_i10_index', 'wos_g_index',
+            'scopus_q1', 'scopus_q2', 'scopus_q3', 'scopus_q4', 'scopus_noq',
+            'research_conference', 'research_articles', 'research_others',
+            'scraped_at', 'trend',
         ]

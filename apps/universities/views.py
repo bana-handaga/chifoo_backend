@@ -93,7 +93,7 @@ class PT10Pagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 500
 
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal, SintaAfiliasi
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal, SintaAfiliasi, SintaDepartemen, SintaAuthor
 from django.db.models import OuterRef, Subquery
 from .serializers import _get_periode_aktif
 from apps.monitoring.models import PeriodePelaporan
@@ -103,6 +103,8 @@ from .serializers import (
     DataMahasiswaSerializer, DataDosenSerializer,
     SintaJurnalSerializer, SintaJurnalListSerializer,
     SintaAfiliasiListSerializer, SintaAfiliasiDetailSerializer,
+    SintaDepartemenSerializer,
+    SintaAuthorListSerializer, SintaAuthorDetailSerializer,
 )
 
 
@@ -1502,4 +1504,135 @@ class SintaAfiliasiViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelView
             'avg_score':      round(avg_score),
             'max_score':      max_score,
             'distribusi_cluster': cluster_dist,
+        })
+
+
+class SintaDepartemenViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSet):
+    """
+    Endpoint daftar departemen (program studi) PTMA di SINTA.
+
+    List  : GET /api/sinta-departemen/
+    Detail: GET /api/sinta-departemen/{id}/
+    Stats : GET /api/sinta-departemen/stats/
+
+    Filter  : afiliasi__sinta_kode, jenjang
+    Search  : nama, afiliasi__nama_sinta, afiliasi__perguruan_tinggi__singkatan
+    Ordering: sinta_score_overall, sinta_score_3year, jumlah_authors, nama
+    """
+    queryset = (
+        SintaDepartemen.objects
+        .select_related('afiliasi__perguruan_tinggi')
+        .order_by('-sinta_score_overall')
+    )
+    serializer_class = SintaDepartemenSerializer
+    filter_backends  = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = {
+        'afiliasi__sinta_kode': ['exact'],
+        'jenjang':              ['exact', 'icontains'],
+    }
+    search_fields   = [
+        'nama',
+        'afiliasi__nama_sinta',
+        'afiliasi__singkatan_sinta',
+        'afiliasi__perguruan_tinggi__singkatan',
+        'afiliasi__perguruan_tinggi__nama',
+    ]
+    ordering_fields = [
+        'sinta_score_overall', 'sinta_score_3year',
+        'jumlah_authors', 'nama',
+        'afiliasi__nama_sinta',
+    ]
+
+    @action(detail=False, methods=['get'], url_path='stats')
+    def stats(self, request):
+        """Statistik agregat departemen seluruh PTMA."""
+        from django.db.models import Avg, Max, Count as DCount
+
+        qs = SintaDepartemen.objects.all()
+
+        # Filter per PT jika ada query param
+        kode_pt = request.query_params.get('kode_pt')
+        if kode_pt:
+            qs = qs.filter(afiliasi__sinta_kode=kode_pt)
+
+        total_dept   = qs.count()
+        total_authors = qs.aggregate(t=Sum('jumlah_authors'))['t'] or 0
+        avg_score    = qs.aggregate(a=Avg('sinta_score_overall'))['a'] or 0
+        max_score    = qs.aggregate(m=Max('sinta_score_overall'))['m'] or 0
+
+        distribusi_jenjang = list(
+            qs.values('jenjang')
+            .annotate(jumlah=DCount('id'))
+            .order_by('-jumlah')
+        )
+
+        return Response({
+            'total_departemen':    total_dept,
+            'total_authors':       total_authors,
+            'avg_score_overall':   round(avg_score),
+            'max_score_overall':   max_score,
+            'distribusi_jenjang':  distribusi_jenjang,
+        })
+
+
+class SintaAuthorViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSet):
+    """
+    Endpoint profil author PTMA di SINTA.
+
+    List  : GET /api/sinta-author/
+    Detail: GET /api/sinta-author/{id}/
+    Stats : GET /api/sinta-author/stats/
+
+    Filter  : afiliasi__sinta_kode, departemen, departemen__kode_dept
+    Search  : nama, bidang_keilmuan
+    Ordering: sinta_score_overall, sinta_score_3year, scopus_artikel, scopus_h_index
+    """
+    queryset = (
+        SintaAuthor.objects
+        .select_related('afiliasi__perguruan_tinggi', 'departemen')
+        .order_by('-sinta_score_overall')
+    )
+    filter_backends  = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = {
+        'afiliasi__sinta_kode':    ['exact'],
+        'departemen':              ['exact'],
+        'departemen__kode_dept':   ['exact'],
+    }
+    search_fields   = ['nama', 'bidang_keilmuan']
+    ordering_fields = [
+        'sinta_score_overall', 'sinta_score_3year',
+        'scopus_artikel', 'scopus_sitasi', 'scopus_h_index',
+        'gscholar_h_index', 'nama',
+    ]
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return SintaAuthorDetailSerializer
+        return SintaAuthorListSerializer
+
+    @action(detail=False, methods=['get'], url_path='stats')
+    def stats(self, request):
+        """Statistik agregat author seluruh PTMA."""
+        from django.db.models import Avg, Max, Count as DCount
+
+        qs = SintaAuthor.objects.all()
+
+        kode_pt = request.query_params.get('kode_pt')
+        if kode_pt:
+            qs = qs.filter(afiliasi__sinta_kode=kode_pt)
+
+        agg = qs.aggregate(
+            total=DCount('id'),
+            avg_score=Avg('sinta_score_overall'),
+            max_score=Max('sinta_score_overall'),
+            total_scopus=Sum('scopus_artikel'),
+            total_sitasi=Sum('scopus_sitasi'),
+        )
+
+        return Response({
+            'total_authors':     agg['total'] or 0,
+            'avg_score_overall': round(agg['avg_score'] or 0),
+            'max_score_overall': agg['max_score'] or 0,
+            'total_scopus_artikel': agg['total_scopus'] or 0,
+            'total_scopus_sitasi':  agg['total_sitasi'] or 0,
         })

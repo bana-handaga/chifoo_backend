@@ -452,6 +452,161 @@ class SintaWcuTahunan(models.Model):
         return f"{self.afiliasi.perguruan_tinggi.singkatan} — WCU {self.tahun}: overall={self.overall}"
 
 
+class SintaDepartemen(models.Model):
+    """
+    Daftar departemen (program studi) per Perguruan Tinggi di SINTA.
+    Satu baris = satu program studi pada satu PT.
+    """
+
+    afiliasi = models.ForeignKey(
+        SintaAfiliasi, on_delete=models.CASCADE,
+        related_name='departemen', verbose_name='SINTA Afiliasi'
+    )
+
+    # --- Identitas departemen ---
+    nama            = models.CharField(max_length=300, verbose_name='Nama Departemen')
+    jenjang         = models.CharField(max_length=10, blank=True, verbose_name='Jenjang (S1/S2/S3/D3)')
+    kode_dept       = models.CharField(max_length=20, blank=True, db_index=True, verbose_name='Kode Departemen SINTA')
+    url_profil      = models.URLField(max_length=500, blank=True, verbose_name='URL Profil SINTA')
+
+    # --- SINTA Score ---
+    sinta_score_overall = models.BigIntegerField(default=0, verbose_name='SINTA Score Overall')
+    sinta_score_3year   = models.BigIntegerField(default=0, verbose_name='SINTA Score 3Yr')
+
+    # --- Ringkasan SDM ---
+    jumlah_authors  = models.PositiveIntegerField(default=0, verbose_name='Jumlah Authors')
+
+    # --- Metadata ---
+    scraped_at = models.DateTimeField(auto_now=True, verbose_name='Waktu Scrape')
+
+    class Meta:
+        verbose_name        = 'SINTA Departemen'
+        verbose_name_plural = 'SINTA Departemen'
+        ordering            = ['-sinta_score_overall']
+        unique_together     = ('afiliasi', 'kode_dept')
+        indexes             = [
+            models.Index(fields=['afiliasi', 'jenjang']),
+            models.Index(fields=['sinta_score_overall']),
+        ]
+
+    def __str__(self):
+        return f"{self.afiliasi.perguruan_tinggi.singkatan} — {self.jenjang} {self.nama}"
+
+
+class SintaAuthor(models.Model):
+    """
+    Profil lengkap author SINTA (1 row per author unik).
+    Data dari: /authors/profile/{sinta_id}
+    """
+
+    # --- Identitas ---
+    sinta_id    = models.CharField(max_length=20, unique=True, db_index=True, verbose_name='SINTA ID Author')
+    nama        = models.CharField(max_length=300, verbose_name='Nama Author')
+    url_profil  = models.URLField(max_length=500, blank=True, verbose_name='URL Profil SINTA')
+    foto_url    = models.URLField(max_length=500, blank=True, verbose_name='URL Foto')
+    bidang_keilmuan = models.JSONField(default=list, blank=True, verbose_name='Bidang Keilmuan')
+
+    # --- Relasi ke PT & Departemen ---
+    afiliasi    = models.ForeignKey(
+        SintaAfiliasi, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='authors', verbose_name='SINTA Afiliasi'
+    )
+    departemen  = models.ForeignKey(
+        SintaDepartemen, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='authors', verbose_name='Departemen'
+    )
+
+    # --- SINTA Score ---
+    sinta_score_overall = models.BigIntegerField(default=0, verbose_name='SINTA Score Overall')
+    sinta_score_3year   = models.BigIntegerField(default=0, verbose_name='SINTA Score 3Yr')
+    affil_score         = models.BigIntegerField(default=0, verbose_name='Affil Score')
+    affil_score_3year   = models.BigIntegerField(default=0, verbose_name='Affil Score 3Yr')
+
+    # --- Statistik Scopus ---
+    scopus_artikel   = models.IntegerField(default=0)
+    scopus_sitasi    = models.IntegerField(default=0)
+    scopus_cited_doc = models.IntegerField(default=0)
+    scopus_h_index   = models.SmallIntegerField(default=0)
+    scopus_i10_index = models.SmallIntegerField(default=0)
+    scopus_g_index   = models.SmallIntegerField(default=0)
+
+    # --- Statistik Google Scholar ---
+    gscholar_artikel   = models.IntegerField(default=0)
+    gscholar_sitasi    = models.IntegerField(default=0)
+    gscholar_cited_doc = models.IntegerField(default=0)
+    gscholar_h_index   = models.SmallIntegerField(default=0)
+    gscholar_i10_index = models.SmallIntegerField(default=0)
+    gscholar_g_index   = models.SmallIntegerField(default=0)
+
+    # --- Statistik Web of Science ---
+    wos_artikel   = models.IntegerField(default=0)
+    wos_sitasi    = models.IntegerField(default=0)
+    wos_cited_doc = models.IntegerField(default=0)
+    wos_h_index   = models.SmallIntegerField(default=0)
+    wos_i10_index = models.SmallIntegerField(default=0)
+    wos_g_index   = models.SmallIntegerField(default=0)
+
+    # --- Distribusi Kuartil Scopus ---
+    scopus_q1  = models.PositiveIntegerField(default=0)
+    scopus_q2  = models.PositiveIntegerField(default=0)
+    scopus_q3  = models.PositiveIntegerField(default=0)
+    scopus_q4  = models.PositiveIntegerField(default=0)
+    scopus_noq = models.PositiveIntegerField(default=0)
+
+    # --- Research Radar ---
+    research_conference = models.IntegerField(default=0)
+    research_articles   = models.IntegerField(default=0)
+    research_others     = models.IntegerField(default=0)
+
+    # --- Metadata ---
+    scraped_at = models.DateTimeField(auto_now=True, verbose_name='Waktu Scrape')
+
+    class Meta:
+        verbose_name        = 'SINTA Author'
+        verbose_name_plural = 'SINTA Author'
+        ordering            = ['-sinta_score_overall']
+        indexes             = [
+            models.Index(fields=['sinta_score_overall']),
+            models.Index(fields=['afiliasi']),
+            models.Index(fields=['departemen']),
+        ]
+
+    def __str__(self):
+        return f"{self.nama} ({self.sinta_id})"
+
+
+class SintaAuthorTrend(models.Model):
+    """
+    Tren tahunan per author: Scopus, penelitian, dan pengabdian.
+    Hanya menyimpan tahun dengan jumlah > 0.
+    """
+
+    class Jenis(models.TextChoices):
+        SCOPUS   = 'scopus',   'Publikasi Scopus'
+        RESEARCH = 'research', 'Penelitian'
+        SERVICE  = 'service',  'Pengabdian'
+
+    author = models.ForeignKey(
+        SintaAuthor, on_delete=models.CASCADE,
+        related_name='trend', verbose_name='Author'
+    )
+    jenis  = models.CharField(max_length=10, choices=Jenis.choices, verbose_name='Jenis')
+    tahun  = models.PositiveSmallIntegerField(verbose_name='Tahun')
+    jumlah = models.PositiveIntegerField(default=0, verbose_name='Jumlah')
+
+    class Meta:
+        verbose_name        = 'SINTA Author Trend'
+        verbose_name_plural = 'SINTA Author Trend'
+        unique_together     = ('author', 'jenis', 'tahun')
+        ordering            = ['author', 'jenis', 'tahun']
+        indexes             = [
+            models.Index(fields=['jenis', 'tahun']),
+        ]
+
+    def __str__(self):
+        return f"{self.author.nama} — {self.jenis} {self.tahun}: {self.jumlah}"
+
+
 class SintaCluster(models.Model):
     """
     Klasterisasi Perguruan Tinggi oleh Kemdikbud (2022–2024).
