@@ -972,3 +972,18 @@ class RisetAnalisisSnapshot(models.Model):
     @classmethod
     def latest(cls) -> 'RisetAnalisisSnapshot | None':
         return cls.objects.first()
+
+
+class RisetLdaDeskripsi(models.Model):
+    """Deskripsi AI per topik LDA — disimpan permanen di DB."""
+    label      = models.CharField(max_length=255, unique=True, verbose_name='Label Topik')
+    deskripsi  = models.TextField(verbose_name='Deskripsi AI')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Diperbarui')
+
+    class Meta:
+        verbose_name        = 'LDA Deskripsi'
+        verbose_name_plural = 'LDA Deskripsi'
+        ordering            = ['label']
+
+    def __str__(self):
+        return self.label

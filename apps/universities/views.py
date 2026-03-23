@@ -1934,13 +1934,29 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
         # Sort topics by article count descending
         topics_out.sort(key=lambda x: -x['article_count'])
 
-        # ── 2b. LLM lokal: deskripsi per topik (Qwen2.5-0.5B, cached 24h) ──
+        # ── 2b. Deskripsi per topik: DB → cache → fixture → hardcoded → LLM ──
         from django.core.cache import cache as _cache
+        from .models import RisetLdaDeskripsi as _LdaDesc
         import json as _json, os as _os
-        _CACHE_KEY = 'riset_analisis_deskripsi_v4'
-        _cached_descs = _cache.get(_CACHE_KEY) or {}
 
-        # Deskripsi bawaan (hardcoded fallback — tidak tergantung file eksternal)
+        # 1. Baca dari DB (permanen)
+        _db_descs = {row.label: row.deskripsi
+                     for row in _LdaDesc.objects.all()}
+
+        # 2. Fallback cache (24h) untuk label yang belum ada di DB
+        _CACHE_KEY = 'riset_analisis_deskripsi_v4'
+        _cached_descs = dict(_cache.get(_CACHE_KEY) or {})
+        _cached_descs.update(_db_descs)  # DB selalu prioritas
+
+        # 3. Fallback file fixture
+        if len(_cached_descs) < len(topics_out):
+            _fixture_path = _os.path.join(_os.path.dirname(__file__), 'fixtures', 'riset_analisis_deskripsi.json')
+            if _os.path.exists(_fixture_path):
+                with open(_fixture_path, encoding='utf-8') as _f:
+                    for k, v in _json.load(_f).items():
+                        _cached_descs.setdefault(k, v)
+
+        # 4. Fallback hardcoded
         _BUILTIN_DESCS = {
             'Learning & Development & Based': 'Dosen PTMA aktif meneliti bidang pendidikan dan pengembangan pembelajaran berbasis konstruktivisme. Fokus riset mencakup efektivitas model pembelajaran aktif, integrasi teknologi digital, dan peningkatan kemampuan akademik siswa. Tren berkembang ke arah pembelajaran adaptif dan personalisasi kurikulum. Riset ini berkontribusi langsung pada peningkatan kualitas pendidikan nasional di lingkungan Muhammadiyah-Aisyiyah.',
             'Indonesia & 19 & Study': 'Riset ini memusatkan perhatian pada dampak pandemi COVID-19 di Indonesia dari berbagai dimensi — kesehatan, ekonomi, dan sosial. Dosen PTMA aktif mengkaji pola penyebaran, kebijakan penanganan, serta dampak jangka panjang pandemi terhadap masyarakat. Tren riset berkembang ke arah analisis pemulihan pasca-pandemi dan ketahanan sistem kesehatan. Hasil riset berperan penting dalam memberikan rekomendasi kebijakan berbasis data.',
@@ -1951,16 +1967,10 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
             'Review & Analysis & Indonesian': 'Bidang ini mencakup kajian review sistematis dan analisis komprehensif tentang perkembangan ilmu pengetahuan Indonesia. Dosen PTMA aktif melakukan meta-analisis dan tinjauan literatur untuk mengidentifikasi tren riset nasional. Fokus mencakup pemetaan kinerja sains Indonesia dalam konteks global. Riset ini penting untuk perencanaan kebijakan riset dan pengembangan kapasitas ilmiah perguruan tinggi.',
             'Indonesia & Learning & Behavior': 'Riset ini mengkaji perilaku belajar dan faktor psikososial yang memengaruhi prestasi akademik siswa Indonesia. Dosen PTMA meneliti pengaruh lingkungan keluarga, budaya, dan teknologi terhadap motivasi dan gaya belajar. Tren berkembang pada riset perilaku digital dan penggunaan media sosial dalam konteks pendidikan. Hasil riset berkontribusi pada pengembangan pendekatan pendidikan yang kontekstual dan berbasis kearifan lokal.',
         }
+        for k, v in _BUILTIN_DESCS.items():
+            _cached_descs.setdefault(k, v)
 
-        # Fallback: file fixture → hardcoded
-        if not _cached_descs:
-            _fixture_path = _os.path.join(_os.path.dirname(__file__), 'fixtures', 'riset_analisis_deskripsi.json')
-            if _os.path.exists(_fixture_path):
-                with open(_fixture_path, encoding='utf-8') as _f:
-                    _cached_descs = _json.load(_f)
-        if not _cached_descs:
-            _cached_descs = _BUILTIN_DESCS.copy()
-
+        # 5. Generate LLM untuk label baru yang belum ada di semua fallback
         _needs_gen = [t for t in topics_out if t['label'] not in _cached_descs]
         if _needs_gen:
             try:
@@ -1990,15 +2000,22 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
                         out = _mdl.generate(**inputs, max_new_tokens=220, do_sample=False)
                     gen_ids = out[0][inputs.input_ids.shape[1]:]
                     raw = _tok.decode(gen_ids, skip_special_tokens=True).strip()
-                    # Bersihkan karakter non-latin yang bocor (Mandarin, dll)
                     import re as _re
                     raw = _re.sub(r'[^\x00-\x7F\u00C0-\u024F\u0020-\u007E\u00A0-\u00FF\u0100-\u017E\u2018-\u201D\u2026]', '', raw)
                     raw = _re.sub(r' {2,}', ' ', raw).strip()
                     _cached_descs[t['label']] = raw
 
-                _cache.set(_CACHE_KEY, _cached_descs, timeout=86400)  # 24 jam
+                _cache.set(_CACHE_KEY, _cached_descs, timeout=86400)
             except Exception:
-                pass  # fallback: deskripsi kosong
+                pass
+
+        # Simpan deskripsi baru ke DB (update_or_create per label)
+        _new_labels = {t['label'] for t in topics_out} - set(_db_descs.keys())
+        for _lbl in _new_labels:
+            if _cached_descs.get(_lbl):
+                _LdaDesc.objects.update_or_create(
+                    label=_lbl, defaults={'deskripsi': _cached_descs[_lbl]}
+                )
 
         for t in topics_out:
             t['deskripsi'] = _cached_descs.get(t['label'], '')
