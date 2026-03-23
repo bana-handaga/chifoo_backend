@@ -1839,7 +1839,9 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
         # ── POST: bebas, siapapun bisa reset dan generate ulang ─────────
         if request.method == 'POST':
             _dcache.delete(_FULL_CACHE_KEY)
-            return Response({'status': 'cache_cleared', 'detail': 'Cache dihapus. Analisis baru akan dibuat pada permintaan berikutnya.'})
+            from .models import RisetAnalisisSnapshot
+            RisetAnalisisSnapshot.objects.all().delete()
+            return Response({'status': 'cache_cleared', 'detail': 'Cache dan snapshot dihapus. Analisis baru akan dibuat pada permintaan berikutnya.'})
 
         # ── GET: kembalikan cache jika ada, generate jika kosong ─────
         if request.method == 'GET':

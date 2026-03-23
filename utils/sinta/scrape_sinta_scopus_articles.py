@@ -437,6 +437,7 @@ def main():
     parser.add_argument("--force",    action="store_true", help="Re-scrape meski sudah ada")
     parser.add_argument("--status",   action="store_true", help="Tampilkan status")
     parser.add_argument("--limit",    type=int, default=0, help="Batasi jumlah author")
+    parser.add_argument("--offset",   type=int, default=0, help="Mulai dari index ke-N (untuk paralel)")
     parser.add_argument("--username", default=SINTA_USERNAME, help="Username SINTA")
     parser.add_argument("--password", default=SINTA_PASSWORD, help="Password SINTA")
     args = parser.parse_args()
@@ -464,6 +465,8 @@ def main():
         authors = get_authors_with_pt()
         print(f"  → {len(authors):,} author ditemukan")
 
+    if args.offset:
+        authors = authors[args.offset:]
     if args.limit:
         authors = authors[:args.limit]
 

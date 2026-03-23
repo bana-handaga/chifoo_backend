@@ -97,6 +97,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--status",  action="store_true")
+    parser.add_argument("--offset",  type=int, default=0)
     parser.add_argument("--limit",   type=int, default=0)
     args = parser.parse_args()
 
@@ -105,6 +106,8 @@ def main():
         return
 
     files = sorted(INPUT_DIR.glob("*/*_scopus.json"))
+    if args.offset:
+        files = files[args.offset:]
     if args.limit:
         files = files[:args.limit]
 
