@@ -1681,7 +1681,9 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
     def get_queryset(self):
         qs = (
             SintaScopusArtikel.objects
-            .prefetch_related('artikel_authors__author')
+            .prefetch_related(
+                'artikel_authors__author__afiliasi__perguruan_tinggi'
+            )
             .order_by('-sitasi', '-tahun')
         )
         author_id = self.request.query_params.get('author')
@@ -1709,6 +1711,23 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
                     rel = art.artikel_authors.get(author_id=author_id)
                 except Exception:
                     pass
+
+            penulis_ptma = [
+                {
+                    'author_id':      r.author_id,
+                    'nama':           r.author.nama,
+                    'sinta_id':       r.author.sinta_id,
+                    'pt_singkatan':   (
+                        r.author.afiliasi.perguruan_tinggi.singkatan
+                        if r.author.afiliasi_id and r.author.afiliasi and r.author.afiliasi.perguruan_tinggi_id
+                        else ''
+                    ),
+                    'urutan_penulis': r.urutan_penulis,
+                    'total_penulis':  r.total_penulis,
+                }
+                for r in art.artikel_authors.all()
+            ]
+
             results.append({
                 'id':             art.id,
                 'eid':            art.eid,
@@ -1722,6 +1741,7 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
                 'urutan_penulis': rel.urutan_penulis if rel else None,
                 'total_penulis':  rel.total_penulis  if rel else None,
                 'nama_singkat':   rel.nama_singkat   if rel else None,
+                'penulis_ptma':   penulis_ptma,
             })
 
         return Response({

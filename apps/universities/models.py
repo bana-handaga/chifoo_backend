@@ -974,6 +974,64 @@ class RisetAnalisisSnapshot(models.Model):
         return cls.objects.first()
 
 
+class SintaPenelitian(models.Model):
+    """
+    Data penelitian dosen dari SINTA (?view=researches).
+    Satu baris = satu judul penelitian (deduplikasi by judul+tahun+skema_kode).
+    """
+    judul       = models.CharField(max_length=1000, verbose_name='Judul Penelitian')
+    leader_nama = models.CharField(max_length=200, blank=True, verbose_name='Nama Ketua')
+    skema       = models.CharField(max_length=300, blank=True, verbose_name='Skema Penelitian')
+    skema_kode  = models.CharField(max_length=20,  blank=True, verbose_name='Kode Skema')
+    tahun       = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Tahun')
+    dana        = models.CharField(max_length=50,  blank=True, verbose_name='Dana')
+    status      = models.CharField(max_length=50,  blank=True, verbose_name='Status')
+    sumber      = models.CharField(max_length=50,  blank=True, verbose_name='Sumber Dana')
+    scraped_at  = models.DateTimeField(auto_now=True, verbose_name='Waktu Scrape')
+
+    class Meta:
+        verbose_name        = 'Sinta Penelitian'
+        verbose_name_plural = 'Sinta Penelitian'
+        ordering            = ['-tahun', 'judul']
+        unique_together     = ('judul', 'tahun', 'skema_kode')
+        indexes             = [
+            models.Index(fields=['tahun']),
+            models.Index(fields=['skema_kode']),
+            models.Index(fields=['sumber']),
+        ]
+
+    def __str__(self):
+        return f"[{self.tahun}] {self.judul[:80]}"
+
+
+class SintaPenelitianAuthor(models.Model):
+    """
+    Relasi M2M antara penelitian SINTA dengan author PTMA.
+    Mencakup ketua (is_leader=True) maupun anggota (is_leader=False).
+    """
+    penelitian  = models.ForeignKey(
+        SintaPenelitian, on_delete=models.CASCADE,
+        related_name='penelitian_authors', verbose_name='Penelitian'
+    )
+    author      = models.ForeignKey(
+        'SintaAuthor', on_delete=models.CASCADE,
+        related_name='penelitians', verbose_name='Author'
+    )
+    is_leader   = models.BooleanField(default=False, verbose_name='Ketua')
+
+    class Meta:
+        verbose_name        = 'Sinta Penelitian Author'
+        verbose_name_plural = 'Sinta Penelitian Authors'
+        unique_together     = ('penelitian', 'author')
+        indexes             = [
+            models.Index(fields=['author']),
+        ]
+
+    def __str__(self):
+        role = 'Ketua' if self.is_leader else 'Anggota'
+        return f"{self.author} — {role}"
+
+
 class RisetLdaDeskripsi(models.Model):
     """Deskripsi AI per topik LDA — disimpan permanen di DB."""
     label      = models.CharField(max_length=255, unique=True, verbose_name='Label Topik')
