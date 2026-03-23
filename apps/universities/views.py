@@ -1819,12 +1819,13 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
             'top_author':    top_author,
         })
 
-    @action(detail=False, methods=['get', 'post'], url_path='riset-analisis')
+    @action(detail=False, methods=['get', 'post'], url_path='riset-analisis',
+            permission_classes=[AllowAny])
     def riset_analisis(self, request):
         """
         GET  — Baca hasil analisis dari cache (publik, instan).
                Jika cache kosong kembalikan {"ready": false}.
-        POST — Paksa regenerasi analisis (admin/is_staff only).
+        POST — Reset cache & trigger regenerasi (bebas, tanpa auth).
         """
         from django.core.cache import cache as _dcache
         _FULL_CACHE_KEY = 'riset_analisis_full_v2'
