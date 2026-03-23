@@ -1829,21 +1829,20 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
         from django.core.cache import cache as _dcache
         _FULL_CACHE_KEY = 'riset_analisis_full_v1'
 
-        # ── POST: hanya admin, paksa regenerasi ──────────────────────
+        # ── POST: hanya admin, hapus cache lalu return cepat ─────────
         if request.method == 'POST':
             if not (request.user and request.user.is_staff):
                 from rest_framework import status as _st
                 return Response({'detail': 'Hanya administrator yang dapat memicu analisis baru.'}, status=_st.HTTP_403_FORBIDDEN)
-            _dcache.delete(_FULL_CACHE_KEY)   # hapus cache agar regenerasi
-            # lanjut ke bawah untuk generate
+            _dcache.delete(_FULL_CACHE_KEY)
+            return Response({'status': 'cache_cleared', 'detail': 'Cache dihapus. Analisis baru akan dibuat pada permintaan berikutnya.'})
 
-        # ── GET: kembalikan cache jika ada ───────────────────────────
+        # ── GET: kembalikan cache jika ada, generate jika kosong ─────
         if request.method == 'GET':
             cached = _dcache.get(_FULL_CACHE_KEY)
             if cached is not None:
                 return Response(cached)
-            # cache kosong — kembalikan status belum siap
-            return Response({'ready': False, 'detail': 'Analisis belum dijalankan. Hubungi administrator.'})
+            # cache kosong — lanjut generate di bawah
 
         # ── Generate (POST atau GET saat cache kosong — admin saja bisa sampai sini via POST) ──
         import re

@@ -123,6 +123,8 @@ def main():
     parser.add_argument("--dry-run",  action="store_true")
     parser.add_argument("--status",   action="store_true")
     parser.add_argument("--sinta-id", help="Import satu author saja")
+    parser.add_argument("--offset",   type=int, default=0,  help="Mulai dari index ke-N")
+    parser.add_argument("--limit",    type=int, default=0,  help="Batasi jumlah file")
     args = parser.parse_args()
 
     if args.status:
@@ -137,6 +139,11 @@ def main():
     else:
         files = all_json_files()
         print(f"File JSON ditemukan: {len(files)}")
+
+    if args.offset:
+        files = files[args.offset:]
+    if args.limit:
+        files = files[:args.limit]
 
     run(files, dry_run=args.dry_run)
 
