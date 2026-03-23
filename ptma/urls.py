@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/auth/', include('apps.users.urls')),
     path('api/', include('apps.universities.urls')),
     path('api/', include('apps.monitoring.urls')),
-    # Serve media files (aktif baik DEBUG=True maupun False)
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    # Serve media & static files (aktif baik DEBUG=True maupun False)
+    re_path(r'^media/(?P<path>.*)$',  serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+]
