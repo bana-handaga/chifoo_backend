@@ -1940,12 +1940,26 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
         _CACHE_KEY = 'riset_analisis_deskripsi_v4'
         _cached_descs = _cache.get(_CACHE_KEY) or {}
 
-        # Fallback statis: load dari fixture jika cache kosong
+        # Deskripsi bawaan (hardcoded fallback — tidak tergantung file eksternal)
+        _BUILTIN_DESCS = {
+            'Learning & Development & Based': 'Dosen PTMA aktif meneliti bidang pendidikan dan pengembangan pembelajaran berbasis konstruktivisme. Fokus riset mencakup efektivitas model pembelajaran aktif, integrasi teknologi digital, dan peningkatan kemampuan akademik siswa. Tren berkembang ke arah pembelajaran adaptif dan personalisasi kurikulum. Riset ini berkontribusi langsung pada peningkatan kualitas pendidikan nasional di lingkungan Muhammadiyah-Aisyiyah.',
+            'Indonesia & 19 & Study': 'Riset ini memusatkan perhatian pada dampak pandemi COVID-19 di Indonesia dari berbagai dimensi — kesehatan, ekonomi, dan sosial. Dosen PTMA aktif mengkaji pola penyebaran, kebijakan penanganan, serta dampak jangka panjang pandemi terhadap masyarakat. Tren riset berkembang ke arah analisis pemulihan pasca-pandemi dan ketahanan sistem kesehatan. Hasil riset berperan penting dalam memberikan rekomendasi kebijakan berbasis data.',
+            'From & Oil & As': 'Bidang ini mencakup riset material dan rekayasa, khususnya pemanfaatan ekstrak alam dan limbah industri sebagai bahan konstruksi. Dosen PTMA meneliti sifat mekanis material alternatif seperti pemanfaatan minyak nabati dan produk sampingan industri untuk campuran beton. Tren mengarah pada material berkelanjutan dan ramah lingkungan. Riset ini relevan untuk mendukung industri konstruksi yang lebih efisien dan berwawasan lingkungan.',
+            'Using & Learning & Students': 'Riset ini mengkaji metode pengajaran inovatif berbasis student-centered learning untuk meningkatkan hasil belajar mahasiswa. Fokus mencakup pendekatan inquiry-based, problem-solving, dan blended learning. Tren berkembang pada integrasi platform digital dan gamifikasi dalam proses pembelajaran. Dampaknya signifikan dalam meningkatkan motivasi, partisipasi aktif, dan prestasi akademik mahasiswa di perguruan tinggi.',
+            'Performance & Using & Analysis': 'Dosen PTMA meneliti analisis kinerja sistem teknis dan operasional, dengan fokus pada optimasi performa menggunakan pendekatan kuantitatif. Bidang ini mencakup sistem energi terbarukan, efisiensi operasional industri, dan analisis data kinerja. Tren berkembang pada penggunaan machine learning untuk prediksi dan optimasi sistem. Riset ini berdampak pada peningkatan efisiensi industri dan pengembangan teknologi energi di Indonesia.',
+            'Based & Using & Treatment': 'Riset ini berfokus pada pengolahan limbah dan aktivitas antioksidan, mengkaji efek berbagai perlakuan terhadap sifat biologis bahan. Dosen PTMA aktif meneliti potensi ekstrak alami dan proses bioteknologi untuk aplikasi kesehatan dan lingkungan. Tren mengarah pada pemanfaatan bahan herbal lokal Indonesia sebagai sumber antioksidan. Riset ini berpotensi mendukung pengembangan produk kesehatan berbasis bahan alam.',
+            'Review & Analysis & Indonesian': 'Bidang ini mencakup kajian review sistematis dan analisis komprehensif tentang perkembangan ilmu pengetahuan Indonesia. Dosen PTMA aktif melakukan meta-analisis dan tinjauan literatur untuk mengidentifikasi tren riset nasional. Fokus mencakup pemetaan kinerja sains Indonesia dalam konteks global. Riset ini penting untuk perencanaan kebijakan riset dan pengembangan kapasitas ilmiah perguruan tinggi.',
+            'Indonesia & Learning & Behavior': 'Riset ini mengkaji perilaku belajar dan faktor psikososial yang memengaruhi prestasi akademik siswa Indonesia. Dosen PTMA meneliti pengaruh lingkungan keluarga, budaya, dan teknologi terhadap motivasi dan gaya belajar. Tren berkembang pada riset perilaku digital dan penggunaan media sosial dalam konteks pendidikan. Hasil riset berkontribusi pada pengembangan pendekatan pendidikan yang kontekstual dan berbasis kearifan lokal.',
+        }
+
+        # Fallback: file fixture → hardcoded
         if not _cached_descs:
             _fixture_path = _os.path.join(_os.path.dirname(__file__), 'fixtures', 'riset_analisis_deskripsi.json')
             if _os.path.exists(_fixture_path):
                 with open(_fixture_path, encoding='utf-8') as _f:
                     _cached_descs = _json.load(_f)
+        if not _cached_descs:
+            _cached_descs = _BUILTIN_DESCS.copy()
 
         _needs_gen = [t for t in topics_out if t['label'] not in _cached_descs]
         if _needs_gen:
