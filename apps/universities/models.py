@@ -939,3 +939,36 @@ class SintaJurnal(models.Model):
 
     def __str__(self):
         return f"{self.nama} ({self.akreditasi})"
+
+
+class RisetAnalisisSnapshot(models.Model):
+    """Snapshot hasil analisis riset (maks 4 record, FIFO)."""
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Dibuat pada')
+    data       = models.JSONField(verbose_name='Data hasil analisis')
+
+    MAX_HISTORY = 4
+
+    class Meta:
+        verbose_name        = 'Riset Analisis Snapshot'
+        verbose_name_plural = 'Riset Analisis Snapshots'
+        ordering            = ['-created_at']
+
+    def __str__(self):
+        return f"Snapshot #{self.pk} — {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+
+    @classmethod
+    def save_snapshot(cls, data: dict) -> 'RisetAnalisisSnapshot':
+        """Simpan snapshot baru dan hapus yang melebihi MAX_HISTORY (FIFO)."""
+        snap = cls.objects.create(data=data)
+        # Hapus yang terlama jika melebihi batas
+        old_ids = list(
+            cls.objects.order_by('-created_at')
+            .values_list('id', flat=True)[cls.MAX_HISTORY:]
+        )
+        if old_ids:
+            cls.objects.filter(id__in=old_ids).delete()
+        return snap
+
+    @classmethod
+    def latest(cls) -> 'RisetAnalisisSnapshot | None':
+        return cls.objects.first()

@@ -1839,7 +1839,13 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
             cached = _dcache.get(_FULL_CACHE_KEY)
             if cached is not None:
                 return Response(cached)
-            # cache kosong — lanjut generate di bawah
+            # cache kosong — coba restore dari snapshot terbaru
+            from .models import RisetAnalisisSnapshot
+            snap = RisetAnalisisSnapshot.latest()
+            if snap:
+                _dcache.set(_FULL_CACHE_KEY, snap.data, timeout=604800)
+                return Response(snap.data)
+            # tidak ada snapshot — lanjut generate di bawah
 
         # ── Generate (POST atau GET saat cache kosong — admin saja bisa sampai sini via POST) ──
         import re
@@ -2197,6 +2203,8 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
             'wcu_distribution': wcu_distribution,
             'wcu_trend_year':   wcu_trend_year,
         }
-        # Simpan ke full cache (7 hari) — dibaca ulang oleh GET tanpa generate ulang
+        # Simpan ke full cache (7 hari) dan snapshot DB (maks 4, FIFO)
         _dcache.set(_FULL_CACHE_KEY, result, timeout=604800)
+        from .models import RisetAnalisisSnapshot
+        RisetAnalisisSnapshot.save_snapshot(result)
         return Response(result)
