@@ -1827,7 +1827,7 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
         POST — Paksa regenerasi analisis (admin/is_staff only).
         """
         from django.core.cache import cache as _dcache
-        _FULL_CACHE_KEY = 'riset_analisis_full_v1'
+        _FULL_CACHE_KEY = 'riset_analisis_full_v2'
 
         # ── POST: bebas, siapapun bisa reset dan generate ulang ─────────
         if request.method == 'POST':
