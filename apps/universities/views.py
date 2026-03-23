@@ -1933,8 +1933,16 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
 
         # ── 2b. LLM lokal: deskripsi per topik (Qwen2.5-0.5B, cached 24h) ──
         from django.core.cache import cache as _cache
+        import json as _json, os as _os
         _CACHE_KEY = 'riset_analisis_deskripsi_v4'
         _cached_descs = _cache.get(_CACHE_KEY) or {}
+
+        # Fallback statis: load dari fixture jika cache kosong
+        if not _cached_descs:
+            _fixture_path = _os.path.join(_os.path.dirname(__file__), 'fixtures', 'riset_analisis_deskripsi.json')
+            if _os.path.exists(_fixture_path):
+                with open(_fixture_path, encoding='utf-8') as _f:
+                    _cached_descs = _json.load(_f)
 
         _needs_gen = [t for t in topics_out if t['label'] not in _cached_descs]
         if _needs_gen:
