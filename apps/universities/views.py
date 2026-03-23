@@ -1829,13 +1829,8 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
         from django.core.cache import cache as _dcache
         _FULL_CACHE_KEY = 'riset_analisis_full_v1'
 
-        # ── POST: siapapun boleh jika cache kosong; admin bisa paksa reset ──
+        # ── POST: bebas, siapapun bisa reset dan generate ulang ─────────
         if request.method == 'POST':
-            cache_exists = _dcache.get(_FULL_CACHE_KEY) is not None
-            is_admin = request.user and request.user.is_authenticated and request.user.is_staff
-            if cache_exists and not is_admin:
-                from rest_framework import status as _st
-                return Response({'detail': 'Analisis sudah tersedia. Hanya administrator yang dapat memicu analisis ulang.'}, status=_st.HTTP_403_FORBIDDEN)
             _dcache.delete(_FULL_CACHE_KEY)
             return Response({'status': 'cache_cleared', 'detail': 'Cache dihapus. Analisis baru akan dibuat pada permintaan berikutnya.'})
 
