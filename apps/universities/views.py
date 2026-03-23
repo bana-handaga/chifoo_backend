@@ -93,7 +93,7 @@ class PT10Pagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 500
 
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal, SintaAfiliasi, SintaDepartemen, SintaAuthor
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal, SintaAfiliasi, SintaDepartemen, SintaAuthor, SintaScopusArtikel, SintaScopusArtikelAuthor, SintaAuthorTrend
 from django.db.models import OuterRef, Subquery
 from .serializers import _get_periode_aktif
 from apps.monitoring.models import PeriodePelaporan
@@ -1617,6 +1617,7 @@ class SintaAuthorViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
         'sinta_score_overall', 'sinta_score_3year',
         'scopus_artikel', 'scopus_sitasi', 'scopus_h_index',
         'gscholar_h_index', 'nama',
+        'afiliasi__nama_sinta', 'departemen__nama',
     ]
 
     def get_serializer_class(self):
@@ -1650,3 +1651,548 @@ class SintaAuthorViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
             'total_scopus_artikel': agg['total_scopus'] or 0,
             'total_scopus_sitasi':  agg['total_sitasi'] or 0,
         })
+
+
+class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSet):
+    """
+    Daftar artikel Scopus per author.
+
+    GET /api/sinta-scopus-artikel/?author=<id>&ordering=-sitasi
+    GET /api/sinta-scopus-artikel/?author=<id>&kuartil=Q1
+    GET /api/sinta-scopus-artikel/?author=<id>&tahun=2023
+    """
+    serializer_class = None   # pakai inline di bawah
+    filter_backends  = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = {
+        'artikel_authors__author': ['exact'],
+        'kuartil':                 ['exact', 'in'],
+        'tahun':                   ['exact', 'gte', 'lte'],
+    }
+    search_fields   = ['judul', 'jurnal_nama']
+    ordering_fields = ['tahun', 'sitasi', 'kuartil', 'jurnal_nama']
+    ordering        = ['-sitasi', '-tahun']
+
+    def get_queryset(self):
+        qs = (
+            SintaScopusArtikel.objects
+            .prefetch_related('artikel_authors__author')
+            .order_by('-sitasi', '-tahun')
+        )
+        author_id = self.request.query_params.get('author')
+        if author_id:
+            qs = qs.filter(artikel_authors__author_id=author_id)
+        return qs
+
+    def list(self, request, *args, **kwargs):
+        qs = self.filter_queryset(self.get_queryset())
+
+        # Paginasi manual
+        page_size = min(int(request.query_params.get('page_size', 20)), 200)
+        page      = int(request.query_params.get('page', 1))
+        total     = qs.count()
+        items     = qs[(page - 1) * page_size: page * page_size]
+
+        # Ambil relasi penulis untuk author yg diminta
+        author_id = request.query_params.get('author')
+
+        results = []
+        for art in items:
+            rel = None
+            if author_id:
+                try:
+                    rel = art.artikel_authors.get(author_id=author_id)
+                except Exception:
+                    pass
+            results.append({
+                'id':             art.id,
+                'eid':            art.eid,
+                'judul':          art.judul,
+                'tahun':          art.tahun,
+                'sitasi':         art.sitasi,
+                'kuartil':        art.kuartil,
+                'jurnal_nama':    art.jurnal_nama,
+                'jurnal_url':     art.jurnal_url,
+                'scopus_url':     art.scopus_url,
+                'urutan_penulis': rel.urutan_penulis if rel else None,
+                'total_penulis':  rel.total_penulis  if rel else None,
+                'nama_singkat':   rel.nama_singkat   if rel else None,
+            })
+
+        return Response({
+            'count':    total,
+            'page':     page,
+            'page_size': page_size,
+            'results':  results,
+        })
+
+    @action(detail=False, methods=['get'], url_path='stats')
+    def stats(self, request):
+        """Statistik agregat artikel Scopus + tren gabungan seluruh author PTMA."""
+        from django.db.models import Count, Sum, Min, Max, Avg
+
+        qs = SintaScopusArtikel.objects
+
+        agg = qs.aggregate(
+            total_artikel=Count('id'),
+            total_sitasi=Sum('sitasi'),
+            min_tahun=Min('tahun'),
+            max_tahun=Max('tahun'),
+        )
+        total_jurnal = qs.exclude(jurnal_nama='').values('jurnal_nama').distinct().count()
+        total_author = SintaScopusArtikelAuthor.objects.values('author_id').distinct().count()
+        q1q2 = qs.filter(kuartil__in=['Q1', 'Q2']).count()
+
+        # Distribusi kuartil
+        dist_kuartil = list(
+            qs.values('kuartil')
+            .annotate(jumlah=Count('id'), sitasi=Sum('sitasi'))
+            .order_by('kuartil')
+        )
+
+        # Tren per tahun dari artikel di DB
+        tren_artikel = list(
+            qs.exclude(tahun__isnull=True)
+            .values('tahun')
+            .annotate(jumlah=Count('id'), sitasi=Sum('sitasi'))
+            .order_by('tahun')
+        )
+
+        # Tren kuartil per tahun (stacked)
+        tren_kuartil = list(
+            qs.exclude(tahun__isnull=True)
+            .exclude(kuartil='')
+            .values('tahun', 'kuartil')
+            .annotate(jumlah=Count('id'))
+            .order_by('tahun', 'kuartil')
+        )
+
+        # Tren gabungan dari SintaAuthorTrend (lebih lengkap — semua author yg sudah di-scrape)
+        tren_scopus_author = list(
+            SintaAuthorTrend.objects.filter(jenis='scopus')
+            .values('tahun')
+            .annotate(jumlah=Sum('jumlah'))
+            .order_by('tahun')
+        )
+        tren_gscholar_pub = list(
+            SintaAuthorTrend.objects.filter(jenis='gscholar_pub')
+            .values('tahun')
+            .annotate(jumlah=Sum('jumlah'))
+            .order_by('tahun')
+        )
+        tren_gscholar_cite = list(
+            SintaAuthorTrend.objects.filter(jenis='gscholar_cite')
+            .values('tahun')
+            .annotate(jumlah=Sum('jumlah'))
+            .order_by('tahun')
+        )
+
+        # Top jurnal
+        top_jurnal = list(
+            qs.exclude(jurnal_nama='')
+            .values('jurnal_nama')
+            .annotate(jumlah=Count('id'), sitasi=Sum('sitasi'))
+            .order_by('-jumlah')[:20]
+        )
+
+        # Top author berdasarkan artikel di DB
+        from apps.universities.models import SintaAuthor
+        top_author = list(
+            SintaScopusArtikelAuthor.objects
+            .values('author__nama', 'author__afiliasi__perguruan_tinggi__singkatan')
+            .annotate(jumlah=Count('artikel_id'))
+            .order_by('-jumlah')[:10]
+        )
+
+        return Response({
+            'total_artikel': agg['total_artikel'] or 0,
+            'total_sitasi':  agg['total_sitasi']  or 0,
+            'total_jurnal':  total_jurnal,
+            'total_author':  total_author,
+            'q1q2':          q1q2,
+            'dist_kuartil':  dist_kuartil,
+            'tren_artikel':  tren_artikel,
+            'tren_kuartil':  tren_kuartil,
+            'tren_scopus_author':  tren_scopus_author,
+            'tren_gscholar_pub':   tren_gscholar_pub,
+            'tren_gscholar_cite':  tren_gscholar_cite,
+            'top_jurnal':    top_jurnal,
+            'top_author':    top_author,
+        })
+
+    @action(detail=False, methods=['get', 'post'], url_path='riset-analisis')
+    def riset_analisis(self, request):
+        """
+        GET  — Baca hasil analisis dari cache (publik, instan).
+               Jika cache kosong kembalikan {"ready": false}.
+        POST — Paksa regenerasi analisis (admin/is_staff only).
+        """
+        from django.core.cache import cache as _dcache
+        _FULL_CACHE_KEY = 'riset_analisis_full_v1'
+
+        # ── POST: hanya admin, paksa regenerasi ──────────────────────
+        if request.method == 'POST':
+            if not (request.user and request.user.is_staff):
+                from rest_framework import status as _st
+                return Response({'detail': 'Hanya administrator yang dapat memicu analisis baru.'}, status=_st.HTTP_403_FORBIDDEN)
+            _dcache.delete(_FULL_CACHE_KEY)   # hapus cache agar regenerasi
+            # lanjut ke bawah untuk generate
+
+        # ── GET: kembalikan cache jika ada ───────────────────────────
+        if request.method == 'GET':
+            cached = _dcache.get(_FULL_CACHE_KEY)
+            if cached is not None:
+                return Response(cached)
+            # cache kosong — kembalikan status belum siap
+            return Response({'ready': False, 'detail': 'Analisis belum dijalankan. Hubungi administrator.'})
+
+        # ── Generate (POST atau GET saat cache kosong — admin saja bisa sampai sini via POST) ──
+        import re
+        import re
+        from collections import Counter
+        from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+        from sklearn.decomposition import LatentDirichletAllocation
+        import numpy as np
+
+        rows = list(SintaScopusArtikel.objects.values_list('judul', 'tahun'))
+        titles = [r[0] for r in rows if r[0]]
+        tahuns = [r[1] for r in rows if r[0]]
+
+        # ── Stopwords ────────────────────────────────────────────────
+        STOP = [
+            'the','a','an','of','in','on','at','to','for','with','and','or','is','are',
+            'was','were','be','been','have','has','had','do','does','did','will','would',
+            'could','should','may','might','this','that','these','those','it','its','by',
+            'from','as','into','through','during','before','after','when','where','which',
+            'who','what','how','some','such','than','too','very','just','then','there',
+            'also','but','not','only','more','most','each','both','all','any','same',
+            'using','based','study','analysis','approach','method','methods','model','models',
+            'system','systems','design','review','paper','novel','proposed','performance',
+            'results','result','experimental','comparison','toward','towards','effect',
+            'effects','impact','research','application','applications','case','development',
+            'implementation','evaluation','assessment','investigation','potential','various',
+            'different','high','new','used','show','shows','good','between','among','data',
+            'type','types','process','level','number','factor','factors','rate','value',
+            'work','can','well','thus','two','three','four','five','first','second','third',
+            'test','tests','testing','measured','measure','found','show','showed','shows',
+        ]
+
+        # ── 1. TF-IDF Word Cloud ──────────────────────────────────────
+        tfidf = TfidfVectorizer(
+            max_features=80,
+            stop_words=STOP,
+            ngram_range=(1, 2),
+            min_df=3,
+            token_pattern=r'\b[a-zA-Z]{4,}\b',
+        )
+        tfidf_matrix = tfidf.fit_transform(titles)
+        feature_names = tfidf.get_feature_names_out()
+        tfidf_scores  = tfidf_matrix.sum(axis=0).A1
+        word_cloud = sorted(
+            [{'word': w, 'score': round(float(s), 3)}
+             for w, s in zip(feature_names, tfidf_scores)],
+            key=lambda x: -x['score']
+        )[:60]
+
+        # ── 2. LDA Topic Modelling ─────────────────────────────────────
+        N_TOPICS = 8
+        cv = CountVectorizer(
+            max_features=500,
+            stop_words=STOP,
+            ngram_range=(1, 2),
+            min_df=3,
+            token_pattern=r'\b[a-zA-Z]{4,}\b',
+        )
+        cv_matrix = cv.fit_transform(titles)
+        cv_features = cv.get_feature_names_out()
+
+        lda = LatentDirichletAllocation(
+            n_components=N_TOPICS,
+            random_state=42,
+            max_iter=20,
+            learning_method='batch',
+        )
+        doc_topics = lda.fit_transform(cv_matrix)
+
+        # Top words per topic
+        topics_out = []
+        for idx, comp in enumerate(lda.components_):
+            top_idx   = comp.argsort()[-12:][::-1]
+            top_words = [cv_features[i] for i in top_idx]
+            article_count = int((doc_topics.argmax(axis=1) == idx).sum())
+            # Auto-label dari 3 keyword teratas (title-case)
+            label = ' · '.join(w.title() for w in top_words[:3])
+            topics_out.append({
+                'id':    idx,
+                'label': label,
+                'keywords': top_words,
+                'article_count': article_count,
+            })
+
+        # Sort topics by article count descending
+        topics_out.sort(key=lambda x: -x['article_count'])
+
+        # ── 2b. LLM lokal: deskripsi per topik (Qwen2.5-0.5B, cached 24h) ──
+        from django.core.cache import cache as _cache
+        _CACHE_KEY = 'riset_analisis_deskripsi_v4'
+        _cached_descs = _cache.get(_CACHE_KEY) or {}
+
+        _needs_gen = [t for t in topics_out if t['label'] not in _cached_descs]
+        if _needs_gen:
+            try:
+                import torch as _torch
+                from transformers import AutoModelForCausalLM as _CausalLM, AutoTokenizer as _Tok
+                _model_id = 'Qwen/Qwen2.5-0.5B-Instruct'
+                _tok = _Tok.from_pretrained(_model_id)
+                _mdl = _CausalLM.from_pretrained(_model_id, dtype=_torch.float32)
+                _mdl.eval()
+
+                for t in _needs_gen:
+                    kw_str = ', '.join(t['keywords'][:8])
+                    msgs = [
+                        {'role': 'system', 'content': 'Kamu adalah analis riset perguruan tinggi Indonesia yang menulis laporan ilmiah.'},
+                        {'role': 'user',   'content': (
+                            f"Dosen PTMA (Perguruan Tinggi Muhammadiyah-Aisyiyah) menerbitkan artikel Scopus "
+                            f"dengan kata kunci: {kw_str}. "
+                            f"Tulis satu paragraf singkat (4-5 kalimat) dalam Bahasa Indonesia yang menjelaskan: "
+                            f"(1) bidang riset utama yang sedang dikerjakan, "
+                            f"(2) fokus dan tren yang berkembang, "
+                            f"(3) relevansi atau dampak riset tersebut."
+                        )},
+                    ]
+                    text = _tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+                    inputs = _tok([text], return_tensors='pt')
+                    with _torch.no_grad():
+                        out = _mdl.generate(**inputs, max_new_tokens=220, do_sample=False)
+                    gen_ids = out[0][inputs.input_ids.shape[1]:]
+                    raw = _tok.decode(gen_ids, skip_special_tokens=True).strip()
+                    # Bersihkan karakter non-latin yang bocor (Mandarin, dll)
+                    import re as _re
+                    raw = _re.sub(r'[^\x00-\x7F\u00C0-\u024F\u0020-\u007E\u00A0-\u00FF\u0100-\u017E\u2018-\u201D\u2026]', '', raw)
+                    raw = _re.sub(r' {2,}', ' ', raw).strip()
+                    _cached_descs[t['label']] = raw
+
+                _cache.set(_CACHE_KEY, _cached_descs, timeout=86400)  # 24 jam
+            except Exception:
+                pass  # fallback: deskripsi kosong
+
+        for t in topics_out:
+            t['deskripsi'] = _cached_descs.get(t['label'], '')
+
+        # ── 3. Trending keywords per year (TF-IDF per year) ───────────
+        by_year: dict = {}
+        for judul, tahun in zip(titles, tahuns):
+            if tahun and 2015 <= tahun <= 2025:
+                by_year.setdefault(int(tahun), []).append(judul)
+
+        trending_by_year = {}
+        for yr in sorted(by_year.keys()):
+            docs = by_year[yr]
+            if len(docs) < 5:
+                continue
+            vec = TfidfVectorizer(
+                max_features=100, stop_words=STOP,
+                ngram_range=(1,1), min_df=2,
+                token_pattern=r'\b[a-zA-Z]{4,}\b',
+            )
+            mat = vec.fit_transform(docs)
+            names  = vec.get_feature_names_out()
+            scores = mat.sum(axis=0).A1
+            top = sorted(zip(names, scores), key=lambda x: -x[1])[:8]
+            trending_by_year[str(yr)] = [{'word': w, 'score': round(float(s), 3)} for w, s in top]
+
+        # ── 4. Topic share per year ────────────────────────────────────
+        topic_year: dict = {}
+        for i, (judul, tahun) in enumerate(zip(titles, tahuns)):
+            if not tahun or not (2015 <= tahun <= 2025):
+                continue
+            dominant = int(doc_topics[i].argmax())
+            label    = topics_out[dominant]['label'] if dominant < len(topics_out) else f'Topik {dominant}'
+            k = str(tahun)
+            topic_year.setdefault(k, Counter())[label] += 1
+
+        topic_per_year = {
+            yr: [{'label': t, 'count': c} for t, c in counts.most_common(5)]
+            for yr, counts in sorted(topic_year.items())
+        }
+
+        # ── 5. Klasifikasi WCU Broad Subject Areas ────────────────────
+        WCU_FIELDS = {
+            'Engineering & Technology': {
+                'id': 'engineering', 'color': '#2563eb',
+                'keywords': [
+                    'algorithm','optimization','convolutional','classification','detection',
+                    'iot','blockchain','software','database','cloud','wireless','circuit',
+                    'solar','control','robot','automation','concrete','polymer','composite',
+                    'membrane','thermal','mechanical','electrical','fuel','turbine',
+                    'construction','building','manufacturing','electronic','semiconductor',
+                    'microcontroller','signal','encryption','sensor','voltage','battery',
+                    'capacitor','antenna','power','energy','deep','neural','machine',
+                    'reinforcement','transfer','computer','vision','language','intelligent',
+                    'autonomous','drone','lidar','radar','embedded','microprocessor',
+                    'renewable','photovoltaic','wind','geothermal','hydrogen','biomass',
+                ],
+                'bigrams': [
+                    'machine learning','deep learning','reinforcement learning','transfer learning',
+                    'computer vision','natural language','smart grid','artificial intelligence',
+                    'internet of things','digital twin','edge computing','renewable energy',
+                    'neural network','image processing','feature extraction','object detection',
+                ],
+            },
+            'Life Sciences & Medicine': {
+                'id': 'lifescience', 'color': '#16a34a',
+                'keywords': [
+                    'covid','pandemic','health','disease','diabetes','cancer','clinical',
+                    'patient','drug','medical','hospital','treatment','therapy','blood',
+                    'vaccine','antioxidant','extract','herbal','pharmacology','biology',
+                    'cell','protein','enzyme','microbiology','ecology','plant','animal',
+                    'genetics','zoology','botany','rice','food','nutrition','livestock',
+                    'fish','aquaculture','veterinary','pathogen','bacteria','virus',
+                    'antibacterial','antimicrobial','toxicity','bioactive','phytochemical',
+                    'flavonoid','leaves','seed','fruit','stem','root','crop','fertilizer',
+                    'pesticide','harvest','antifungal','antibiotics','inflammation','wound',
+                    'liver','kidney','mortality','morbidity','prevalence','incidence',
+                    'mutation','chromosome','genome','metabolite','alkaloid','phenolic',
+                ],
+                'bigrams': [
+                    'essential oil','blood pressure','blood glucose','immune system',
+                    'oxidative stress','in vitro','in vivo','clinical trial',
+                    'systematic review','meta analysis','risk factor','medicinal plant',
+                ],
+            },
+            'Natural Sciences': {
+                'id': 'natural', 'color': '#0891b2',
+                'keywords': [
+                    'physics','chemistry','mathematics','statistics','geology','earthquake',
+                    'environment','water','climate','carbon','emission','waste',
+                    'pollution','quantum','molecular','nano','crystallography','mineral',
+                    'spectroscopy','thermodynamics','fluid','acoustic','optic','photon',
+                    'radiation','isotope','sediment','geothermal','atmospheric',
+                    'ocean','river','lake','forest','biodiversity','ecosystem','soil',
+                    'rainfall','drought','volcano','landslide','tsunami','calculus',
+                    'algebra','topology','differential','integral','probability',
+                    'simulation','modelling','numerical','finite','element',
+                ],
+                'bigrams': [
+                    'greenhouse gas','global warming','climate change','heavy metal',
+                    'wastewater treatment','water quality','soil contamination',
+                    'groundwater','surface water','air quality','noise pollution',
+                ],
+            },
+            'Social Sciences & Management': {
+                'id': 'social', 'color': '#d97706',
+                'keywords': [
+                    'economic','finance','market','business','management','investment',
+                    'performance','firm','bank','financial','revenue','education','student',
+                    'school','curriculum','teaching','social','community','society',
+                    'governance','policy','law','politics','psychology','tourism','urban',
+                    'city','zakat','waqf','accounting','audit','taxation','trade',
+                    'consumer','marketing','organization','leadership','literacy','poverty',
+                    'welfare','employment','salary','teacher','pedagogy','learning',
+                    'knowledge','competence','motivation','attitude','perception',
+                    'satisfaction','loyalty','productivity','innovation','entrepreneurship',
+                    'startup','ecommerce','fintech','microfinance','cooperative','village',
+                    'district','region','province','indonesia','indonesian','local',
+                ],
+                'bigrams': [
+                    'supply chain','human resource','public policy','local government',
+                    'small medium','micro enterprise','digital economy','critical thinking',
+                    'problem solving','project based','cooperative learning','game based',
+                    'blended learning','flipped classroom','higher education',
+                ],
+            },
+            'Arts & Humanities': {
+                'id': 'arts', 'color': '#9333ea',
+                'keywords': [
+                    'literature','history','art','culture','religion','philosophy',
+                    'linguistics','language','arabic','quran','hadith','heritage','music',
+                    'theater','film','journalism','communication','discourse',
+                    'narrative','translation','poetry','novel','folklore','tradition',
+                    'manuscript','archaeology','ethnography','anthropology','identity',
+                    'ideology','ethics','moral','islamic','mosque','madrasa','pesantren',
+                    'sufism','fiqh','tafsir','sharia','halal','fatwa','ijtihad',
+                    'calligraphy','batik','wayang','gamelan','architecture','design',
+                    'graphic','typography','visual','aesthetics','semiotics',
+                ],
+                'bigrams': [
+                    'cultural identity','social media','content analysis','discourse analysis',
+                    'thematic analysis','islamic education','character education',
+                    'moral education','religious education',
+                ],
+            },
+        }
+
+        def classify_wcu(title_lower):
+            scores = {f: 0 for f in WCU_FIELDS}
+            words = set(re.findall(r'\b[a-z]{3,}\b', title_lower))
+            # Bigram matching (higher weight)
+            for field, cfg in WCU_FIELDS.items():
+                for bg in cfg.get('bigrams', []):
+                    if bg in title_lower:
+                        scores[field] += 3
+            # Single keyword matching
+            for field, cfg in WCU_FIELDS.items():
+                scores[field] += len(words & set(cfg['keywords']))
+            best = max(scores, key=scores.get)
+            return best if scores[best] > 0 else 'Social Sciences & Management'
+
+        # Klasifikasi per artikel
+        wcu_counts = Counter()
+        wcu_by_year: dict = {}
+        for judul, tahun in zip(titles, tahuns):
+            field = classify_wcu(judul.lower())
+            wcu_counts[field] += 1
+            if tahun and 2015 <= tahun <= 2025:
+                wcu_by_year.setdefault(int(tahun), Counter())[field] += 1
+
+        total = len(titles) or 1
+        wcu_distribution = []
+        for field, cfg in WCU_FIELDS.items():
+            count = wcu_counts.get(field, 0)
+            # Kumpulkan LDA topics yang masuk field ini
+            related_topics = []
+            for t in topics_out:
+                t_kws = set(t['keywords'])
+                field_kws = set(cfg['keywords'][:20])
+                if len(t_kws & field_kws) >= 1:
+                    related_topics.append(t['label'])
+            wcu_distribution.append({
+                'field':   field,
+                'field_id': cfg['id'],
+                'color':   cfg['color'],
+                'count':   count,
+                'pct':     round(count / total * 100, 1),
+                'topics':  related_topics,
+            })
+        wcu_distribution.sort(key=lambda x: -x['count'])
+
+        # WCU tren per tahun (normalized per tahun)
+        wcu_trend_year = {}
+        for yr in sorted(wcu_by_year.keys()):
+            yr_total = sum(wcu_by_year[yr].values()) or 1
+            wcu_trend_year[str(yr)] = [
+                {'field': f, 'field_id': WCU_FIELDS[f]['id'], 'color': WCU_FIELDS[f]['color'],
+                 'count': wcu_by_year[yr].get(f, 0),
+                 'pct': round(wcu_by_year[yr].get(f, 0) / yr_total * 100, 1)}
+                for f in WCU_FIELDS
+            ]
+
+        # Tambahkan wcu_field ke setiap LDA topic
+        for t in topics_out:
+            kw_text = ' '.join(t['keywords'])
+            t['wcu_field'] = classify_wcu(kw_text.lower())
+            t['wcu_color'] = WCU_FIELDS[t['wcu_field']]['color']
+            t['wcu_id']    = WCU_FIELDS[t['wcu_field']]['id']
+
+        result = {
+            'ready':            True,
+            'total_titles':     len(titles),
+            'word_cloud':       word_cloud,
+            'lda_topics':       topics_out,
+            'trending_by_year': trending_by_year,
+            'topic_per_year':   topic_per_year,
+            'wcu_distribution': wcu_distribution,
+            'wcu_trend_year':   wcu_trend_year,
+        }
+        # Simpan ke full cache (7 hari) — dibaca ulang oleh GET tanpa generate ulang
+        _dcache.set(_FULL_CACHE_KEY, result, timeout=604800)
+        return Response(result)

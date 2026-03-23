@@ -171,7 +171,7 @@ def import_author(data, dept_map, afiliasi_map, dry_run=False):
 
 
 def cmd_status():
-    files_count = len(list(INPUT_DIR.glob("*_authordetail.json")))
+    files_count = len(list(INPUT_DIR.glob("*/*/*.json")))
     author_count = SintaAuthor.objects.count()
     trend_count  = SintaAuthorTrend.objects.count()
     linked_afiliasi = SintaAuthor.objects.filter(afiliasi__isnull=False).count()

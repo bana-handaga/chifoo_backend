@@ -382,12 +382,13 @@ class SintaDepartemenDetailSerializer(SintaDepartemenListSerializer):
     top_authors         = serializers.SerializerMethodField()
     bidang_distribution = serializers.SerializerMethodField()
     author_stats        = serializers.SerializerMethodField()
+    trend_gscholar      = serializers.SerializerMethodField()
 
     class Meta(SintaDepartemenListSerializer.Meta):
         fields = SintaDepartemenListSerializer.Meta.fields + [
             'scopus_q1', 'scopus_q2', 'scopus_q3', 'scopus_q4', 'scopus_noq',
             'research_conference', 'research_articles', 'research_others',
-            'trend_scopus',
+            'trend_scopus', 'trend_gscholar',
             'top_authors', 'bidang_distribution', 'author_stats',
         ]
 
@@ -422,6 +423,37 @@ class SintaDepartemenDetailSerializer(SintaDepartemenListSerializer):
                     if b:
                         counter[b] += 1
         return [{'bidang': k, 'jumlah': v} for k, v in counter.most_common(10)]
+
+    def get_trend_gscholar(self, obj):
+        """
+        Agregat tren GScholar per tahun dari semua author di departemen ini.
+        Menggabungkan gscholar_pub dan gscholar_cite dari SintaAuthorTrend.
+        """
+        from django.db.models import Sum as DSum
+        from apps.universities.models import SintaAuthorTrend
+
+        author_ids = obj.authors.values_list('id', flat=True)
+
+        rows = (
+            SintaAuthorTrend.objects
+            .filter(author_id__in=author_ids, jenis__in=['gscholar_pub', 'gscholar_cite'])
+            .values('tahun', 'jenis')
+            .annotate(total=DSum('jumlah'))
+            .order_by('tahun')
+        )
+
+        # Pivot: {tahun: {pub, cite}}
+        pivot = {}
+        for r in rows:
+            t = r['tahun']
+            if t not in pivot:
+                pivot[t] = {'tahun': t, 'pub': 0, 'cite': 0}
+            if r['jenis'] == 'gscholar_pub':
+                pivot[t]['pub'] = r['total'] or 0
+            else:
+                pivot[t]['cite'] = r['total'] or 0
+
+        return sorted(pivot.values(), key=lambda x: x['tahun'])
 
     def get_author_stats(self, obj):
         """Statistik agregat dari author yang terhubung ke departemen ini."""

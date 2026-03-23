@@ -470,11 +470,36 @@ class SintaDepartemen(models.Model):
     url_profil      = models.URLField(max_length=500, blank=True, verbose_name='URL Profil SINTA')
 
     # --- SINTA Score ---
-    sinta_score_overall = models.BigIntegerField(default=0, verbose_name='SINTA Score Overall')
-    sinta_score_3year   = models.BigIntegerField(default=0, verbose_name='SINTA Score 3Yr')
+    sinta_score_overall      = models.BigIntegerField(default=0, verbose_name='SINTA Score Overall')
+    sinta_score_3year        = models.BigIntegerField(default=0, verbose_name='SINTA Score 3Yr')
+    sinta_score_productivity      = models.IntegerField(default=0, verbose_name='SINTA Score Productivity')
+    sinta_score_productivity_3year= models.IntegerField(default=0, verbose_name='SINTA Score Productivity 3Yr')
 
     # --- Ringkasan SDM ---
     jumlah_authors  = models.PositiveIntegerField(default=0, verbose_name='Jumlah Authors')
+
+    # --- Statistik Publikasi ---
+    scopus_artikel  = models.IntegerField(default=0)
+    scopus_sitasi   = models.IntegerField(default=0)
+    gscholar_artikel= models.IntegerField(default=0)
+    gscholar_sitasi = models.IntegerField(default=0)
+    wos_artikel     = models.IntegerField(default=0)
+    wos_sitasi      = models.IntegerField(default=0)
+
+    # --- Distribusi Kuartil Scopus ---
+    scopus_q1  = models.PositiveIntegerField(default=0)
+    scopus_q2  = models.PositiveIntegerField(default=0)
+    scopus_q3  = models.PositiveIntegerField(default=0)
+    scopus_q4  = models.PositiveIntegerField(default=0)
+    scopus_noq = models.PositiveIntegerField(default=0)
+
+    # --- Research Radar ---
+    research_conference = models.IntegerField(default=0)
+    research_articles   = models.IntegerField(default=0)
+    research_others     = models.IntegerField(default=0)
+
+    # --- Tren Scopus (JSON: [{tahun, jumlah}, ...]) ---
+    trend_scopus = models.JSONField(default=list, blank=True)
 
     # --- Metadata ---
     scraped_at = models.DateTimeField(auto_now=True, verbose_name='Waktu Scrape')
@@ -582,15 +607,17 @@ class SintaAuthorTrend(models.Model):
     """
 
     class Jenis(models.TextChoices):
-        SCOPUS   = 'scopus',   'Publikasi Scopus'
-        RESEARCH = 'research', 'Penelitian'
-        SERVICE  = 'service',  'Pengabdian'
+        SCOPUS        = 'scopus',        'Publikasi Scopus'
+        RESEARCH      = 'research',      'Penelitian'
+        SERVICE       = 'service',       'Pengabdian'
+        GSCHOLAR_PUB  = 'gscholar_pub',  'Publikasi Google Scholar'
+        GSCHOLAR_CITE = 'gscholar_cite', 'Sitasi Google Scholar'
 
     author = models.ForeignKey(
         SintaAuthor, on_delete=models.CASCADE,
         related_name='trend', verbose_name='Author'
     )
-    jenis  = models.CharField(max_length=10, choices=Jenis.choices, verbose_name='Jenis')
+    jenis  = models.CharField(max_length=20, choices=Jenis.choices, verbose_name='Jenis')
     tahun  = models.PositiveSmallIntegerField(verbose_name='Tahun')
     jumlah = models.PositiveIntegerField(default=0, verbose_name='Jumlah')
 
@@ -605,6 +632,161 @@ class SintaAuthorTrend(models.Model):
 
     def __str__(self):
         return f"{self.author.nama} — {self.jenis} {self.tahun}: {self.jumlah}"
+
+
+class SintaAuthorPublication(models.Model):
+    """
+    Daftar publikasi milik author dari Google Scholar / Scopus / WoS.
+    Setiap baris = satu karya unik per sumber.
+    """
+
+    class Sumber(models.TextChoices):
+        GSCHOLAR = 'gscholar', 'Google Scholar'
+        SCOPUS   = 'scopus',   'Scopus'
+        WOS      = 'wos',      'Web of Science'
+
+    author      = models.ForeignKey(
+        SintaAuthor, on_delete=models.CASCADE,
+        related_name='publications', verbose_name='Author'
+    )
+    sumber      = models.CharField(max_length=10, choices=Sumber.choices, verbose_name='Sumber')
+    pub_id      = models.CharField(max_length=200, db_index=True, verbose_name='ID Publikasi')
+    judul       = models.CharField(max_length=1000, verbose_name='Judul')
+    penulis     = models.TextField(blank=True, verbose_name='Penulis')
+    jurnal      = models.CharField(max_length=500, blank=True, verbose_name='Jurnal / Venue')
+    tahun       = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Tahun')
+    sitasi      = models.PositiveIntegerField(default=0, verbose_name='Jumlah Sitasi')
+    url         = models.URLField(max_length=800, blank=True, verbose_name='URL')
+    scraped_at  = models.DateTimeField(auto_now=True, verbose_name='Waktu Scrape')
+
+    class Meta:
+        verbose_name        = 'SINTA Author Publication'
+        verbose_name_plural = 'SINTA Author Publications'
+        unique_together     = ('author', 'sumber', 'pub_id')
+        ordering            = ['-sitasi', '-tahun']
+        indexes             = [
+            models.Index(fields=['author', 'sumber']),
+            models.Index(fields=['tahun']),
+        ]
+
+    def __str__(self):
+        return f"{self.author.nama} — {self.judul[:60]}"
+
+
+class SintaAuthorCitation(models.Model):
+    """
+    Daftar karya dari penulis lain yang mensitasi si author (citing articles).
+    Data dari tab Google Scholar / Scopus profil author di SINTA.
+    """
+
+    class Sumber(models.TextChoices):
+        GSCHOLAR = 'gscholar', 'Google Scholar'
+        SCOPUS   = 'scopus',   'Scopus'
+
+    author      = models.ForeignKey(
+        SintaAuthor, on_delete=models.CASCADE,
+        related_name='citations', verbose_name='Author Disitasi'
+    )
+    sumber      = models.CharField(max_length=10, choices=Sumber.choices, verbose_name='Sumber')
+    cite_id     = models.CharField(max_length=200, db_index=True, verbose_name='ID Sitasi')
+    judul       = models.CharField(max_length=1000, verbose_name='Judul Karya Pensitasi')
+    penulis     = models.TextField(blank=True, verbose_name='Penulis')
+    jurnal      = models.CharField(max_length=500, blank=True, verbose_name='Jurnal / Venue')
+    tahun       = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Tahun')
+    url         = models.URLField(max_length=800, blank=True, verbose_name='URL')
+    scraped_at  = models.DateTimeField(auto_now=True, verbose_name='Waktu Scrape')
+
+    class Meta:
+        verbose_name        = 'SINTA Author Citation'
+        verbose_name_plural = 'SINTA Author Citations'
+        unique_together     = ('author', 'sumber', 'cite_id')
+        ordering            = ['-tahun']
+        indexes             = [
+            models.Index(fields=['author', 'sumber']),
+            models.Index(fields=['tahun']),
+        ]
+
+    def __str__(self):
+        return f"→ {self.author.nama} ← {self.judul[:60]}"
+
+
+class SintaScopusArtikel(models.Model):
+    """
+    Artikel Scopus unik (deduplikasi by EID).
+    Satu baris = satu artikel, terlepas dari berapa author PTMA yang menulisnya.
+    """
+
+    class Kuartil(models.TextChoices):
+        Q1   = 'Q1', 'Q1'
+        Q2   = 'Q2', 'Q2'
+        Q3   = 'Q3', 'Q3'
+        Q4   = 'Q4', 'Q4'
+        NONE = '',   'No Quartile'
+
+    eid         = models.CharField(
+        max_length=50, unique=True, db_index=True,
+        verbose_name='Scopus EID'
+    )  # contoh: 2-s2.0-85018240220
+    judul       = models.CharField(max_length=1000, verbose_name='Judul')
+    tahun       = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Tahun')
+    sitasi      = models.PositiveIntegerField(default=0, verbose_name='Jumlah Sitasi')
+    kuartil     = models.CharField(
+        max_length=2, blank=True, choices=Kuartil.choices,
+        verbose_name='Kuartil Jurnal'
+    )
+    jurnal_nama = models.CharField(max_length=500, blank=True, verbose_name='Nama Jurnal')
+    jurnal_url  = models.URLField(max_length=400, blank=True, verbose_name='URL Jurnal Scopus')
+    scopus_url  = models.URLField(max_length=600, blank=True, verbose_name='URL Artikel Scopus')
+    scraped_at  = models.DateTimeField(auto_now=True, verbose_name='Waktu Scrape')
+
+    class Meta:
+        verbose_name        = 'Scopus Artikel'
+        verbose_name_plural = 'Scopus Artikel'
+        ordering            = ['-sitasi', '-tahun']
+        indexes             = [
+            models.Index(fields=['tahun']),
+            models.Index(fields=['kuartil']),
+        ]
+
+    def __str__(self):
+        return f"[{self.eid}] {self.judul[:80]}"
+
+
+class SintaScopusArtikelAuthor(models.Model):
+    """
+    Relasi M2M antara artikel Scopus dengan author PTMA yang tercatat di SINTA.
+    Satu baris = satu author menulis satu artikel.
+    """
+
+    artikel         = models.ForeignKey(
+        SintaScopusArtikel, on_delete=models.CASCADE,
+        related_name='artikel_authors', verbose_name='Artikel'
+    )
+    author          = models.ForeignKey(
+        SintaAuthor, on_delete=models.CASCADE,
+        related_name='scopus_artikels', verbose_name='Author'
+    )
+    urutan_penulis  = models.PositiveSmallIntegerField(
+        default=0, verbose_name='Urutan Penulis'
+    )  # "1 of 4" → 1
+    total_penulis   = models.PositiveSmallIntegerField(
+        default=0, verbose_name='Total Penulis'
+    )  # "1 of 4" → 4
+    nama_singkat    = models.CharField(
+        max_length=100, blank=True, verbose_name='Nama Singkat'
+    )  # "Nurfadly Z."
+
+    class Meta:
+        verbose_name        = 'Scopus Artikel Author'
+        verbose_name_plural = 'Scopus Artikel Authors'
+        unique_together     = ('artikel', 'author')
+        ordering            = ['urutan_penulis']
+        indexes             = [
+            models.Index(fields=['author']),
+        ]
+
+    def __str__(self):
+        return f"{self.author.nama} → {self.artikel.eid}"
 
 
 class SintaCluster(models.Model):
