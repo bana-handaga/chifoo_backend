@@ -1663,6 +1663,12 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
     """
     serializer_class = None   # pakai inline di bawah
     filter_backends  = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+
+    def get_permissions(self):
+        # riset-analisis POST bebas akses (siapapun boleh trigger)
+        if self.action == 'riset_analisis':
+            return [AllowAny()]
+        return super().get_permissions()
     filterset_fields = {
         'artikel_authors__author': ['exact'],
         'kuartil':                 ['exact', 'in'],
