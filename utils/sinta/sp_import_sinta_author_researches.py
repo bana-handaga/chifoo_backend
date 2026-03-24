@@ -22,6 +22,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -31,9 +32,23 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ptma.settings.base")
 import django
 django.setup()
 
+from django.db import OperationalError
+
 from apps.universities.models import SintaAuthor, SintaPenelitian, SintaPenelitianAuthor, SintaAuthorTrend
 
 INPUT_DIR = BASE_DIR / "utils" / "sinta" / "outs" / "author_researches"
+
+
+def uoc_retry(model, max_retry=5, sleep=0.3, **kwargs):
+    """update_or_create dengan retry otomatis untuk deadlock MySQL (1213)."""
+    for attempt in range(max_retry):
+        try:
+            return model.objects.update_or_create(**kwargs)
+        except OperationalError as e:
+            if "1213" in str(e) and attempt < max_retry - 1:
+                time.sleep(sleep * (attempt + 1))
+                continue
+            raise
 
 
 def build_author_map():
@@ -52,7 +67,8 @@ def import_research_history(page_author, research_history, dry_run):
         if tahun > CURRENT_YEAR or tahun < 1990:
             continue
         if not dry_run:
-            SintaAuthorTrend.objects.update_or_create(
+            uoc_retry(
+                SintaAuthorTrend,
                 author=page_author,
                 jenis=SintaAuthorTrend.Jenis.RESEARCH,
                 tahun=tahun,
@@ -98,16 +114,18 @@ def import_file(path, page_author, author_map, dry_run):
         }
 
         if not dry_run:
-            penelitian, _ = SintaPenelitian.objects.update_or_create(
+            penelitian, _ = uoc_retry(
+                SintaPenelitian,
                 judul=judul, tahun=tahun, skema_kode=skema_kode,
                 defaults=defaults,
             )
 
             # Relasi: author pemilik halaman ini (selalu anggota/ketua)
-            SintaPenelitianAuthor.objects.update_or_create(
+            uoc_retry(
+                SintaPenelitianAuthor,
                 penelitian=penelitian,
                 author=page_author,
-                defaults={"is_leader": False},  # akan di-update jika dia ketua
+                defaults={"is_leader": False},
             )
 
             # Cek apakah page_author adalah ketua
@@ -123,7 +141,8 @@ def import_file(path, page_author, author_map, dry_run):
                 p_sinta_id = p.get("sinta_id", "").strip()
                 p_author = author_map.get(p_sinta_id) if p_sinta_id else None
                 if p_author and p_author != page_author:
-                    SintaPenelitianAuthor.objects.update_or_create(
+                    uoc_retry(
+                        SintaPenelitianAuthor,
                         penelitian=penelitian,
                         author=p_author,
                         defaults={"is_leader": False},

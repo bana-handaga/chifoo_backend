@@ -933,3 +933,139 @@ Filter PT diganti dari single `<select>` menjadi **custom dropdown dengan checkb
 | `chifoo_frontend/…/sinta-kolaborasi.component.ts` | Semua perubahan di atas |
 | `chifoo_backend/apps/universities/views.py` | Fix stdout redirect + import sys |
 | `chifoo_backend/utils/sinta/build_kolaboasi_graph.py` | dim=3 spring_layout + stdout reconfigure + koordinat z |
+
+---
+
+## Topik 15: Author Search & Focus, Label Topik, Penyesuaian Tampilan 3D
+
+### 15.1 Fitur Author Search & Focus Network
+
+Ditambahkan search box di atas canvas graph untuk mencari peneliti berdasarkan nama atau PT,
+kemudian memfokuskan jaringannya di grafik.
+
+#### Komponen UI
+- **Search bar** (`sk-as-bar`) — muncul di antara legend komunitas dan SVG canvas
+- **Autocomplete dropdown** — menampilkan maks 10 hasil, diurutkan by degree (paling terhubung duluan)
+- **Focus info strip** (kuning) — muncul saat author dipilih, menampilkan nama + jumlah kolaborator langsung
+- Tombol **"⊙ Jaringan saja"** — toggle untuk isolasi ego-network
+- Tombol **"👤 Profil"** — shortcut buka popup profil author dari strip fokus
+- Tombol **"✕"** — hapus fokus, kembali ke tampilan normal
+
+#### Logika State
+```typescript
+focusAuthorId:           number | null = null;
+focusNeighborIds:        Set<number>   // neighbor langsung dari edges
+authorSearchQuery:       string
+authorSearchResults:     GraphNode[]
+authorSearchDropdownOpen: boolean
+focusEgoOnly:            boolean       // isolasi ego-network
+```
+
+#### Visualisasi Fokus
+Saat `focusAuthorId` di-set (bukan `focusEgoOnly`):
+
+| Node | Warna | Opacity |
+|------|-------|---------|
+| Author fokus | warna komunitas + ring amber | 1.0 |
+| Kolaborator langsung | warna komunitas | 0.9 |
+| Node lain | `#cbd5e1` (abu) | 0.10 |
+
+| Edge | Opacity |
+|------|---------|
+| Melibatkan author fokus | 0.85 |
+| Edge lain | 0.05 |
+
+#### Mode "Jaringan saja" (`focusEgoOnly = true`)
+- `graphNodes` getter: hanya mengembalikan focusAuthor + neighbors
+- `graphEdges` getter: hanya edge yang melibatkan focusAuthorId
+- Tampilan bersih — hanya ego-network yang terlihat
+
+#### Reset Otomatis
+Fokus di-reset (`clearFocus()`) saat:
+- Graph di-rebuild (load data baru)
+- User klik tombol ✕
+
+#### Method Baru
+```typescript
+searchAuthor(q: string)          // filter visibleNodes, max 10, sort by degree
+selectFocusAuthor(n: GraphNode)  // set focusAuthorId + hitung focusNeighborIds
+clearFocus()                     // reset semua state fokus
+get graphNodes(): GraphNode[]    // sortedVisibleNodes, atau subset jika focusEgoOnly
+get graphEdges(): GraphEdge[]    // visibleEdges, atau subset jika focusEgoOnly
+nodeColor(n): string             // warna node dengan prioritas: fokus > PT > default
+nodeOpacity(n): number           // opacity node dengan prioritas: fokus > PT > 3D scale
+nodeStroke(n): string            // stroke: amber jika fokus, slate jika hover, putih sinon
+nodeStrokeWidth(n): number       // 3px jika fokus, 2.5px jika hover, 1px sinon
+edgeOpacity(e): number           // 0.85/0.05 jika fokus aktif, 0.45/0.4 sinon
+```
+
+---
+
+### 15.2 Label Topik / Bidang Keilmuan di Ego-Network
+
+Saat fokus aktif, label topik penelitian (bidang keilmuan) ditampilkan di bawah nama node.
+
+#### Backend — `build_kolaboasi_graph.py`
+Ditambahkan `bidang_keilmuan` ke query metadata author:
+```python
+.values('id', 'nama', 'sinta_score_overall', 'sinta_id',
+        'bidang_keilmuan',                             # ← baru
+        'afiliasi__perguruan_tinggi__singkatan')
+# Disimpan maks 3 topik pertama:
+'topik': (a['bidang_keilmuan'] or [])[:3],
+```
+Field `topik` (list maks 3 string) ditambahkan ke setiap node dalam snapshot JSON.
+
+#### Frontend — `sinta-kolaborasi.component.ts`
+Interface `GraphNode` ditambah field:
+```typescript
+topik: string[];
+```
+
+Label topik ditampilkan dalam SVG di dalam `<g>` node:
+```html
+<ng-container *ngIf="focusAuthorId !== null &&
+                     (focusAuthorId === n.id || focusNeighborIds.has(n.id)) &&
+                     n.topik?.length">
+  <text *ngFor="let t of n.topik; let ti = index"
+        [attr.dy]="nodeRadius(n) * scale + 20 + ti * 11"
+        font-size="7"
+        [attr.fill]="focusAuthorId === n.id ? '#b45309' : '#64748b'">
+    {{ t | slice:0:20 }}
+  </text>
+</ng-container>
+```
+
+- Author fokus: topik **amber gelap** (`#b45309`)
+- Kolaborator: topik **abu** (`#64748b`)
+- Node tidak terkait: tidak ada label topik
+
+> **Catatan:** Data topik baru tersedia setelah graph di-recompute. Snapshot cache lama
+> tidak memiliki field `topik` (akan `undefined`/empty pada data lama).
+
+---
+
+### 15.3 Penyesuaian Warna Mode 3D (Background Terang)
+
+Background 3D diubah dari gelap (`#0f0f1a`) ke **abu-abu 5%** (`#f2f2f2`) agar lebih
+nyaman dibaca dan sesuai dengan tampilan keseluruhan aplikasi.
+
+Semua elemen disesuaikan untuk keterbacaan di background terang:
+
+| Elemen | Sebelum | Sesudah |
+|--------|---------|---------|
+| Background 3D | `#0f0f1a` (hitam) | `#f2f2f2` (abu 5%) |
+| Label nama node | `#e2e8f0` (putih abu) | `#1e293b` (hitam) — sama untuk semua mode |
+| Label topik (fokus) | `#fbbf24` (kuning) | `#b45309` (amber gelap) |
+| Label topik (neighbor) | `#94a3b8` | `#64748b` (lebih gelap) |
+| Focus ring stroke | `#fbbf24` | `#f59e0b` (amber solid) |
+| Node stroke normal | `#fff` solid | `rgba(255,255,255,0.7)` semi-transparan |
+| Node opacity minimum | 0.55 | **0.65** |
+| Edge opacity (3D normal) | 0.30 | **0.45** (lebih terlihat di bg terang) |
+| Edge opacity (fokus on) | 0.04 | **0.05** |
+
+### File yang Diubah (Topik 15)
+| File | Perubahan |
+|------|-----------|
+| `chifoo_frontend/…/sinta-kolaborasi.component.ts` | Author search/focus UI + logika, label topik, penyesuaian warna 3D |
+| `chifoo_backend/utils/sinta/build_kolaboasi_graph.py` | Tambah field `topik` (maks 3 bidang keilmuan) ke node snapshot |

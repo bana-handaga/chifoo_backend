@@ -145,6 +145,7 @@ def build_graph(sumber: str = 'all', min_bobot: int = 1,
     author_qs = SintaAuthor.objects.filter(id__in=top_nodes).select_related(
         'afiliasi__perguruan_tinggi'
     ).values('id', 'nama', 'sinta_score_overall', 'sinta_id',
+             'bidang_keilmuan',
              'afiliasi__perguruan_tinggi__singkatan')
     author_map = {
         a['id']: {
@@ -152,6 +153,7 @@ def build_graph(sumber: str = 'all', min_bobot: int = 1,
             'nama': a['nama'],
             'sinta_score': a['sinta_score_overall'] or 0,
             'sinta_id': a['sinta_id'] or '',
+            'topik': (a['bidang_keilmuan'] or [])[:3],  # maks 3 topik
         }
         for a in author_qs
     }
@@ -206,6 +208,7 @@ def build_graph(sumber: str = 'all', min_bobot: int = 1,
             'betweenness': round(betweenness.get(node_id, 0), 6),
             'komunitas':   k_id,
             'color':       COMMUNITY_COLORS[k_id % len(COMMUNITY_COLORS)],
+            'topik':       meta.get('topik', []),
             'x':           _norm(p[0], xmin, xmax),
             'y':           _norm(p[1], ymin, ymax),
             'z':           _norm(p[2], zmin, zmax),
