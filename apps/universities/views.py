@@ -93,7 +93,7 @@ class PT10Pagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 500
 
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal, SintaAfiliasi, SintaDepartemen, SintaAuthor, SintaScopusArtikel, SintaScopusArtikelAuthor, SintaAuthorTrend, SintaPengabdian, SintaPengabdianAuthor, SintaPenelitian, SintaPenelitianAuthor
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal, SintaAfiliasi, SintaDepartemen, SintaAuthor, SintaScopusArtikel, SintaScopusArtikelAuthor, SintaAuthorTrend, SintaPengabdian, SintaPengabdianAuthor, SintaPenelitian, SintaPenelitianAuthor, KolaboasiSnapshot
 from django.db.models import OuterRef, Subquery
 from .serializers import _get_periode_aktif
 from apps.monitoring.models import PeriodePelaporan
@@ -2607,4 +2607,87 @@ class SintaPenelitianViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelVi
             'tahun_list':       tahun_list,
             'sumber_list':      sumber_list,
             'skema_kode_list':  skema_kode_list,
+        })
+
+
+class KolaboasiViewSet(PublicReadAdminWriteMixin, viewsets.ViewSet):
+    """
+    Jaringan kerjasama antar peneliti PTMA (co-authorship network).
+
+    GET /api/sinta-kolaborasi/graph/
+        ?sumber=all|penelitian|pengabdian|scopus
+        ?min_bobot=1
+        ?max_nodes=400
+        ?force=1   (paksa recompute, admin only)
+
+    GET /api/sinta-kolaborasi/stats/   – ringkasan cepat dari snapshot terakhir
+    """
+
+    @action(detail=False, methods=['get'], url_path='graph',
+            permission_classes=[AllowAny])
+    def graph(self, request):
+        sumber    = request.query_params.get('sumber', 'all')
+        min_bobot = int(request.query_params.get('min_bobot', 1))
+        max_nodes = int(request.query_params.get('max_nodes', 400))
+        force     = request.query_params.get('force', '0') == '1'
+
+        if sumber not in ('all', 'penelitian', 'pengabdian', 'scopus'):
+            sumber = 'all'
+        min_bobot = max(1, min(min_bobot, 10))
+        max_nodes = max(50, min(max_nodes, 800))
+
+        # Gunakan snapshot cache jika tersedia dan tidak force-recompute
+        snap = KolaboasiSnapshot.latest(sumber=sumber)
+        if snap and not force:
+            data = snap.data
+            # Filter ulang max_nodes di sisi server jika perlu
+            if len(data.get('nodes', [])) > max_nodes:
+                nodes = data['nodes'][:max_nodes]
+                node_ids = {n['id'] for n in nodes}
+                edges = [e for e in data.get('edges', [])
+                         if e['source'] in node_ids and e['target'] in node_ids]
+                data = {**data, 'nodes': nodes, 'edges': edges,
+                        'cached': True,
+                        'cached_at': snap.created_at.isoformat()}
+            else:
+                data = {**data, 'cached': True,
+                        'cached_at': snap.created_at.isoformat()}
+            return Response(data)
+
+        # Recompute (admin or no snapshot)
+        if not request.user.is_staff and snap:
+            # Non-admin tidak bisa force recompute, kembalikan cache
+            return Response({**snap.data, 'cached': True,
+                             'cached_at': snap.created_at.isoformat()})
+
+        try:
+            from utils.sinta.build_kolaboasi_graph import build_graph
+            result = build_graph(sumber=sumber, min_bobot=min_bobot,
+                                 max_nodes=max_nodes)
+            if result.get('ready'):
+                KolaboasiSnapshot.save_snapshot(result, sumber=sumber,
+                                                min_bobot=min_bobot)
+            return Response(result)
+        except Exception as e:
+            return Response({'ready': False, 'error': str(e)}, status=500)
+
+    @action(detail=False, methods=['get'], url_path='stats',
+            permission_classes=[AllowAny])
+    def stats(self, request):
+        sumber = request.query_params.get('sumber', 'all')
+        snap   = KolaboasiSnapshot.latest(sumber=sumber)
+        if not snap:
+            return Response({'ready': False,
+                             'message': 'Belum ada snapshot. Hit /graph/ dulu.'})
+        d = snap.data
+        return Response({
+            'ready':           d.get('ready', False),
+            'sumber':          d.get('sumber'),
+            'cached_at':       snap.created_at.isoformat(),
+            'stats':           d.get('stats', {}),
+            'komunitas_list':  d.get('komunitas_list', []),
+            'top_pairs':       d.get('top_pairs', []),
+            'top_degree':      d.get('top_degree', []),
+            'top_betweenness': d.get('top_betweenness', []),
+            'top_pt':          d.get('top_pt', []),
         })

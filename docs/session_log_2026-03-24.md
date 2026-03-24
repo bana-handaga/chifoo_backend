@@ -625,3 +625,207 @@ Urutan sparkline di popup dibalik: Penelitian (hijau) tampil di atas, Pengabdian
 - `top_ketua` di stats menggunakan `SintaPenelitianAuthor.objects.filter(is_leader=True)`
   agar mendapat `author_id` (bukan hanya string nama ketua dari field `leader_nama`)
 - Semua accordion default tertutup (konsisten dengan keputusan di Topik 10)
+
+---
+
+## Topik 12: Phase 1 — Analisis Jaringan Kolaborasi (Co-Authorship Network)
+
+### Latar Belakang
+Inisiasi fitur deteksi jaringan kerjasama antar peneliti/dosen berbasis data yang sudah
+ada di DB: `SintaPenelitianAuthor`, `SintaPengabdianAuthor`, dan `SintaScopusArtikelAuthor`.
+Dua peneliti terhubung jika muncul bersama dalam satu item (penelitian / pengabdian / artikel).
+
+### Library yang Digunakan
+| Library | Versi | Fungsi |
+|---------|-------|--------|
+| `networkx` | 3.6.1 | Representasi graf, spring_layout, betweenness_centrality, density |
+| `python-louvain` (community) | 0.16 | Deteksi komunitas (Louvain algorithm) |
+
+Kedua library sudah terinstal di environment production.
+
+### Model Baru: `KolaboasiSnapshot` (migration 0022)
+
+```python
+class KolaboasiSnapshot(models.Model):
+    sumber     = models.CharField(max_length=20, default='all')
+    min_bobot  = models.PositiveSmallIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    data       = models.JSONField()
+    MAX_HISTORY = 3
+
+    @classmethod
+    def save_snapshot(cls, data, sumber='all', min_bobot=1):
+        # FIFO — hapus snapshot lama jika > MAX_HISTORY
+        snap = cls.objects.create(sumber=sumber, min_bobot=min_bobot, data=data)
+        old = cls.objects.filter(sumber=sumber).order_by('-created_at')[cls.MAX_HISTORY:]
+        cls.objects.filter(pk__in=old).delete()
+        return snap
+
+    @classmethod
+    def latest(cls, sumber='all'):
+        return cls.objects.filter(sumber=sumber).first()
+```
+
+Pola cache FIFO identik dengan `RisetLdaDeskripsi` / `RisetAnalisisSnapshot`.
+
+### Script Pembangun Graf: `utils/sinta/build_kolaboasi_graph.py`
+
+#### Alur Komputasi
+```
+1. SQL self-join per tabel M2M → pasangan (author_a, author_b) per sumber
+2. Akumulasi edge_weight (int) + edge_sources (set) untuk setiap pasangan
+3. Filter edge dengan weight < min_bobot
+4. Bangun nx.Graph + hapus isolated nodes
+5. Hitung degree centrality
+6. Hitung betweenness_centrality (k=500 approximation agar cepat)
+7. Louvain community detection (random_state=42, reproducible)
+8. Filter top-N nodes berdasarkan degree (default max_nodes=500)
+9. Ambil metadata author dari DB (nama, PT, sinta_score, sinta_id)
+10. spring_layout pada subgraph top nodes, normalisasi ke [0.02, 0.98]
+11. Serialize nodes, edges, komunitas stats, top_pairs, top_pt
+12. Simpan ke KolaboasiSnapshot
+```
+
+#### SQL Self-Join (pasangan co-author)
+```sql
+SELECT a.author_id, b.author_id
+FROM   universities_sintapenelitianauthor a
+JOIN   universities_sintapenelitianauthor b
+       ON a.penelitian_id = b.penelitian_id
+      AND a.author_id < b.author_id
+```
+Digunakan `a.id < b.id` constraint untuk menghindari duplikat simetris.
+Lebih efisien dari ORM untuk self-join pada tabel besar.
+
+#### Struktur Output JSON (disimpan ke `KolaboasiSnapshot.data`)
+```json
+{
+  "ready": true,
+  "sumber": "all",
+  "min_bobot": 1,
+  "elapsed_sec": 9.5,
+  "stats": {
+    "total_nodes": 6485,
+    "total_edges": 10435,
+    "total_komunitas": 639,
+    "display_nodes": 500,
+    "display_edges": ...,
+    "density": 0.000496,
+    "avg_degree": 3.22
+  },
+  "nodes": [{"id":..,"nama":..,"pt":..,"degree":..,"betweenness":..,"komunitas":..,"color":..,"x":..,"y":..}],
+  "edges": [{"source":..,"target":..,"weight":..,"sources":[..]}],
+  "komunitas_list": [{"id":..,"size":..,"pt_dom":..,"color":..}],
+  "top_pairs": [...],
+  "top_degree": [...],
+  "top_betweenness": [...],
+  "top_pt": [...]
+}
+```
+
+#### Hasil Test Run (seluruh sumber, min_bobot=1, max_nodes=500)
+| Metrik | Nilai |
+|--------|-------|
+| Total nodes (full graph) | 6,485 |
+| Total edges (full graph) | 10,435 |
+| Komunitas terdeteksi | 639 |
+| Graph density | 0.000496 |
+| Avg degree | 3.22 |
+| Waktu komputasi | **9.5 detik** |
+| Top pair | ILYAS MASUDIN (UMM) ↔ DIAN PALUPI RESTUPUTRI (UMM): **56×** |
+
+### Backend: `KolaboasiViewSet`
+
+```python
+class KolaboasiViewSet(PublicReadAdminWriteMixin, viewsets.ViewSet):
+    @action(detail=False, methods=['get'], url_path='graph')
+    def graph(self, request):
+        # Query params: sumber, min_bobot, max_nodes, rebuild
+        # Cek cache → serve atau trigger build_graph()
+        ...
+
+    @action(detail=False, methods=['get'], url_path='stats')
+    def stats(self, request):
+        # Ringkasan stats dari snapshot terbaru
+        ...
+```
+
+URL terdaftar: `GET /api/sinta-kolaborasi/graph/` dan `GET /api/sinta-kolaborasi/stats/`
+
+### File yang Dibuat / Diubah
+
+| File | Jenis | Keterangan |
+|------|-------|------------|
+| `apps/universities/models.py` | Ubah | Tambah `KolaboasiSnapshot` |
+| `apps/universities/migrations/0022_add_kolaboasi_snapshot.py` | Baru | Migration otomatis |
+| `apps/universities/views.py` | Ubah | Import model baru; tambah `KolaboasiViewSet` |
+| `apps/universities/urls.py` | Ubah | Daftarkan `sinta-kolaborasi` ke router |
+| `utils/sinta/build_kolaboasi_graph.py` | **Baru** | Script builder graf NetworkX |
+| `chifoo_frontend/…/sinta-kolaborasi.component.ts` | **Baru** | Komponen Angular visualisasi jaringan |
+
+### Komponen Frontend `sinta-kolaborasi.component.ts`
+
+**Tema:** Ungu `#7c3aed`, icon 🕸️
+
+**Visualisasi utama:** SVG canvas interaktif
+- Node radius skala dengan `degree`; warna berdasarkan komunitas Louvain
+- Edge width skala dengan `weight`; warna berdasarkan sumber (scopus=amber, penelitian=hijau, pengabdian=biru)
+- Hover tooltip node (nama, PT, degree, betweenness, komunitas)
+- Klik node → popup profil author (sama seperti halaman Penelitian & Pengabdian)
+- Posisi node dari `spring_layout` backend (pre-computed, tidak ada simulasi di frontend)
+
+**Filter bar:** sumber, min_bobot, max_nodes, filter PT
+
+**Panel statistik:**
+- 4 stat cards (total nodes, edges, komunitas, density)
+- Top pasangan kolaborasi (top_pairs)
+- Top 15 nodes by degree
+- Top 15 nodes by betweenness centrality
+- Daftar komunitas dengan dominansi PT
+- Bar chart top PT by total kolaborasi
+
+---
+
+## Topik 13: Menu Top-Level "NetworkX"
+
+### Permintaan
+Buat item menu tersendiri sejajar dengan "SINTA" di navigasi utama,
+dengan label "NetworkX", yang mengarah ke halaman visualisasi jaringan kolaborasi
+(`SintaKolaboasiComponent`).
+
+### Perubahan
+
+#### `app.module.ts`
+```typescript
+// Import baru
+import { SintaKolaboasiComponent } from './components/sinta/sinta-kolaborasi.component';
+
+// Route baru (di dalam children LayoutComponent)
+{ path: 'network-x', component: SintaKolaboasiComponent },
+
+// Declarations
+SintaKolaboasiComponent,
+```
+
+#### `layout.component.ts` — Desktop Nav
+```html
+<!-- Setelah item SINTA -->
+<a routerLink="/network-x" routerLinkActive="active">
+  <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17 12a5 5 0 1 0-4.48 4.97V18h-2v2h2v1h2v-1h2v-2h-2v-1.03..."/>
+  </svg>
+  <span class="nav-label">NetworkX</span>
+</a>
+```
+
+#### `layout.component.ts` — Mobile Bottom Tabs
+Item "NetworkX" yang sama ditambahkan di tab bar bawah (identik dengan desktop).
+
+### Struktur Navigasi Akhir
+```
+Dashboard | Pendidikan Tinggi | SINTA | NetworkX
+```
+- Route: `/network-x`
+- Komponen: `SintaKolaboasiComponent`
+- Icon: graf jaringan (SVG network/hub icon)
+- Tersedia di desktop topbar dan mobile bottom tab bar

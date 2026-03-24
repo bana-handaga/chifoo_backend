@@ -1090,6 +1090,47 @@ class SintaPengabdianAuthor(models.Model):
         return f"{self.author} — {role}"
 
 
+class KolaboasiSnapshot(models.Model):
+    """
+    Cache hasil analisis jaringan kerjasama antar peneliti (co-authorship network).
+    Menyimpan graph (nodes + edges), metrics, dan komunitas dalam JSONField.
+    Maks 2 snapshot disimpan (FIFO) — satu per sumber data atau full.
+    """
+    sumber     = models.CharField(
+        max_length=20, default='all',
+        help_text="all | penelitian | pengabdian | scopus"
+    )
+    min_bobot  = models.PositiveSmallIntegerField(default=1,
+        help_text="Bobot edge minimum yang disimpan")
+    created_at = models.DateTimeField(auto_now_add=True)
+    data       = models.JSONField()
+
+    MAX_HISTORY = 3
+
+    class Meta:
+        verbose_name        = 'Kolaboasi Snapshot'
+        verbose_name_plural = 'Kolaboasi Snapshots'
+        ordering            = ['-created_at']
+
+    def __str__(self):
+        return f"Kolaboasi [{self.sumber}] #{self.pk} — {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+
+    @classmethod
+    def save_snapshot(cls, data: dict, sumber='all', min_bobot=1) -> 'KolaboasiSnapshot':
+        snap = cls.objects.create(data=data, sumber=sumber, min_bobot=min_bobot)
+        old_ids = list(
+            cls.objects.order_by('-created_at')
+            .values_list('id', flat=True)[cls.MAX_HISTORY:]
+        )
+        if old_ids:
+            cls.objects.filter(id__in=old_ids).delete()
+        return snap
+
+    @classmethod
+    def latest(cls, sumber='all') -> 'KolaboasiSnapshot | None':
+        return cls.objects.filter(sumber=sumber).first()
+
+
 class RisetLdaDeskripsi(models.Model):
     """Deskripsi AI per topik LDA — disimpan permanen di DB."""
     label      = models.CharField(max_length=255, unique=True, verbose_name='Label Topik')
