@@ -93,7 +93,7 @@ class PT10Pagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 500
 
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal, SintaAfiliasi, SintaDepartemen, SintaAuthor, SintaScopusArtikel, SintaScopusArtikelAuthor, SintaAuthorTrend
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal, SintaAfiliasi, SintaDepartemen, SintaAuthor, SintaScopusArtikel, SintaScopusArtikelAuthor, SintaAuthorTrend, SintaPengabdian, SintaPengabdianAuthor, SintaPenelitian, SintaPenelitianAuthor
 from django.db.models import OuterRef, Subquery
 from .serializers import _get_periode_aktif
 from apps.monitoring.models import PeriodePelaporan
@@ -2268,3 +2268,343 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
         from .models import RisetAnalisisSnapshot
         RisetAnalisisSnapshot.save_snapshot(result)
         return Response(result)
+
+
+class SintaPengabdianViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSet):
+    """
+    Data pengabdian masyarakat dosen PTMA dari SINTA.
+
+    GET /api/sinta-pengabdian/                    - Daftar (paginasi)
+    GET /api/sinta-pengabdian/?tahun=2023          - Filter tahun
+    GET /api/sinta-pengabdian/?skema_kode=PKM      - Filter kode skema
+    GET /api/sinta-pengabdian/?sumber=DIKTI        - Filter sumber dana
+    GET /api/sinta-pengabdian/?search=kata         - Cari judul / nama ketua
+    GET /api/sinta-pengabdian/stats/               - Statistik agregat
+    """
+    filter_backends  = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = {
+        'tahun':      ['exact', 'gte', 'lte'],
+        'skema_kode': ['exact'],
+        'sumber':     ['exact'],
+    }
+    search_fields   = ['judul', 'leader_nama']
+    ordering_fields = ['tahun', 'judul', 'skema_kode', 'sumber', 'dana']
+    ordering        = ['-tahun', 'judul']
+
+    def get_queryset(self):
+        return (
+            SintaPengabdian.objects
+            .prefetch_related('pengabdian_authors__author__afiliasi__perguruan_tinggi')
+            .order_by('-tahun', 'judul')
+        )
+
+    def list(self, request, *args, **kwargs):
+        qs = self.filter_queryset(self.get_queryset())
+
+        page_size = min(int(request.query_params.get('page_size', 20)), 200)
+        page      = int(request.query_params.get('page', 1))
+        total     = qs.count()
+        items     = qs[(page - 1) * page_size: page * page_size]
+
+        results = []
+        for p in items:
+            authors = []
+            for r in p.pengabdian_authors.all():
+                pt_singkatan = ''
+                try:
+                    if r.author.afiliasi_id and r.author.afiliasi and r.author.afiliasi.perguruan_tinggi_id:
+                        pt_singkatan = r.author.afiliasi.perguruan_tinggi.singkatan
+                except Exception:
+                    pass
+                authors.append({
+                    'author_id':   r.author_id,
+                    'nama':        r.author.nama,
+                    'sinta_id':    r.author.sinta_id,
+                    'pt_singkatan': pt_singkatan,
+                    'is_leader':   r.is_leader,
+                })
+            results.append({
+                'id':          p.id,
+                'judul':       p.judul,
+                'leader_nama': p.leader_nama,
+                'skema':       p.skema,
+                'skema_kode':  p.skema_kode,
+                'tahun':       p.tahun,
+                'dana':        p.dana,
+                'status':      p.status,
+                'sumber':      p.sumber,
+                'authors':     authors,
+            })
+
+        return Response({
+            'count':     total,
+            'page':      page,
+            'page_size': page_size,
+            'results':   results,
+        })
+
+    @action(detail=False, methods=['get'], url_path='stats', permission_classes=[AllowAny])
+    def stats(self, request):
+        total_pengabdian = SintaPengabdian.objects.count()
+        total_author = SintaPengabdianAuthor.objects.values('author').distinct().count()
+
+        # Tren dari SintaAuthorTrend (semua author yg sudah di-scrape)
+        tren_service = list(
+            SintaAuthorTrend.objects.filter(jenis='service')
+            .values('tahun')
+            .annotate(jumlah=Sum('jumlah'))
+            .order_by('tahun')
+        )
+
+        # Tren jumlah judul pengabdian per tahun (dari tabel SintaPengabdian)
+        tren_judul = list(
+            SintaPengabdian.objects
+            .exclude(tahun=None)
+            .values('tahun')
+            .annotate(jumlah=Count('id'))
+            .order_by('tahun')
+        )
+
+        # Top skema
+        top_skema = list(
+            SintaPengabdian.objects
+            .exclude(skema='')
+            .values('skema')
+            .annotate(jumlah=Count('id'))
+            .order_by('-jumlah')[:15]
+        )
+
+        # Top sumber dana
+        top_sumber = list(
+            SintaPengabdian.objects
+            .exclude(sumber='')
+            .values('sumber')
+            .annotate(jumlah=Count('id'))
+            .order_by('-jumlah')[:10]
+        )
+
+        # Top ketua — pakai SintaPengabdianAuthor(is_leader=True) agar dapat author_id
+        top_ketua = list(
+            SintaPengabdianAuthor.objects
+            .filter(is_leader=True)
+            .values('author_id', 'author__nama',
+                    'author__afiliasi__perguruan_tinggi__singkatan')
+            .annotate(jumlah=Count('pengabdian_id', distinct=True))
+            .order_by('-jumlah')[:10]
+        )
+        # Normalisasi key nama
+        top_ketua = [
+            {
+                'author_id':   r['author_id'],
+                'leader_nama': r['author__nama'],
+                'pt_singkatan': r['author__afiliasi__perguruan_tinggi__singkatan'] or '',
+                'jumlah':      r['jumlah'],
+            }
+            for r in top_ketua
+        ]
+
+        # Daftar pilihan filter
+        tahun_list = list(
+            SintaPengabdian.objects
+            .exclude(tahun=None)
+            .values_list('tahun', flat=True)
+            .distinct()
+            .order_by('-tahun')
+        )
+        sumber_list = list(
+            SintaPengabdian.objects
+            .exclude(sumber='')
+            .values_list('sumber', flat=True)
+            .distinct()
+            .order_by('sumber')
+        )
+        skema_kode_list = list(
+            SintaPengabdian.objects
+            .exclude(skema_kode='')
+            .values('skema_kode', 'skema')
+            .annotate(jumlah=Count('id'))
+            .order_by('-jumlah')[:30]
+        )
+
+        return Response({
+            'total_pengabdian': total_pengabdian,
+            'total_author':     total_author,
+            'tren_service':     tren_service,
+            'tren_judul':       tren_judul,
+            'top_skema':        top_skema,
+            'top_sumber':       top_sumber,
+            'top_ketua':        top_ketua,
+            'tahun_list':       tahun_list,
+            'sumber_list':      sumber_list,
+            'skema_kode_list':  skema_kode_list,
+        })
+
+
+class SintaPenelitianViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSet):
+    """
+    Data penelitian dosen PTMA dari SINTA.
+
+    GET /api/sinta-penelitian/                    - Daftar (paginasi)
+    GET /api/sinta-penelitian/?tahun=2023          - Filter tahun
+    GET /api/sinta-penelitian/?skema_kode=PKM      - Filter kode skema
+    GET /api/sinta-penelitian/?sumber=DIKTI        - Filter sumber dana
+    GET /api/sinta-penelitian/?search=kata         - Cari judul / nama ketua
+    GET /api/sinta-penelitian/?ordering=-tahun     - Urutan (judul, tahun, skema_kode, sumber, dana)
+    GET /api/sinta-penelitian/stats/               - Statistik agregat
+    """
+    filter_backends  = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = {
+        'tahun':      ['exact', 'gte', 'lte'],
+        'skema_kode': ['exact'],
+        'sumber':     ['exact'],
+    }
+    search_fields   = ['judul', 'leader_nama']
+    ordering_fields = ['tahun', 'judul', 'skema_kode', 'sumber', 'dana']
+    ordering        = ['-tahun', 'judul']
+
+    def get_queryset(self):
+        return (
+            SintaPenelitian.objects
+            .prefetch_related('penelitian_authors__author__afiliasi__perguruan_tinggi')
+            .order_by('-tahun', 'judul')
+        )
+
+    def list(self, request, *args, **kwargs):
+        qs = self.filter_queryset(self.get_queryset())
+
+        page_size = min(int(request.query_params.get('page_size', 20)), 200)
+        page      = int(request.query_params.get('page', 1))
+        total     = qs.count()
+        items     = qs[(page - 1) * page_size: page * page_size]
+
+        results = []
+        for p in items:
+            authors = []
+            for r in p.penelitian_authors.all():
+                pt_singkatan = ''
+                try:
+                    if r.author.afiliasi_id and r.author.afiliasi and r.author.afiliasi.perguruan_tinggi_id:
+                        pt_singkatan = r.author.afiliasi.perguruan_tinggi.singkatan
+                except Exception:
+                    pass
+                authors.append({
+                    'author_id':    r.author_id,
+                    'nama':         r.author.nama,
+                    'sinta_id':     r.author.sinta_id,
+                    'pt_singkatan': pt_singkatan,
+                    'is_leader':    r.is_leader,
+                })
+            results.append({
+                'id':          p.id,
+                'judul':       p.judul,
+                'leader_nama': p.leader_nama,
+                'skema':       p.skema,
+                'skema_kode':  p.skema_kode,
+                'tahun':       p.tahun,
+                'dana':        p.dana,
+                'status':      p.status,
+                'sumber':      p.sumber,
+                'authors':     authors,
+            })
+
+        return Response({
+            'count':     total,
+            'page':      page,
+            'page_size': page_size,
+            'results':   results,
+        })
+
+    @action(detail=False, methods=['get'], url_path='stats', permission_classes=[AllowAny])
+    def stats(self, request):
+        total_penelitian = SintaPenelitian.objects.count()
+        total_author = SintaPenelitianAuthor.objects.values('author').distinct().count()
+
+        # Tren dari SintaAuthorTrend (jenis='research')
+        tren_research = list(
+            SintaAuthorTrend.objects.filter(jenis='research')
+            .values('tahun')
+            .annotate(jumlah=Sum('jumlah'))
+            .order_by('tahun')
+        )
+
+        # Tren jumlah judul penelitian per tahun (dari tabel SintaPenelitian)
+        tren_judul = list(
+            SintaPenelitian.objects
+            .exclude(tahun=None)
+            .values('tahun')
+            .annotate(jumlah=Count('id'))
+            .order_by('tahun')
+        )
+
+        # Top skema
+        top_skema = list(
+            SintaPenelitian.objects
+            .exclude(skema='')
+            .values('skema')
+            .annotate(jumlah=Count('id'))
+            .order_by('-jumlah')[:15]
+        )
+
+        # Top sumber dana
+        top_sumber = list(
+            SintaPenelitian.objects
+            .exclude(sumber='')
+            .values('sumber')
+            .annotate(jumlah=Count('id'))
+            .order_by('-jumlah')[:10]
+        )
+
+        # Top ketua — pakai SintaPenelitianAuthor(is_leader=True) agar dapat author_id
+        top_ketua = list(
+            SintaPenelitianAuthor.objects
+            .filter(is_leader=True)
+            .values('author_id', 'author__nama',
+                    'author__afiliasi__perguruan_tinggi__singkatan')
+            .annotate(jumlah=Count('penelitian_id', distinct=True))
+            .order_by('-jumlah')[:10]
+        )
+        top_ketua = [
+            {
+                'author_id':    r['author_id'],
+                'leader_nama':  r['author__nama'],
+                'pt_singkatan': r['author__afiliasi__perguruan_tinggi__singkatan'] or '',
+                'jumlah':       r['jumlah'],
+            }
+            for r in top_ketua
+        ]
+
+        # Daftar pilihan filter
+        tahun_list = list(
+            SintaPenelitian.objects
+            .exclude(tahun=None)
+            .values_list('tahun', flat=True)
+            .distinct()
+            .order_by('-tahun')
+        )
+        sumber_list = list(
+            SintaPenelitian.objects
+            .exclude(sumber='')
+            .values_list('sumber', flat=True)
+            .distinct()
+            .order_by('sumber')
+        )
+        skema_kode_list = list(
+            SintaPenelitian.objects
+            .exclude(skema_kode='')
+            .values('skema_kode', 'skema')
+            .annotate(jumlah=Count('id'))
+            .order_by('-jumlah')[:30]
+        )
+
+        return Response({
+            'total_penelitian': total_penelitian,
+            'total_author':     total_author,
+            'tren_research':    tren_research,
+            'tren_judul':       tren_judul,
+            'top_skema':        top_skema,
+            'top_sumber':       top_sumber,
+            'top_ketua':        top_ketua,
+            'tahun_list':       tahun_list,
+            'sumber_list':      sumber_list,
+            'skema_kode_list':  skema_kode_list,
+        })

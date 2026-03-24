@@ -1,21 +1,21 @@
 """
-Import data penelitian author dari JSON ke DB.
+Import data pengabdian author dari JSON ke DB.
 
-Input : utils/sinta/outs/author_researches/{kode_pt}/{sinta_id}_researches.json
-Output: tabel SintaPenelitian + SintaPenelitianAuthor
+Input : utils/sinta/outs/author_services/{kode_pt}/{sinta_id}_services.json
+Output: tabel SintaPengabdian + SintaPengabdianAuthor + SintaAuthorTrend (jenis=service)
 
 Strategi:
-  - SintaPenelitian    : update_or_create by (judul, tahun, skema_kode)
-  - SintaPenelitianAuthor: update_or_create by (penelitian, author)
-  - Author scrape page (ketua/personil) dicocokkan ke SintaAuthor via sinta_id
+  - SintaPengabdian      : update_or_create by (judul, tahun, skema_kode)
+  - SintaPengabdianAuthor: update_or_create by (pengabdian, author)
+  - SintaAuthorTrend     : update_or_create by (author, jenis='service', tahun)
   - Author tidak ada di DB → di-skip
 
 Usage:
   cd chifoo_backend
-  python utils/sinta/sp_import_sinta_author_researches.py
-  python utils/sinta/sp_import_sinta_author_researches.py --dry-run
-  python utils/sinta/sp_import_sinta_author_researches.py --status
-  python utils/sinta/sp_import_sinta_author_researches.py --limit 50
+  python utils/sinta/sp_import_sinta_author_services.py
+  python utils/sinta/sp_import_sinta_author_services.py --dry-run
+  python utils/sinta/sp_import_sinta_author_services.py --status
+  python utils/sinta/sp_import_sinta_author_services.py --limit 50
 """
 
 import argparse
@@ -31,45 +31,28 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ptma.settings.base")
 import django
 django.setup()
 
-from apps.universities.models import SintaAuthor, SintaPenelitian, SintaPenelitianAuthor, SintaAuthorTrend
+from apps.universities.models import (
+    SintaAuthor, SintaAuthorTrend,
+    SintaPengabdian, SintaPengabdianAuthor,
+)
 
-INPUT_DIR = BASE_DIR / "utils" / "sinta" / "outs" / "author_researches"
+INPUT_DIR = BASE_DIR / "utils" / "sinta" / "outs" / "author_services"
 
 
 def build_author_map():
-    return {a.sinta_id: a for a in SintaAuthor.objects.only("id", "sinta_id")}
-
-
-def import_research_history(page_author, research_history, dry_run):
-    """Simpan tren tahunan penelitian ke SintaAuthorTrend."""
-    count = 0
-    CURRENT_YEAR = 2026
-    for yr_str, jumlah in research_history.items():
-        try:
-            tahun = int(str(yr_str))
-        except (ValueError, TypeError):
-            continue
-        if tahun > CURRENT_YEAR or tahun < 1990:
-            continue
-        if not dry_run:
-            SintaAuthorTrend.objects.update_or_create(
-                author=page_author,
-                jenis=SintaAuthorTrend.Jenis.RESEARCH,
-                tahun=tahun,
-                defaults={"jumlah": jumlah},
-            )
-        count += 1
-    return count
+    return {a.sinta_id: a for a in SintaAuthor.objects.only("id", "sinta_id", "nama")}
 
 
 def import_file(path, page_author, author_map, dry_run):
-    """Return (penelitian_upserted, rel_upserted, tren_upserted)."""
+    """Return (pengabdian_upserted, rel_upserted, trend_upserted)."""
     data = json.loads(path.read_text())
-    researches = data.get("researches", [])
-    research_history = data.get("research_history", {})
-    p_count = r_count = 0
+    services = data.get("services", [])
+    service_history = data.get("service_history", {})
+    p_count = r_count = t_count = 0
 
-    for r in researches:
+    CURRENT_YEAR = 2026
+
+    for r in services:
         judul      = (r.get("judul") or "").strip()[:1000]
         skema_kode = (r.get("skema_kode") or "")[:20]
         tahun_raw  = r.get("tahun")
@@ -84,7 +67,7 @@ def import_file(path, page_author, author_map, dry_run):
             except (ValueError, TypeError):
                 tahun = None
             else:
-                if tahun > 2026 or tahun < 1990:
+                if tahun > CURRENT_YEAR or tahun < 1990:
                     tahun = None
         else:
             tahun = None
@@ -98,24 +81,24 @@ def import_file(path, page_author, author_map, dry_run):
         }
 
         if not dry_run:
-            penelitian, _ = SintaPenelitian.objects.update_or_create(
+            pengabdian, _ = SintaPengabdian.objects.update_or_create(
                 judul=judul, tahun=tahun, skema_kode=skema_kode,
                 defaults=defaults,
             )
 
-            # Relasi: author pemilik halaman ini (selalu anggota/ketua)
-            SintaPenelitianAuthor.objects.update_or_create(
-                penelitian=penelitian,
+            # Relasi: author pemilik halaman ini
+            SintaPengabdianAuthor.objects.update_or_create(
+                pengabdian=pengabdian,
                 author=page_author,
-                defaults={"is_leader": False},  # akan di-update jika dia ketua
+                defaults={"is_leader": False},
             )
 
             # Cek apakah page_author adalah ketua
             leader_nama = defaults["leader_nama"].strip().lower()
             author_nama = (page_author.nama or "").strip().lower()
             if leader_nama and author_nama and leader_nama == author_nama:
-                SintaPenelitianAuthor.objects.filter(
-                    penelitian=penelitian, author=page_author
+                SintaPengabdianAuthor.objects.filter(
+                    pengabdian=pengabdian, author=page_author
                 ).update(is_leader=True)
 
             # Personils dengan sinta_id
@@ -123,8 +106,8 @@ def import_file(path, page_author, author_map, dry_run):
                 p_sinta_id = p.get("sinta_id", "").strip()
                 p_author = author_map.get(p_sinta_id) if p_sinta_id else None
                 if p_author and p_author != page_author:
-                    SintaPenelitianAuthor.objects.update_or_create(
-                        penelitian=penelitian,
+                    SintaPengabdianAuthor.objects.update_or_create(
+                        pengabdian=pengabdian,
                         author=p_author,
                         defaults={"is_leader": False},
                     )
@@ -132,22 +115,38 @@ def import_file(path, page_author, author_map, dry_run):
         p_count += 1
         r_count += 1 + len(r.get("personils", []))
 
-    t_count = import_research_history(page_author, research_history, dry_run)
+    # Tren tahunan
+    if not dry_run:
+        CURRENT_YEAR = 2026
+        for yr_str, jumlah in service_history.items():
+            try:
+                tahun_int = int(str(yr_str))
+            except (ValueError, TypeError):
+                continue
+            if tahun_int > CURRENT_YEAR or tahun_int < 1990:
+                continue
+            SintaAuthorTrend.objects.update_or_create(
+                author=page_author,
+                jenis=SintaAuthorTrend.Jenis.SERVICE,
+                tahun=tahun_int,
+                defaults={"jumlah": jumlah},
+            )
+            t_count += 1
+
     return p_count, r_count, t_count
 
 
 def status():
-    files = list(INPUT_DIR.glob("*/*_researches.json"))
+    files = list(INPUT_DIR.glob("*/*_services.json"))
     total_items = sum(
-        len(json.loads(f.read_text()).get("researches", []))
+        len(json.loads(f.read_text()).get("services", []))
         for f in files if f.stat().st_size > 0
     )
-    tren_count = SintaAuthorTrend.objects.filter(jenis=SintaAuthorTrend.Jenis.RESEARCH).count()
-    print(f"File JSON            : {len(files):,}")
-    print(f"Total penelitian raw : {total_items:,}")
-    print(f"SintaPenelitian      : {SintaPenelitian.objects.count():,}")
-    print(f"PenelitianAuthor     : {SintaPenelitianAuthor.objects.count():,}")
-    print(f"SintaAuthorTrend     : {tren_count:,} (research)")
+    print(f"File JSON             : {len(files):,}")
+    print(f"Total pengabdian raw  : {total_items:,}")
+    print(f"SintaPengabdian       : {SintaPengabdian.objects.count():,}")
+    print(f"PengabdianAuthor      : {SintaPengabdianAuthor.objects.count():,}")
+    print(f"Tren service (author) : {SintaAuthorTrend.objects.filter(jenis='service').count():,}")
 
 
 def main():
@@ -162,7 +161,7 @@ def main():
         status()
         return
 
-    files = sorted(INPUT_DIR.glob("*/*_researches.json"))
+    files = sorted(INPUT_DIR.glob("*/*_services.json"))
     if args.offset:
         files = files[args.offset:]
     if args.limit:
@@ -177,7 +176,7 @@ def main():
     total_p = total_r = total_t = 0
 
     for i, f in enumerate(files, 1):
-        sinta_id   = f.stem.replace("_researches", "")
+        sinta_id    = f.stem.replace("_services", "")
         page_author = author_map.get(sinta_id)
 
         if page_author is None:
@@ -186,10 +185,7 @@ def main():
 
         try:
             data = json.loads(f.read_text())
-            has_researches = bool(data.get("researches"))
-            has_history    = bool(data.get("research_history"))
-
-            if not has_researches and not has_history:
+            if not data.get("services") and not data.get("service_history"):
                 skip_empty += 1
                 continue
 
@@ -205,17 +201,16 @@ def main():
 
         if i % 200 == 0:
             print(f"  [{i:,}/{len(files):,}] ok={ok} skip_noauth={skip_no_author} "
-                  f"skip_empty={skip_empty} err={err} | penelitian={total_p:,} tren={total_t:,}")
+                  f"skip_empty={skip_empty} err={err} | pengabdian={total_p:,} tren={total_t:,}")
 
     mode = "dry-run" if args.dry_run else "imported"
     print(f"\nSelesai: {ok} file {mode}, {skip_empty} kosong, "
           f"{skip_no_author} author tidak ditemukan, {err} error.")
-    print(f"Penelitian : {total_p:,}")
-    print(f"Tren       : {total_t:,} tahun")
-    tren_count = SintaAuthorTrend.objects.filter(jenis=SintaAuthorTrend.Jenis.RESEARCH).count()
-    print(f"DB total   : {SintaPenelitian.objects.count():,} penelitian, "
-          f"{SintaPenelitianAuthor.objects.count():,} relasi, "
-          f"{tren_count:,} tren")
+    print(f"Pengabdian : {total_p:,}")
+    print(f"Tren       : {total_t:,} baris")
+    print(f"DB total   : {SintaPengabdian.objects.count():,} pengabdian, "
+          f"{SintaPengabdianAuthor.objects.count():,} relasi, "
+          f"{SintaAuthorTrend.objects.filter(jenis='service').count():,} tren")
 
 
 if __name__ == "__main__":

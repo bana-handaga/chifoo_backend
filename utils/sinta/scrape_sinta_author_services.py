@@ -1,25 +1,25 @@
 """
-Scrape daftar penelitian per author dari SINTA (?view=researches).
+Scrape daftar pengabdian per author dari SINTA (?view=services).
 
 Input : daftar SintaAuthor dari DB
-Output: utils/sinta/outs/author_researches/{kode_pt}/{sinta_id}_researches.json
+Output: utils/sinta/outs/author_services/{kode_pt}/{sinta_id}_services.json
 
 Format tiap file:
   {
     "sinta_id": "...",
     "scraped_at": "...",
     "total_scraped": N,
-    "research_history": {"2022": 3, "2023": 5, ...},
-    "researches": [
+    "service_history": {"2022": 3, "2023": 5, ...},
+    "services": [
       {
         "judul": "...",
         "leader_nama": "...",
-        "skema": "...",
-        "skema_kode": "PFR",
-        "tahun": 2025,
-        "dana": "Rp. 110.330.000",
+        "skema": "PKM PID ( PKM-PID )",
+        "skema_kode": "PKM-PID",
+        "tahun": 2024,
+        "dana": "Rp. 5.000.000",
         "status": "Approved",
-        "sumber": "BIMA",
+        "sumber": "INTERNAL",
         "personils": [{"nama": "...", "sinta_id": "..."}]
       }
     ]
@@ -27,11 +27,11 @@ Format tiap file:
 
 Usage:
   cd chifoo_backend
-  python utils/sinta/scrape_sinta_author_researches.py --sinta-id 6771904
-  python utils/sinta/scrape_sinta_author_researches.py
-  python utils/sinta/scrape_sinta_author_researches.py --status
-  python utils/sinta/scrape_sinta_author_researches.py --force
-  python utils/sinta/scrape_sinta_author_researches.py --offset 0 --limit 1000
+  python utils/sinta/scrape_sinta_author_services.py --sinta-id 6771904
+  python utils/sinta/scrape_sinta_author_services.py
+  python utils/sinta/scrape_sinta_author_services.py --status
+  python utils/sinta/scrape_sinta_author_services.py --force
+  python utils/sinta/scrape_sinta_author_services.py --offset 0 --limit 1000
 """
 
 import argparse
@@ -61,7 +61,7 @@ SINTA_PASSWORD = "Jawad@Mahdi1214"
 
 BASE_URL  = "https://sinta.kemdiktisaintek.go.id"
 LOGIN_URL = f"{BASE_URL}/logins/do_login"
-OUT_BASE  = BASE_DIR / "utils" / "sinta" / "outs" / "author_researches"
+OUT_BASE  = BASE_DIR / "utils" / "sinta" / "outs" / "author_services"
 
 DELAY_OK  = 1.5
 DELAY_ERR = 5.0
@@ -95,7 +95,7 @@ def is_session_expired(html):
     return 'action="https://sinta.kemdiktisaintek.go.id/logins/do_login"' in html
 
 
-# ── Fetch ─────────────────────────────────────────────────────────────────────
+# ── Fetch ────────────────────────────────────────────────────────────────────
 
 def fetch_page(session, url, username, password):
     for attempt in range(MAX_RETRY):
@@ -117,6 +117,11 @@ def fetch_page(session, url, username, password):
 
 # ── Parse ────────────────────────────────────────────────────────────────────
 
+def extract_skema_kode(skema):
+    m = re.search(r'\(\s*([A-Z0-9\-]+)\s*\)', skema)
+    return m.group(1) if m else ""
+
+
 def get_last_page(html):
     """Cari nomor halaman terakhir dari pagination."""
     soup = BeautifulSoup(html, "html.parser")
@@ -125,10 +130,10 @@ def get_last_page(html):
     return max((int(p) for p in pages), default=1)
 
 
-def parse_research_history(html):
-    """Ambil tren tahunan dari JS chart (research-chart-articles)."""
+def parse_service_history(html):
+    """Ambil tren tahunan dari JS chart (service-chart-articles)."""
     history = {}
-    m = re.search(r"getElementById\(['\"]research-chart-articles['\"]", html)
+    m = re.search(r"getElementById\(['\"]service-chart-articles['\"]", html)
     if m:
         block = html[m.start():m.start() + 5000]
         arrays = re.findall(r"data\s*:\s*\[([^\]]+)\]", block, re.DOTALL)
@@ -141,12 +146,7 @@ def parse_research_history(html):
     return history
 
 
-def extract_skema_kode(skema):
-    m = re.search(r'\(\s*([A-Z0-9]+)\s*\)', skema)
-    return m.group(1) if m else ""
-
-
-def parse_penelitian(html):
+def parse_services(html):
     soup = BeautifulSoup(html, "html.parser")
     items = soup.find_all(class_="ar-list-item")
     results = []
@@ -220,24 +220,24 @@ def parse_penelitian(html):
     return results
 
 
-# ── File helpers ─────────────────────────────────────────────────────────────
+# ── File helpers ──────────────────────────────────────────────────────────────
 
 def find_existing(sinta_id):
-    for f in OUT_BASE.glob(f"*/{sinta_id}_researches.json"):
+    for f in OUT_BASE.glob(f"*/{sinta_id}_services.json"):
         return f
     return None
 
 
-def save_result(sinta_id, kode_pt, researches, research_history):
+def save_result(sinta_id, kode_pt, services, service_history):
     out_dir = OUT_BASE / kode_pt
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_file = out_dir / f"{sinta_id}_researches.json"
+    out_file = out_dir / f"{sinta_id}_services.json"
     payload = {
-        "sinta_id":         sinta_id,
-        "scraped_at":       datetime.now(timezone.utc).isoformat(),
-        "total_scraped":    len(researches),
-        "research_history": research_history,
-        "researches":       researches,
+        "sinta_id":       sinta_id,
+        "scraped_at":     datetime.now(timezone.utc).isoformat(),
+        "total_scraped":  len(services),
+        "service_history": service_history,
+        "services":       services,
     }
     out_file.write_text(json.dumps(payload, ensure_ascii=False, indent=2))
     return out_file
@@ -260,7 +260,7 @@ def status():
     authors = get_authors()
     total   = len(authors)
     done    = sum(1 for sid, _ in authors if find_existing(sid))
-    all_files = list(OUT_BASE.glob("*/*_researches.json"))
+    all_files = list(OUT_BASE.glob("*/*_services.json"))
     total_items = not_found_count = 0
     for f in all_files:
         try:
@@ -275,8 +275,8 @@ def status():
     print(f"Sudah discrape        : {done:,}")
     print(f"Belum discrape        : {total - done:,}")
     print(f"Total file JSON       : {len(all_files):,}")
-    print(f"  Tidak ada penelitian: {not_found_count:,}")
-    print(f"Total penelitian      : {total_items:,}")
+    print(f"  Tidak ada pengabdian: {not_found_count:,}")
+    print(f"Total pengabdian      : {total_items:,}")
 
 
 # ── Run ───────────────────────────────────────────────────────────────────────
@@ -295,7 +295,7 @@ def run(authors, force=False, username="", password=""):
             skip += 1
             continue
 
-        base_url = f"{BASE_URL}/authors/profile/{sid}/?view=researches"
+        base_url = f"{BASE_URL}/authors/profile/{sid}/?view=services"
         html = fetch_page(session, f"{base_url}&page=1", username, password)
         if html is None:
             print(f"  [{i}/{total}] {sid} ERROR")
@@ -303,22 +303,22 @@ def run(authors, force=False, username="", password=""):
             time.sleep(DELAY_ERR)
             continue
 
-        research_history = parse_research_history(html)
+        service_history = parse_service_history(html)
         last_page = get_last_page(html)
-        all_researches = parse_penelitian(html)
+        all_services = parse_services(html)
 
         for pg in range(2, last_page + 1):
             html_pg = fetch_page(session, f"{base_url}&page={pg}", username, password)
             if html_pg:
-                all_researches.extend(parse_penelitian(html_pg))
+                all_services.extend(parse_services(html_pg))
             time.sleep(DELAY_OK)
 
-        save_result(sid, kode_pt, all_researches, research_history)
+        save_result(sid, kode_pt, all_services, service_history)
 
-        if all_researches:
+        if all_services:
             ok += 1
-            print(f"  [{i}/{total}] {sid} ok ({len(all_researches)} penelitian "
-                  f"[{last_page}p], tren={len(research_history)} tahun)")
+            print(f"  [{i}/{total}] {sid} ok ({len(all_services)} pengabdian "
+                  f"[{last_page}p], tren={len(service_history)} tahun)")
         else:
             not_found += 1
 
@@ -327,13 +327,13 @@ def run(authors, force=False, username="", password=""):
         if i % 200 == 0:
             print(f"\n  --- [{i}/{total}] ok={ok} not_found={not_found} skip={skip} err={err} ---\n")
 
-    print(f"\nSelesai: {ok} scraped, {not_found} tidak ada penelitian, {skip} dilewati, {err} error.")
+    print(f"\nSelesai: {ok} scraped, {not_found} tidak ada pengabdian, {skip} dilewati, {err} error.")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
-    parser = argparse.ArgumentParser(description="Scrape penelitian author dari SINTA")
+    parser = argparse.ArgumentParser(description="Scrape pengabdian author dari SINTA")
     parser.add_argument("--sinta-id", help="Scrape satu author saja")
     parser.add_argument("--force",    action="store_true")
     parser.add_argument("--status",   action="store_true")
