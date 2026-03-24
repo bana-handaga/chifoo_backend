@@ -1,6 +1,6 @@
 """Views for Universities app"""
 
-import json, os, re
+import json, os, re, sys
 from difflib import SequenceMatcher
 from pathlib import Path
 from datetime import date, timedelta
@@ -2661,9 +2661,18 @@ class KolaboasiViewSet(PublicReadAdminWriteMixin, viewsets.ViewSet):
                              'cached_at': snap.created_at.isoformat()})
 
         try:
+            import io as _io
             from utils.sinta.build_kolaboasi_graph import build_graph
-            result = build_graph(sumber=sumber, min_bobot=min_bobot,
-                                 max_nodes=max_nodes)
+            # Redirect stdout ke StringIO agar print() di build_graph tidak
+            # crash dengan UnicodeEncodeError pada judul yang mengandung karakter
+            # non-ASCII (mis. '…') di lingkungan server dengan locale ASCII.
+            _old_stdout = sys.stdout
+            sys.stdout = _io.StringIO()
+            try:
+                result = build_graph(sumber=sumber, min_bobot=min_bobot,
+                                     max_nodes=max_nodes)
+            finally:
+                sys.stdout = _old_stdout
             if result.get('ready'):
                 KolaboasiSnapshot.save_snapshot(result, sumber=sumber,
                                                 min_bobot=min_bobot)

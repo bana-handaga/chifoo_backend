@@ -19,6 +19,14 @@ import os, sys, time, argparse
 from collections import defaultdict
 from pathlib import Path
 
+# Pastikan stdout UTF-8 agar print() tidak gagal dengan karakter non-ASCII
+# (mis. karakter '…' di judul pengabdian) saat dipanggil dari server
+try:
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+except Exception:
+    pass
+
 # ── Django setup ──────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR))
@@ -151,12 +159,14 @@ def build_graph(sumber: str = 'all', min_bobot: int = 1,
     # ── 7. Layout posisi (spring layout pada subgraph top nodes) ─────────────
     print("  Hitung layout posisi …")
     subG = G.subgraph(top_set)
-    pos  = nx.spring_layout(subG, weight='weight', k=2.5, iterations=80, seed=42)
+    pos  = nx.spring_layout(subG, weight='weight', k=2.5, iterations=80, seed=42, dim=3)
     # Normalisasi ke [0.02, 0.98]
     xs = [p[0] for p in pos.values()]
     ys = [p[1] for p in pos.values()]
+    zs = [p[2] for p in pos.values()]
     xmin, xmax = min(xs), max(xs)
     ymin, ymax = min(ys), max(ys)
+    zmin, zmax = min(zs), max(zs)
     def _norm(v, lo, hi): return round((v - lo) / (hi - lo + 1e-9) * 0.96 + 0.02, 4)
 
     # ── 8. Komunitas stats ────────────────────────────────────────────────────
@@ -198,6 +208,7 @@ def build_graph(sumber: str = 'all', min_bobot: int = 1,
             'color':       COMMUNITY_COLORS[k_id % len(COMMUNITY_COLORS)],
             'x':           _norm(p[0], xmin, xmax),
             'y':           _norm(p[1], ymin, ymax),
+            'z':           _norm(p[2], zmin, zmax),
         })
 
     # ── 10. Serialize edges (hanya antar top nodes) ────────────────────────────
