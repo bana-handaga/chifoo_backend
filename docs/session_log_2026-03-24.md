@@ -829,3 +829,107 @@ Dashboard | Pendidikan Tinggi | SINTA | NetworkX
 - Komponen: `SintaKolaboasiComponent`
 - Icon: graf jaringan (SVG network/hub icon)
 - Tersedia di desktop topbar dan mobile bottom tab bar
+
+---
+
+## Topik 14: Peningkatan Halaman NetworkX — 3D, Tiga Tampilan, Multi-PT Filter
+
+### Perubahan yang Dilakukan
+
+#### 1. Tombol Recreate Filter
+Filter Sumber Data, Min. Kolaborasi, dan Tampilkan (max nodes) tidak lagi auto-trigger reload.
+Tombol **"↻ Terapkan Filter"** muncul dengan animasi pulse ungu saat komposisi filter berbeda
+dari data yang sedang ditampilkan. Kembali ke "✓ Diterapkan" setelah data berhasil dimuat.
+
+Implementasi:
+- `loadedSumber`, `loadedMinBobot`, `loadedMaxNodes` — track params yang sudah dimuat
+- `filtersDirty: boolean` — getter cek apakah filter berubah
+- `applyFilters()` → `loadGraph(false)` — gunakan cache jika ada
+
+#### 2. Visualisasi 3D Interaktif
+Graf dirender dalam perspektif 3D penuh menggunakan pure SVG (tanpa library WebGL/Three.js).
+
+**Backend (`build_kolaboasi_graph.py`):**
+- `nx.spring_layout(..., dim=3)` — posisi node dalam 3 dimensi
+- Koordinat z dinormalisasi ke [0.02, 0.98] dan disimpan ke snapshot
+
+**Frontend:**
+- `project3D(x, y, z)` — rotasi matrix (Y-axis → X-axis) + perspective projection
+- `projMap: Map<number, ProjPos>` — cache proyeksi agar tidak recompute tiap render
+- Depth sort: node jauh di-render lebih dulu (`szB - szA` descending)
+- Node radius × scale perspektif (node dekat = lebih besar)
+- Drag mouse/touch untuk memutar (`rotX`, `rotY` += dx/dy × 0.006)
+- Tombol **↺ Reset** dan **⟳ Auto** (requestAnimationFrame loop)
+
+#### 3. Tiga Pilihan Tampilan
+
+Toggle button di header graph:
+
+| Tombol | Mode | Background | Keterangan |
+|--------|------|------------|------------|
+| 🌌 3D  | `'3d'` | Gelap `#0f0f1a` | Rotatable 3D, depth effect, drag |
+| 🗺️ 2D | `'2d'` | Terang `#f8fafc` | Spring layout flat, label lebih banyak |
+| 🏘️ Klaster | `'cluster'` | Putih `#fafafa` | Node dikelompokkan per komunitas Louvain |
+
+Mode **Klaster**: `computeClusterPositions()` menempatkan center komunitas pada lingkaran besar
+(radius 39% canvas), node dalam tiap komunitas pada lingkaran kecil di sekitar center.
+Lingkaran komunitas digambar transparan dengan label PT dominan.
+
+#### 4. Sparkline Tren Tahunan di Popup Profil Author
+Ditambahkan 4 sparkline sebelum tombol "Lihat profil SINTA lengkap":
+- 🟠 Artikel Scopus (`jenis='scopus'`, amber)
+- 🔵 Artikel G.Scholar (`jenis='gscholar_pub'`, biru)
+- 🔬 Penelitian (`jenis='research'`, hijau)
+- 🤝 Pengabdian (`jenis='service'`, langit)
+
+Method baru: `trenData()`, `sparkPts()`, `sparkPath()`, `sparkArea()` — identik dengan
+implementasi di halaman Penelitian dan Pengabdian.
+
+#### 5. Fix UnicodeEncodeError sumber Pengabdian
+**Root cause:** Judul pengabdian mengandung karakter `…` (U+2026). Di server production
+dengan locale ASCII, `print()` dalam `build_graph()` raise `UnicodeEncodeError`.
+
+**Fix di `views.py`:**
+```python
+_old_stdout = sys.stdout
+sys.stdout = io.StringIO()
+try:
+    result = build_graph(...)
+finally:
+    sys.stdout = _old_stdout
+```
+Stdout dialihkan ke `StringIO` selama `build_graph()` berjalan — output print diabaikan
+(tidak diperlukan di web server context), error encoding tidak terjadi.
+
+**Fix di `build_kolaboasi_graph.py`:**
+```python
+try:
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+except Exception:
+    pass
+```
+Untuk keamanan saat dijalankan via CLI.
+
+#### 6. Multi-PT Filter (Pilih Beberapa PT)
+Filter PT diganti dari single `<select>` menjadi **custom dropdown dengan checkbox**:
+
+- Klik trigger button → dropdown terbuka
+- Search box untuk cari PT
+- Checkbox per PT — bisa pilih banyak sekaligus
+- PT yang dipilih tampil sebagai **chips** (tag berwarna ungu) dengan tombol × untuk hapus
+- Tombol "Hapus semua" dan "Selesai"
+- Klik di luar dropdown → tutup otomatis
+
+**Logika filter:**
+- `selectedPts: Set<string>` — set PT yang dipilih
+- Jika `selectedPts.size === 0` → tampilkan semua node
+- Jika ada PT dipilih → node di luar PT dipilih di-dim (opacity 0.15, warna abu)
+- Edge hanya tampil jika **kedua** endpoint berasal dari PT yang dipilih
+
+### File yang Diubah
+| File | Perubahan |
+|------|-----------|
+| `chifoo_frontend/…/sinta-kolaborasi.component.ts` | Semua perubahan di atas |
+| `chifoo_backend/apps/universities/views.py` | Fix stdout redirect + import sys |
+| `chifoo_backend/utils/sinta/build_kolaboasi_graph.py` | dim=3 spring_layout + stdout reconfigure + koordinat z |
