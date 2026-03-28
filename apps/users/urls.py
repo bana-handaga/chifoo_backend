@@ -1,7 +1,7 @@
 """URLs for Users app"""
 
 from django.urls import path
-from .views import login_view, logout_view, profile_view, mfa_verify, mfa_toggle
+from .views import login_view, logout_view, profile_view, mfa_verify, mfa_toggle, update_email, update_password
 
 urlpatterns = [
     path('login/', login_view, name='login'),
@@ -10,4 +10,6 @@ urlpatterns = [
     path('me/', profile_view, name='me'),
     path('mfa/verify/', mfa_verify, name='mfa-verify'),
     path('mfa/toggle/', mfa_toggle, name='mfa-toggle'),
+    path('update-email/', update_email, name='update-email'),
+    path('update-password/', update_password, name='update-password'),
 ]

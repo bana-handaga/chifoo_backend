@@ -134,6 +134,58 @@ def mfa_toggle(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+def update_email(request):
+    """Update alamat email user yang sedang login."""
+    email = request.data.get('email', '').strip()
+    password = request.data.get('password', '').strip()
+
+    if not email or not password:
+        return Response({'detail': 'Email dan password diperlukan.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not request.user.check_password(password):
+        return Response({'detail': 'Password salah.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if User.objects.filter(email=email).exclude(pk=request.user.pk).exists():
+        return Response({'detail': 'Email sudah digunakan oleh akun lain.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    request.user.email = email
+    # Jika MFA aktif tapi email lama tidak valid, tetap pertahankan
+    request.user.save(update_fields=['email'])
+
+    return Response({'detail': 'Email berhasil diperbarui.', 'user': UserSerializer(request.user).data})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_password(request):
+    """Ganti password user yang sedang login."""
+    old_password = request.data.get('old_password', '').strip()
+    new_password = request.data.get('new_password', '').strip()
+    confirm_password = request.data.get('confirm_password', '').strip()
+
+    if not old_password or not new_password or not confirm_password:
+        return Response({'detail': 'Semua field diperlukan.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not request.user.check_password(old_password):
+        return Response({'detail': 'Password lama salah.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if new_password != confirm_password:
+        return Response({'detail': 'Konfirmasi password tidak cocok.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if len(new_password) < 8:
+        return Response({'detail': 'Password baru minimal 8 karakter.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    request.user.set_password(new_password)
+    request.user.save()
+    # Perbarui token agar sesi tetap valid
+    Token.objects.filter(user=request.user).delete()
+    token = Token.objects.create(user=request.user)
+
+    return Response({'detail': 'Password berhasil diperbarui.', 'token': token.key})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def logout_view(request):
     """Logout dan hapus token"""
     request.user.auth_token.delete()
