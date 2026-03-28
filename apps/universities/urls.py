@@ -9,6 +9,7 @@ from .views import (
     prodi_distribusi, prodi_daftar, SintaJurnalViewSet, SintaAfiliasiViewSet,
     SintaDepartemenViewSet, SintaAuthorViewSet, SintaScopusArtikelViewSet,
     SintaPengabdianViewSet, SintaPenelitianViewSet, KolaboasiViewSet,
+    proxy_image_b64,
 )
 
 router = DefaultRouter()
@@ -34,4 +35,5 @@ urlpatterns = [
     path('riwayat-pendidikan/', riwayat_pendidikan_search, name='riwayat-pendidikan'),
     path('prodi-distribusi/', prodi_distribusi, name='prodi-distribusi'),
     path('prodi-daftar/', prodi_daftar, name='prodi-daftar'),
+    path('proxy-image/', proxy_image_b64, name='proxy-image'),
 ]

@@ -2770,3 +2770,23 @@ class KolaboasiViewSet(PublicReadAdminWriteMixin, viewsets.ViewSet):
             'top_betweenness': d.get('top_betweenness', []),
             'top_pt':          d.get('top_pt', []),
         })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def proxy_image_b64(request):
+    """Fetch external image URL server-side, return as base64 data URI (bypass browser CORS)."""
+    import urllib.request, base64 as b64mod
+    url = request.query_params.get('url', '').strip()
+    if not url or not url.startswith('http'):
+        return Response('')
+    try:
+        req = urllib.request.Request(url, headers={
+            'User-Agent': 'Mozilla/5.0 (compatible; PTMA-Bot/1.0)'
+        })
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            ct = resp.headers.get('Content-Type', 'image/jpeg').split(';')[0].strip()
+            data = b64mod.b64encode(resp.read()).decode()
+            return Response(f'data:{ct};base64,{data}')
+    except Exception:
+        return Response('')
