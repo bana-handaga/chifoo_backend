@@ -712,11 +712,14 @@ class ProgramStudiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
     def _pt_list_inner(self, request):
         nama    = request.query_params.get('nama', '').strip()
         jenjang = request.query_params.get('jenjang', '').strip()
+        pt_id   = request.query_params.get('pt_id', '').strip()
         qs = ProgramStudi.objects.filter(is_active=True)
         if nama:
             qs = qs.filter(nama__icontains=nama)
         if jenjang:
             qs = qs.filter(jenjang=jenjang)
+        if pt_id:
+            qs = qs.filter(perguruan_tinggi_id=pt_id)
         rows = list(
             qs
             .select_related('perguruan_tinggi')
@@ -781,6 +784,15 @@ class ProgramStudiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         ]
         result.sort(key=lambda x: x['mahasiswa_aktif'], reverse=True)
         return Response(result)
+
+    @action(detail=False, methods=['get'])
+    def exp_counts(self, request):
+        """Hitung jumlah prodi yang kedaluarsa < 7 bulan dan < 12 bulan"""
+        today = date.today()
+        qs = ProgramStudi.objects.filter(is_active=True, tanggal_kedaluarsa_akreditasi__isnull=False)
+        count_7m  = qs.filter(tanggal_kedaluarsa_akreditasi__lte=today + relativedelta(months=7)).count()
+        count_12m = qs.filter(tanggal_kedaluarsa_akreditasi__lte=today + relativedelta(months=12)).count()
+        return Response({'count_7m': count_7m, 'count_12m': count_12m})
 
     @action(detail=False, methods=['get'])
     def statistik_jenjang(self, request):
