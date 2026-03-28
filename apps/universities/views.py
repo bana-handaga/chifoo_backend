@@ -785,6 +785,70 @@ class ProgramStudiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         result.sort(key=lambda x: x['mahasiswa_aktif'], reverse=True)
         return Response(result)
 
+    @action(detail=True, methods=['get'])
+    def detail_popup(self, request, pk=None):
+        """Detail prodi untuk popup: info, tren mahasiswa, tren dosen"""
+        try:
+            prodi = ProgramStudi.objects.select_related('perguruan_tinggi').get(pk=pk)
+        except ProgramStudi.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+        pt = prodi.perguruan_tinggi
+        AKREDITASI_LABEL = dict(ProgramStudi.StatusAkreditasi.choices)
+
+        # Tren mahasiswa aktif per semester (ganjil only, ascending)
+        mhs_qs = (DataMahasiswa.objects
+                  .filter(program_studi=prodi)
+                  .exclude(tahun_akademik='2017/2018')
+                  .order_by('tahun_akademik', 'semester'))
+        tren_mhs = [
+            {
+                'label': f"{m.tahun_akademik} {m.semester.title()}",
+                'aktif': m.mahasiswa_aktif,
+                'pria': m.mahasiswa_pria,
+                'wanita': m.mahasiswa_wanita,
+            }
+            for m in mhs_qs
+        ]
+
+        # Tren dosen per semester
+        dsn_qs = (DataDosen.objects
+                  .filter(program_studi=prodi)
+                  .exclude(tahun_akademik='2017/2018')
+                  .order_by('tahun_akademik', 'semester'))
+        tren_dsn = [
+            {
+                'label': f"{d.tahun_akademik} {d.semester.title()}",
+                'tetap': d.dosen_tetap,
+                'tidak_tetap': d.dosen_tidak_tetap,
+                's3': d.dosen_s3,
+                's2': d.dosen_s2,
+                's1': d.dosen_s1,
+            }
+            for d in dsn_qs
+        ]
+
+        return Response({
+            'id':           prodi.id,
+            'kode_prodi':   prodi.kode_prodi,
+            'nama':         prodi.nama,
+            'jenjang':      prodi.jenjang,
+            'jenjang_display': prodi.get_jenjang_display(),
+            'akreditasi':   prodi.akreditasi,
+            'akreditasi_display': AKREDITASI_LABEL.get(prodi.akreditasi, prodi.akreditasi),
+            'no_sk':        prodi.no_sk_akreditasi,
+            'tgl_exp':      prodi.tanggal_kedaluarsa_akreditasi,
+            'is_active':    prodi.is_active,
+            'pt_id':        pt.id,
+            'pt_nama':      pt.nama,
+            'pt_singkatan': pt.singkatan,
+            'pt_kota':      pt.kota,
+            'pt_provinsi':  pt.provinsi,
+            'pt_akreditasi': pt.akreditasi_institusi,
+            'tren_mahasiswa': tren_mhs,
+            'tren_dosen':     tren_dsn,
+        })
+
     @action(detail=False, methods=['get'])
     def exp_counts(self, request):
         """Hitung jumlah prodi yang kedaluarsa < 7 bulan dan < 12 bulan"""
