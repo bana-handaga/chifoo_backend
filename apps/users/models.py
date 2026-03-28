@@ -60,3 +60,21 @@ class MfaOtp(models.Model):
 
     def is_valid(self):
         return not self.is_used and timezone.now() < self.expires_at
+
+
+class PasswordResetToken(models.Model):
+    """Token reset password via email, berlaku 1 jam"""
+    user = models.ForeignKey(
+        'users.User', on_delete=models.CASCADE, related_name='reset_tokens'
+    )
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'Token Reset Password'
+        verbose_name_plural = 'Token Reset Password'
+
+    def is_valid(self):
+        return not self.is_used and timezone.now() < self.expires_at

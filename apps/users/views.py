@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
-from .models import MfaOtp
+from .models import MfaOtp, PasswordResetToken
 from .serializers import UserSerializer
 
 User = get_user_model()
@@ -182,6 +182,95 @@ def update_password(request):
     token = Token.objects.create(user=request.user)
 
     return Response({'detail': 'Password berhasil diperbarui.', 'token': token.key})
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def forgot_password(request):
+    """Kirim link reset password ke email user."""
+    identifier = request.data.get('identifier', '').strip()
+    if not identifier:
+        return Response({'detail': 'Username atau email diperlukan.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = (
+        User.objects.filter(username=identifier).first() or
+        User.objects.filter(email=identifier).first()
+    )
+
+    # Selalu response sukses agar tidak bocorkan info akun
+    success_msg = 'Jika akun ditemukan dan memiliki email terdaftar, link reset password akan dikirim.'
+
+    if not user or not user.email:
+        return Response({'detail': success_msg})
+
+    # Hapus token lama yang belum dipakai
+    PasswordResetToken.objects.filter(user=user, is_used=False).update(is_used=True)
+
+    reset_token = PasswordResetToken.objects.create(
+        user=user,
+        expires_at=timezone.now() + timedelta(hours=1),
+    )
+
+    frontend_url = getattr(django_settings, 'FRONTEND_URL', '').rstrip('/')
+    if not frontend_url:
+        scheme = request.scheme
+        host = request.get_host().split(':')[0]
+        frontend_url = f'{scheme}://{host}'
+
+    reset_url = f'{frontend_url}/reset-password?token={reset_token.token}'
+
+    subject = 'Reset Password PTMA Monitoring'
+    message = (
+        f'Halo {user.get_full_name() or user.username},\n\n'
+        f'Kami menerima permintaan reset password untuk akun Anda.\n\n'
+        f'Klik link berikut untuk membuat password baru:\n{reset_url}\n\n'
+        f'Link berlaku selama 1 jam. Jika Anda tidak meminta reset password, abaikan email ini.\n\n'
+        f'PTMA Monitoring System'
+    )
+    from_email = getattr(django_settings, 'DEFAULT_FROM_EMAIL', 'noreply@ptma.id')
+    send_mail(subject, message, from_email, [user.email], fail_silently=True)
+
+    return Response({'detail': success_msg})
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def reset_password(request):
+    """Reset password menggunakan token dari email."""
+    token_str = request.data.get('token', '').strip()
+    new_password = request.data.get('new_password', '').strip()
+    confirm_password = request.data.get('confirm_password', '').strip()
+
+    if not token_str:
+        return Response({'detail': 'Token diperlukan.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        reset_token = PasswordResetToken.objects.select_related('user').get(token=token_str)
+    except (PasswordResetToken.DoesNotExist, Exception):
+        return Response({'detail': 'Token tidak valid.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not reset_token.is_valid():
+        return Response({'detail': 'Token sudah kadaluarsa atau sudah digunakan.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not new_password or not confirm_password:
+        return Response({'detail': 'Password baru diperlukan.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if len(new_password) < 8:
+        return Response({'detail': 'Password minimal 8 karakter.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if new_password != confirm_password:
+        return Response({'detail': 'Konfirmasi password tidak cocok.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = reset_token.user
+    user.set_password(new_password)
+    user.save()
+
+    # Tandai semua token reset user ini sebagai sudah dipakai
+    PasswordResetToken.objects.filter(user=user).update(is_used=True)
+    # Hapus session token agar user harus login ulang
+    Token.objects.filter(user=user).delete()
+
+    return Response({'detail': 'Password berhasil direset. Silakan login dengan password baru.'})
 
 
 @api_view(['POST'])

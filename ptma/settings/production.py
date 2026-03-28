@@ -146,6 +146,8 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
 # ── Email (untuk OTP MFA) ────────────────────────────────────────────────────
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://chifoo.biroti-ums.id')
+
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 25))
