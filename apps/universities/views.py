@@ -4,6 +4,7 @@ import json, os, re, sys
 from difflib import SequenceMatcher
 from pathlib import Path
 from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 from django.db.models import Count, Sum, Q, Case, When, Value, IntegerField
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, api_view, permission_classes
@@ -173,22 +174,15 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         exp_filter = self.request.query_params.get('exp_filter')
         if exp_filter:
             today = date.today()
-            if exp_filter == 'more_1y':
-                qs = qs.filter(tanggal_kadaluarsa_akreditasi__gt=today + timedelta(days=365))
-            elif exp_filter == 'less_3m':
+            if exp_filter == 'less_12m':
                 qs = qs.filter(
                     tanggal_kadaluarsa_akreditasi__isnull=False,
-                    tanggal_kadaluarsa_akreditasi__lte=today + timedelta(days=90)
+                    tanggal_kadaluarsa_akreditasi__lte=today + relativedelta(months=12)
                 )
-            elif exp_filter == 'less_2m':
+            elif exp_filter == 'less_7m':
                 qs = qs.filter(
                     tanggal_kadaluarsa_akreditasi__isnull=False,
-                    tanggal_kadaluarsa_akreditasi__lte=today + timedelta(days=60)
-                )
-            elif exp_filter == 'less_1m':
-                qs = qs.filter(
-                    tanggal_kadaluarsa_akreditasi__isnull=False,
-                    tanggal_kadaluarsa_akreditasi__lte=today + timedelta(days=30)
+                    tanggal_kadaluarsa_akreditasi__lte=today + relativedelta(months=7)
                 )
         return qs
 
