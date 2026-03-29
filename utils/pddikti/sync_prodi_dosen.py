@@ -457,11 +457,14 @@ def scrape_detail_prodi(driver, detail_url, nama_prodi):
         f"ilmu={len(profil['ilmu_dipelajari'])}c "
         f"kompetensi={len(profil['kompetensi'])}c")
 
-    # ── Tab Tenaga Pendidik ───────────────────────────────────
+    # ── Tab Tenaga Pendidik → sub-tab Dosen Home Base ────────
     log(f"    Mencari tab Tenaga Pendidik...")
     tab_found = _click_tab(driver, ["Tenaga Pendidik", "Dosen"])
     if tab_found:
         wait(4, "tab Tenaga Pendidik")
+        # Klik sub-tab "Dosen Home Base" jika ada (beberapa PT punya sub-tab)
+        _click_tab(driver, ["Dosen Home Base", "Home Base"])
+        wait(2, "sub-tab Dosen Home Base")
         dosen_list = _read_dosen_paginated(driver)
         log(f"    → {len(dosen_list)} dosen terbaca")
         result["dosen"] = dosen_list
@@ -593,35 +596,57 @@ def _read_table_rows(driver, kolom, skip_header=1):
 
 
 def _click_next_page(driver):
-    """Klik tombol next pagination. Return True jika berhasil."""
+    """Klik tombol next pagination. Return True jika berhasil.
+
+    PDDikti menggunakan icon button tanpa teks dan tanpa aria-label.
+    Penanda: aria-disabled="false" (aktif) vs aria-disabled="true" (nonaktif).
+    Strategi: ambil tabel dosen, cari button SETELAH tabel dengan aria-disabled="false".
+    """
+    # Prioritas 1: JavaScript — temukan button setelah tabel dosen dengan aria-disabled="false"
     try:
-        # Cari semua kandidat next button
-        for tag in ["button", "a", "li", "span", "div"]:
-            els = driver.find_elements(By.TAG_NAME, tag)
-            for el in els:
-                try:
-                    txt = el.text.strip()
-                    aria_label = el.get_attribute("aria-label") or ""
-                    title = el.get_attribute("title") or ""
-                    cls = el.get_attribute("class") or ""
-                    aria_disabled = el.get_attribute("aria-disabled") or ""
-                    disabled = el.get_attribute("disabled")
+        btn = driver.execute_script("""
+            // Cari tabel dosen (ada header NIDN)
+            var dosen_tbl = null;
+            for (var tbl of document.querySelectorAll('table')) {
+                var hdrs = Array.from(tbl.querySelectorAll('tr:first-child th, tr:first-child td'))
+                               .map(function(c) { return c.textContent.trim(); });
+                if (hdrs.indexOf('NIDN') >= 0) { dosen_tbl = tbl; break; }
+            }
+            if (!dosen_tbl) return null;
 
-                    is_next = (txt in [">", "›", "»", "Next", "next", "Berikutnya"]
-                               or "next" in aria_label.lower()
-                               or "next" in title.lower()
-                               or ("next" in cls.lower() and tag in ["button","a"]))
-
-                    if not is_next:
-                        continue
-                    if aria_disabled == "true" or disabled or "disabled" in cls or "opacity" in cls:
-                        return False
-                    el.click()
-                    return True
-                except StaleElementReferenceException:
-                    continue
+            // Cari button setelah tabel yang aria-disabled="false"
+            for (var btn of document.querySelectorAll('button')) {
+                if (!(dosen_tbl.compareDocumentPosition(btn) & 4)) continue; // harus setelah tabel
+                if (btn.getAttribute('aria-disabled') === 'false') return btn;
+            }
+            return null;
+        """)
+        if btn:
+            driver.execute_script("arguments[0].scrollIntoView({block:'center'});", btn)
+            time.sleep(0.3)
+            driver.execute_script("arguments[0].click();", btn)
+            return True
     except Exception:
         pass
+
+    # Fallback: cari button teks '>' atau aria-label "next" (untuk halaman lain yang berbeda)
+    for btn in driver.find_elements(By.TAG_NAME, "button"):
+        try:
+            txt      = btn.text.strip()
+            aria     = (btn.get_attribute("aria-label") or "").lower()
+            disabled = btn.get_attribute("disabled")
+            aria_dis = btn.get_attribute("aria-disabled") or ""
+            if (txt == ">" or txt in ("›", "»") or "next" in aria):
+                if not disabled and aria_dis != "true":
+                    driver.execute_script(
+                        "arguments[0].scrollIntoView({block:'center'});", btn)
+                    time.sleep(0.3)
+                    driver.execute_script("arguments[0].click();", btn)
+                    return True
+        except StaleElementReferenceException:
+            continue
+        except Exception:
+            continue
     return False
 
 
