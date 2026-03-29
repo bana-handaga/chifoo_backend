@@ -10,6 +10,7 @@ from .views import (
     SintaDepartemenViewSet, SintaAuthorViewSet, SintaScopusArtikelViewSet,
     SintaPengabdianViewSet, SintaPenelitianViewSet, KolaboasiViewSet,
     proxy_image_b64,
+    sync_jadwal_list, sync_jadwal_detail, sync_pt_list,
 )
 
 router = DefaultRouter()
@@ -36,4 +37,7 @@ urlpatterns = [
     path('prodi-distribusi/', prodi_distribusi, name='prodi-distribusi'),
     path('prodi-daftar/', prodi_daftar, name='prodi-daftar'),
     path('proxy-image/', proxy_image_b64, name='proxy-image'),
+    path('sync/jadwal/', sync_jadwal_list, name='sync-jadwal-list'),
+    path('sync/jadwal/<int:pk>/', sync_jadwal_detail, name='sync-jadwal-detail'),
+    path('sync/pt-list/', sync_pt_list, name='sync-pt-list'),
 ]

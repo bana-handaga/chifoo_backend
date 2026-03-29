@@ -1155,3 +1155,59 @@ class RisetLdaDeskripsi(models.Model):
 
     def __str__(self):
         return self.label
+
+
+class SinkronisasiJadwal(models.Model):
+    """Jadwal sinkronisasi data PDDikti — dikelola oleh superadmin."""
+
+    class TipeSync(models.TextChoices):
+        PRODI_DOSEN   = 'prodi_dosen',   'Prodi + Dosen + Mahasiswa'
+        DETAIL_DOSEN  = 'detail_dosen',  'Detail Dosen'
+
+    class ModePT(models.TextChoices):
+        SEMUA   = 'semua',   'Semua PT'
+        PILIHAN = 'pilihan', 'PT Pilihan'
+
+    class TipeJadwal(models.TextChoices):
+        HARIAN = 'harian', 'Rutin Setiap Hari'
+        SEKALI = 'sekali', 'Sekali Saja'
+
+    class StatusTerakhir(models.TextChoices):
+        MENUNGGU = 'menunggu', 'Menunggu'
+        BERJALAN = 'berjalan', 'Sedang Berjalan'
+        SELESAI  = 'selesai',  'Selesai'
+        ERROR    = 'error',    'Error'
+
+    HARI_CHOICES = [
+        (0, 'Senin'), (1, 'Selasa'), (2, 'Rabu'), (3, 'Kamis'),
+        (4, 'Jumat'), (5, 'Sabtu'), (6, 'Minggu'),
+    ]
+
+    tipe_sync    = models.CharField(max_length=20, choices=TipeSync.choices, default=TipeSync.PRODI_DOSEN)
+    mode_pt      = models.CharField(max_length=10, choices=ModePT.choices, default=ModePT.SEMUA)
+    pt_list      = models.ManyToManyField(PerguruanTinggi, blank=True, verbose_name='PT Pilihan')
+    tipe_jadwal  = models.CharField(max_length=10, choices=TipeJadwal.choices, default=TipeJadwal.HARIAN)
+    hari_mulai   = models.IntegerField(choices=HARI_CHOICES, default=0)
+    jam_mulai    = models.TimeField(default='23:00')
+    hari_selesai = models.IntegerField(choices=HARI_CHOICES, default=6)
+    jam_selesai  = models.TimeField(default='05:00')
+    is_active    = models.BooleanField(default=True)
+    status_terakhir = models.CharField(
+        max_length=10, choices=StatusTerakhir.choices, default=StatusTerakhir.MENUNGGU
+    )
+    pesan_terakhir = models.TextField(blank=True)
+    last_run     = models.DateTimeField(null=True, blank=True)
+    created_by   = models.ForeignKey(
+        'users.User', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='sync_jadwal'
+    )
+    created_at   = models.DateTimeField(auto_now_add=True)
+    updated_at   = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name        = 'Jadwal Sinkronisasi'
+        verbose_name_plural = 'Jadwal Sinkronisasi'
+        ordering            = ['-created_at']
+
+    def __str__(self):
+        return f"{self.get_tipe_sync_display()} — {self.get_tipe_jadwal_display()}"

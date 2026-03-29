@@ -2790,3 +2790,102 @@ def proxy_image_b64(request):
             return Response(f'data:{ct};base64,{data}')
     except Exception:
         return Response('')
+
+
+# ── Sinkronisasi Jadwal ──────────────────────────────────────────────────────
+
+from .models import SinkronisasiJadwal
+
+class IsSuperAdmin(IsAuthenticated):
+    def has_permission(self, request, view):
+        return super().has_permission(request, view) and getattr(request.user, 'role', '') == 'superadmin'
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsSuperAdmin])
+def sync_jadwal_list(request):
+    """List semua jadwal (GET) atau buat jadwal baru (POST)."""
+    if request.method == 'GET':
+        jadwals = SinkronisasiJadwal.objects.prefetch_related('pt_list').all()
+        data = []
+        for j in jadwals:
+            data.append({
+                'id': j.id,
+                'tipe_sync': j.tipe_sync,
+                'tipe_sync_label': j.get_tipe_sync_display(),
+                'mode_pt': j.mode_pt,
+                'pt_list': [{'id': p.id, 'nama': p.nama, 'singkatan': p.singkatan, 'kode_pt': p.kode_pt}
+                             for p in j.pt_list.all()],
+                'tipe_jadwal': j.tipe_jadwal,
+                'tipe_jadwal_label': j.get_tipe_jadwal_display(),
+                'hari_mulai': j.hari_mulai,
+                'hari_mulai_label': dict(SinkronisasiJadwal.HARI_CHOICES).get(j.hari_mulai, ''),
+                'jam_mulai': j.jam_mulai.strftime('%H:%M') if j.jam_mulai else '',
+                'hari_selesai': j.hari_selesai,
+                'hari_selesai_label': dict(SinkronisasiJadwal.HARI_CHOICES).get(j.hari_selesai, ''),
+                'jam_selesai': j.jam_selesai.strftime('%H:%M') if j.jam_selesai else '',
+                'is_active': j.is_active,
+                'status_terakhir': j.status_terakhir,
+                'pesan_terakhir': j.pesan_terakhir,
+                'last_run': j.last_run.isoformat() if j.last_run else None,
+                'created_at': j.created_at.isoformat(),
+            })
+        return Response(data)
+
+    # POST — buat jadwal baru
+    d = request.data
+    try:
+        jadwal = SinkronisasiJadwal.objects.create(
+            tipe_sync    = d.get('tipe_sync', 'prodi_dosen'),
+            mode_pt      = d.get('mode_pt', 'semua'),
+            tipe_jadwal  = d.get('tipe_jadwal', 'harian'),
+            hari_mulai   = int(d.get('hari_mulai', 0)),
+            jam_mulai    = d.get('jam_mulai', '23:00'),
+            hari_selesai = int(d.get('hari_selesai', 6)),
+            jam_selesai  = d.get('jam_selesai', '05:00'),
+            is_active    = bool(d.get('is_active', True)),
+            created_by   = request.user,
+        )
+        pt_ids = d.get('pt_ids', [])
+        if pt_ids:
+            jadwal.pt_list.set(PerguruanTinggi.objects.filter(id__in=pt_ids))
+        return Response({'id': jadwal.id, 'detail': 'Jadwal berhasil disimpan.'}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT', 'DELETE'])
+@permission_classes([IsSuperAdmin])
+def sync_jadwal_detail(request, pk):
+    """Update (PUT) atau hapus (DELETE) jadwal sinkronisasi."""
+    try:
+        jadwal = SinkronisasiJadwal.objects.get(pk=pk)
+    except SinkronisasiJadwal.DoesNotExist:
+        return Response({'detail': 'Tidak ditemukan.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'DELETE':
+        jadwal.delete()
+        return Response({'detail': 'Jadwal dihapus.'})
+
+    d = request.data
+    jadwal.tipe_sync    = d.get('tipe_sync', jadwal.tipe_sync)
+    jadwal.mode_pt      = d.get('mode_pt', jadwal.mode_pt)
+    jadwal.tipe_jadwal  = d.get('tipe_jadwal', jadwal.tipe_jadwal)
+    jadwal.hari_mulai   = int(d.get('hari_mulai', jadwal.hari_mulai))
+    jadwal.jam_mulai    = d.get('jam_mulai', jadwal.jam_mulai)
+    jadwal.hari_selesai = int(d.get('hari_selesai', jadwal.hari_selesai))
+    jadwal.jam_selesai  = d.get('jam_selesai', jadwal.jam_selesai)
+    jadwal.is_active    = bool(d.get('is_active', jadwal.is_active))
+    jadwal.save()
+    pt_ids = d.get('pt_ids')
+    if pt_ids is not None:
+        jadwal.pt_list.set(PerguruanTinggi.objects.filter(id__in=pt_ids))
+    return Response({'detail': 'Jadwal diperbarui.'})
+
+
+@api_view(['GET'])
+@permission_classes([IsSuperAdmin])
+def sync_pt_list(request):
+    """Daftar semua PT untuk dropdown pemilihan (id, nama, singkatan, kode_pt)."""
+    pts = PerguruanTinggi.objects.values('id', 'nama', 'singkatan', 'kode_pt').order_by('nama')
+    return Response(list(pts))
