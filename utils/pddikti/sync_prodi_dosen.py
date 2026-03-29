@@ -29,10 +29,7 @@ from pathlib import Path
 import pymysql
 from dotenv import load_dotenv
 from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
-
-GECKODRIVER_PATH = Path(__file__).resolve().parent.parent / "geckodriver"
+from firefox_helper import make_driver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
@@ -85,13 +82,7 @@ def log(msg):
 # ── Selenium ─────────────────────────────────────────────────
 
 def init_driver():
-    options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
-    options.binary_location = "/snap/firefox/current/usr/lib/firefox/firefox"
-    return webdriver.Firefox(service=Service(str(GECKODRIVER_PATH)), options=options)
+    return make_driver(headless=True)
 
 
 def wait(sec, reason=""):

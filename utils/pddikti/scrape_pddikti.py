@@ -7,14 +7,8 @@ import os
 import time
 import json
 import csv
-from pathlib import Path
-
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
-
-GECKODRIVER_PATH = Path(__file__).resolve().parent.parent / "geckodriver"
 from selenium.webdriver.common.by import By
+from firefox_helper import make_driver
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
@@ -26,14 +20,7 @@ from selenium.webdriver.common.keys import Keys
 # ---------------------------------------------------------------------------
 
 def init_driver(headless=True):
-    options = Options()
-    if headless:
-        options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
-    options.binary_location = "/snap/firefox/current/usr/lib/firefox/firefox"
-    return webdriver.Firefox(service=Service(str(GECKODRIVER_PATH)), options=options)
+    return make_driver(headless=headless)
 
 
 # ---------------------------------------------------------------------------

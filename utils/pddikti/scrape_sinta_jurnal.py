@@ -52,15 +52,9 @@ import os
 import re
 import time
 
-from pathlib import Path
-
-from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
-
-GECKODRIVER_PATH = Path(__file__).resolve().parent.parent / "geckodriver"
 from selenium.webdriver.support.ui import WebDriverWait
+from firefox_helper import make_driver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
@@ -90,18 +84,14 @@ RETRY_WAIT        = 10   # detik jeda antar retry
 # ---------------------------------------------------------------------------
 
 def init_driver(headless=True):
-    options = Options()
-    if headless:
-        options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
-    options.binary_location = "/snap/firefox/current/usr/lib/firefox/firefox"
-    options.set_preference("network.http.connection-timeout", 90)
-    options.set_preference("network.http.response.timeout", 90)
-    driver = webdriver.Firefox(service=Service(str(GECKODRIVER_PATH)), options=options)
-    driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT)
-    return driver
+    return make_driver(
+        headless=headless,
+        page_load_timeout=PAGE_LOAD_TIMEOUT,
+        extra_prefs={
+            "network.http.connection-timeout": 90,
+            "network.http.response.timeout": 90,
+        },
+    )
 
 
 # ---------------------------------------------------------------------------
