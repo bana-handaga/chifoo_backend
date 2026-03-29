@@ -52,9 +52,14 @@ import os
 import re
 import time
 
+from pathlib import Path
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
+
+GECKODRIVER_PATH = Path(__file__).resolve().parent.parent / "geckodriver"
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
@@ -94,7 +99,7 @@ def init_driver(headless=True):
     options.binary_location = "/snap/firefox/current/usr/lib/firefox/firefox"
     options.set_preference("network.http.connection-timeout", 90)
     options.set_preference("network.http.response.timeout", 90)
-    driver = webdriver.Firefox(options=options)
+    driver = webdriver.Firefox(service=Service(str(GECKODRIVER_PATH)), options=options)
     driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT)
     return driver
 
