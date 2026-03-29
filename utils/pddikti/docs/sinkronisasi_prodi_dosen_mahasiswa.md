@@ -44,6 +44,7 @@ Label: **Genap 2025**
     c. Gunakan NIDN sebagai ID untuk update ke table universities_profildosen, jika NIDN kosong gunakan 'NUPTK'. Insert data baru jika keduanya tidak ditemukan.
     d. Ulangi untuk  seluruh dosen yang ditampilkan,
     e. Jika ada nama dosen di halaman selanjutnya ikuti sampai ke halaman yang terakhir.
+    f. Jika data dosen sudah habis, periksa dosen dari porgram studi ini di DB, jika ada dosen yang tidak terupdate set statu = non-aktif
 
 7. **Update Tabel universities_datamahasiswa**
     a. Cari Tab dengan label 'Mahasiswa' posisi ada disamping kanan tab 'Tenaga Tendik'.
