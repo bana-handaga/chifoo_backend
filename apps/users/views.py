@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 from django.conf import settings as django_settings
 from django.utils import timezone
 from rest_framework import serializers, viewsets, status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -37,6 +37,7 @@ def _send_otp_email(user, code):
 
 
 @api_view(['POST'])
+@authentication_classes([])
 @permission_classes([AllowAny])
 def login_view(request):
     """Login dan dapatkan token. Jika MFA aktif, kembalikan mfa_required=True."""
@@ -98,6 +99,7 @@ def login_view(request):
 
 
 @api_view(['POST'])
+@authentication_classes([])
 @permission_classes([AllowAny])
 def mfa_verify(request):
     """Verifikasi kode OTP dari email lalu kembalikan token."""
@@ -204,6 +206,7 @@ def update_password(request):
 
 
 @api_view(['POST'])
+@authentication_classes([])
 @permission_classes([AllowAny])
 def register_view(request):
     """Registrasi akun baru. Akun tidak aktif sampai disetujui admin."""
@@ -280,6 +283,7 @@ def register_view(request):
 
 
 @api_view(['POST'])
+@authentication_classes([])
 @permission_classes([AllowAny])
 def forgot_password(request):
     """Kirim link reset password ke email user."""
@@ -329,6 +333,7 @@ def forgot_password(request):
 
 
 @api_view(['POST'])
+@authentication_classes([])
 @permission_classes([AllowAny])
 def reset_password(request):
     """Reset password menggunakan token dari email."""
