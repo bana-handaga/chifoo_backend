@@ -2964,10 +2964,16 @@ def sync_jalankan(request, pk):
     if request.data.get('dry_run'):
         cmd.append('--dry-run')
 
+    log_path = script_path.parent / f'sync_run_{pk}.log'
+    proc_env = os.environ.copy()
+    proc_env.setdefault('TMPDIR', '/tmp')
+
     proc = subprocess.Popen(
         cmd,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=open(log_path, 'w'),
+        stderr=subprocess.STDOUT,
+        cwd=str(script_path.parent),
+        env=proc_env,
         start_new_session=True,
     )
 
