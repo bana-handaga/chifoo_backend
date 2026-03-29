@@ -11,6 +11,7 @@ Langkah per PT:
        → Update detail profil prodi (kontak, tanggal berdiri, informasi umum, dll.)
   6. Tab 'Tenaga Pendidik': upsert universities_profildosen (NIDN/NUPTK)
   7. Tab 'Mahasiswa': upsert universities_datamahasiswa (3 semester terakhir)
+  8. Setelah semua prodi: tandai Non-Aktif dosen PT yang tidak ditemukan di PDDikti run ini
 
 Usage:
     python sync_prodi_dosen.py --kode 064167 --nama "AKADEMI KESEHATAN MUHAMMADIYAH TEMANGGUNG"
@@ -834,6 +835,36 @@ def db_upsert_profildosen(cur, now, pt_id, prodi_id, prodi_nama, dosen_list, dry
     return n_upd, n_ins
 
 
+def db_mark_nonak_dosen(cur, now, pt_id, dry_run):
+    """
+    Tandai Non-Aktif semua dosen PT yang tidak ter-update pada run ini.
+    Kriteria: perguruan_tinggi_id = pt_id AND (scraped_at IS NULL OR scraped_at < now).
+    """
+    if dry_run:
+        cur.execute(
+            "SELECT COUNT(*) AS n FROM universities_profildosen "
+            "WHERE perguruan_tinggi_id=%s "
+            "  AND (scraped_at IS NULL OR scraped_at < %s) "
+            "  AND status != 'Non-Aktif'",
+            (pt_id, now),
+        )
+        n = cur.fetchone()["n"]
+        log(f"    [DRY] {n} dosen akan ditandai Non-Aktif")
+        return n
+
+    cur.execute(
+        "UPDATE universities_profildosen "
+        "SET status='Non-Aktif', updated_at=%s "
+        "WHERE perguruan_tinggi_id=%s "
+        "  AND (scraped_at IS NULL OR scraped_at < %s) "
+        "  AND status != 'Non-Aktif'",
+        (now, pt_id, now),
+    )
+    n = cur.rowcount
+    log(f"    profildosen Non-Aktif: {n} dosen tidak ditemukan di PDDikti")
+    return n
+
+
 def db_upsert_datamahasiswa(cur, now, pt_id, prodi_id, mhs_list, dry_run):
     n_upd = n_ins = 0
     for m in mhs_list:
@@ -933,6 +964,7 @@ def sync(kode_pt, nama_pt, dry_run):
         "prodi_updated": 0, "prodi_skipped": 0,
         "dosen_updated": 0, "dosen_inserted": 0,
         "profil_updated": 0, "profil_inserted": 0,
+        "profil_non_aktif": 0,
         "mhs_updated": 0, "mhs_inserted": 0,
         "errors": 0,
     }
@@ -1028,6 +1060,10 @@ def sync(kode_pt, nama_pt, dry_run):
                     except Exception:
                         pass
 
+        # Langkah 8 — Tandai Non-Aktif dosen yang tidak ditemukan di PDDikti
+        log("\n--- Langkah 8: Tandai Non-Aktif dosen yang tidak ter-update ---")
+        stats["profil_non_aktif"] = db_mark_nonak_dosen(cur, now, pt_id, dry_run)
+
         if not dry_run:
             conn.commit()
             log("\nKomit ke database berhasil.")
@@ -1050,6 +1086,7 @@ def sync(kode_pt, nama_pt, dry_run):
     log(f"  DataDosen inserted  : {stats['dosen_inserted']}")
     log(f"  ProfilDosen updated : {stats['profil_updated']}")
     log(f"  ProfilDosen inserted: {stats['profil_inserted']}")
+    log(f"  ProfilDosen Non-Aktif:{stats['profil_non_aktif']}")
     log(f"  DataMahasiswa upd   : {stats['mhs_updated']}")
     log(f"  DataMahasiswa ins   : {stats['mhs_inserted']}")
     log(f"  Error               : {stats['errors']}")
