@@ -43,10 +43,29 @@ def login_view(request):
     serializer = LoginSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
-    user = authenticate(
-        username=serializer.validated_data['username'],
-        password=serializer.validated_data['password']
-    )
+    username = serializer.validated_data['username']
+    password = serializer.validated_data['password']
+
+    # Cek dulu apakah user ada dan password benar, tapi belum aktif
+    try:
+        user_obj = User.objects.get(username=username)
+        if not user_obj.check_password(password):
+            return Response(
+                {'detail': 'Username atau password salah.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        if not user_obj.is_active:
+            return Response(
+                {'detail': 'Akun Anda belum diaktifkan. Hubungi administrator.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+    except User.DoesNotExist:
+        return Response(
+            {'detail': 'Username atau password salah.'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    user = authenticate(username=username, password=password)
     if not user:
         return Response(
             {'detail': 'Username atau password salah.'},
@@ -182,6 +201,82 @@ def update_password(request):
     token = Token.objects.create(user=request.user)
 
     return Response({'detail': 'Password berhasil diperbarui.', 'token': token.key})
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register_view(request):
+    """Registrasi akun baru. Akun tidak aktif sampai disetujui admin."""
+    data = request.data
+    username = data.get('username', '').strip()
+    email = data.get('email', '').strip()
+    first_name = data.get('first_name', '').strip()
+    last_name = data.get('last_name', '').strip()
+    password = data.get('password', '').strip()
+    confirm_password = data.get('confirm_password', '').strip()
+    nomor_telepon = data.get('nomor_telepon', '').strip()
+
+    errors = {}
+    if not username:
+        errors['username'] = 'Username wajib diisi.'
+    elif User.objects.filter(username=username).exists():
+        errors['username'] = 'Username sudah digunakan.'
+    if not email:
+        errors['email'] = 'Email wajib diisi.'
+    elif User.objects.filter(email=email).exists():
+        errors['email'] = 'Email sudah terdaftar.'
+    if not first_name:
+        errors['first_name'] = 'Nama depan wajib diisi.'
+    if not password:
+        errors['password'] = 'Password wajib diisi.'
+    elif len(password) < 8:
+        errors['password'] = 'Password minimal 8 karakter.'
+    elif password != confirm_password:
+        errors['confirm_password'] = 'Konfirmasi password tidak cocok.'
+
+    if errors:
+        return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+    user = User.objects.create_user(
+        username=username,
+        email=email,
+        first_name=first_name,
+        last_name=last_name,
+        password=password,
+        nomor_telepon=nomor_telepon,
+        is_active=False,
+        role=User.Role.VIEWER,
+    )
+
+    # Notifikasi ke semua superadmin
+    admin_emails = list(User.objects.filter(
+        role=User.Role.SUPERADMIN, email__isnull=False, is_active=True
+    ).exclude(email='').values_list('email', flat=True))
+    fallback = getattr(django_settings, 'DEFAULT_FROM_EMAIL', '')
+    notify_list = admin_emails if admin_emails else ([fallback] if fallback else [])
+
+    if notify_list:
+        send_mail(
+            subject='Permintaan Registrasi Baru — PTMA Monitor',
+            message=(
+                f'Ada permintaan registrasi akun baru:\n\n'
+                f'Nama     : {user.get_full_name()}\n'
+                f'Username : {user.username}\n'
+                f'Email    : {user.email}\n\n'
+                f'Silakan aktifkan akun melalui halaman admin Django jika disetujui.\n\n'
+                f'PTMA Monitoring System'
+            ),
+            from_email=getattr(django_settings, 'DEFAULT_FROM_EMAIL', 'noreply@ptma.id'),
+            recipient_list=notify_list,
+            fail_silently=True,
+        )
+
+    return Response({
+        'detail': (
+            'Pendaftaran berhasil! Akun Anda sedang menunggu persetujuan admin. '
+            'Anda akan dapat login setelah akun diaktifkan.'
+        )
+    }, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])

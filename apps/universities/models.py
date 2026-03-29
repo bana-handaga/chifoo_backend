@@ -123,6 +123,15 @@ class ProgramStudi(models.Model):
     no_sk_akreditasi = models.CharField(max_length=100, blank=True, verbose_name='No. SK Akreditasi')
     tanggal_kedaluarsa_akreditasi = models.DateField(null=True, blank=True, verbose_name='Tanggal Kedaluarsa Akreditasi')
     is_active = models.BooleanField(default=True)
+
+    telepon = models.CharField(max_length=20, blank=True, verbose_name='Telepon')
+    email = models.CharField(max_length=100, blank=True, verbose_name='Email')
+    website = models.CharField(max_length=200, blank=True, verbose_name='Website')
+    tanggal_berdiri = models.CharField(max_length=40, blank=True, verbose_name='Tanggal Berdiri')
+    informasi_umum = models.TextField(blank=True, verbose_name='Informasi Umum')
+    ilmu_dipelajari = models.TextField(blank=True, verbose_name='Ilmu yang Dipelajari')
+    kompetensi = models.TextField(blank=True, verbose_name='Kompetensi')
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -191,6 +200,8 @@ class DataDosen(models.Model):
     dosen_lektor = models.PositiveIntegerField(default=0)
     dosen_asisten_ahli = models.PositiveIntegerField(default=0)
     dosen_bersertifikat = models.PositiveIntegerField(default=0)
+    dosen_rasio = models.IntegerField(default=0, null=True, blank=True)
+    rasio = models.CharField(max_length=10, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Data Dosen'

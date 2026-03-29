@@ -6,6 +6,7 @@ from .views import (
     mfa_verify, mfa_toggle,
     update_email, update_password,
     forgot_password, reset_password,
+    register_view,
 )
 
 urlpatterns = [
@@ -19,4 +20,5 @@ urlpatterns = [
     path('update-password/', update_password, name='update-password'),
     path('forgot-password/', forgot_password, name='forgot-password'),
     path('reset-password/', reset_password, name='reset-password'),
+    path('register/', register_view, name='register'),
 ]
