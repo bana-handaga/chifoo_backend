@@ -1054,9 +1054,9 @@ def sync(kode_pt, nama_pt, dry_run):
                     except Exception:
                         pass
 
-        # Langkah 8 — Tandai Non-Aktif dosen yang tidak ditemukan di PDDikti
-        log("\n--- Langkah 8: Tandai Non-Aktif dosen yang tidak ter-update ---")
-        stats["profil_non_aktif"] = db_mark_nonak_dosen(cur, now, pt_id, dry_run)
+            # Langkah 8 — Tandai Non-Aktif dosen yang tidak ditemukan di PDDikti
+            log("\n--- Langkah 8: Tandai Non-Aktif dosen yang tidak ter-update ---")
+            stats["profil_non_aktif"] = db_mark_nonak_dosen(cur, now, pt_id, dry_run)
 
         if not dry_run:
             conn.commit()
