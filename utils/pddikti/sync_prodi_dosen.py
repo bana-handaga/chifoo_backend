@@ -46,6 +46,7 @@ DB_CONFIG = {
     "db":          os.environ.get("DB_NAME", "ptma_db"),
     "charset":     "utf8mb4",
     "cursorclass": pymysql.cursors.DictCursor,
+    "connect_timeout": 30,
 }
 
 BASE_URL = "https://pddikti.kemdiktisaintek.go.id"
@@ -1059,6 +1060,7 @@ def sync(kode_pt, nama_pt, dry_run):
             stats["profil_non_aktif"] = db_mark_nonak_dosen(cur, now, pt_id, dry_run)
 
         if not dry_run:
+            conn.ping(reconnect=True)
             conn.commit()
             log("\nKomit ke database berhasil.")
 

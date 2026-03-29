@@ -29,7 +29,7 @@ ENV_PATH  = UTILS_DIR.parent.parent / ".env"
 load_dotenv(ENV_PATH)
 
 sys.path.insert(0, str(UTILS_DIR))
-from sync_db_helper import update_jadwal_status
+from sync_db_helper import update_jadwal_status, ensure_connection
 
 DB_CONFIG = {
     "host":        os.environ.get("DB_HOST", "localhost"),
@@ -39,6 +39,7 @@ DB_CONFIG = {
     "db":          os.environ.get("DB_NAME", "ptma_db"),
     "charset":     "utf8mb4",
     "cursorclass": pymysql.cursors.DictCursor,
+    "connect_timeout": 30,
 }
 
 LOG_LINES = []

@@ -51,6 +51,7 @@ DB_CONFIG = {
     "db":          os.environ.get("DB_NAME", "ptma_db"),
     "charset":     "utf8mb4",
     "cursorclass": pymysql.cursors.DictCursor,
+    "connect_timeout": 30,
 }
 
 PENDIDIKAN_MAP = {
@@ -280,6 +281,7 @@ def sync(kode_pt, nidn_filter, limit, dry_run):
                         stats["updated"] += 1
 
                     if not dry_run:
+                        conn.ping(reconnect=True)
                         conn.commit()
 
                 except Exception as e:

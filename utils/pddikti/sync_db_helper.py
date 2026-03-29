@@ -3,6 +3,14 @@
 from datetime import datetime
 
 
+def ensure_connection(conn):
+    """Ping dan reconnect jika koneksi MySQL sudah putus (gone away)."""
+    try:
+        conn.ping(reconnect=True)
+    except Exception:
+        pass
+
+
 def update_jadwal_status(conn, jadwal_id, status, pesan='', pid=-1):
     """
     Update status sinkronisasi jadwal di DB.
@@ -16,6 +24,7 @@ def update_jadwal_status(conn, jadwal_id, status, pesan='', pid=-1):
     """
     if jadwal_id is None:
         return
+    ensure_connection(conn)
     now = datetime.now()
     with conn.cursor() as cur:
         if pid == -1:
