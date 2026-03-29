@@ -51,10 +51,12 @@ def make_driver(headless=True, page_load_timeout=None, extra_prefs=None):
         for key, val in extra_prefs.items():
             options.set_preference(key, val)
 
-    driver = webdriver.Firefox(
-        service=Service(str(GECKODRIVER_PATH)),
-        options=options,
-    )
+    # Snap Firefox membutuhkan TMPDIR=/tmp agar geckodriver bisa launch
+    svc_env = os.environ.copy()
+    svc_env.setdefault("TMPDIR", "/tmp")
+
+    service = Service(str(GECKODRIVER_PATH), env=svc_env)
+    driver = webdriver.Firefox(service=service, options=options)
     if page_load_timeout:
         driver.set_page_load_timeout(page_load_timeout)
     return driver
