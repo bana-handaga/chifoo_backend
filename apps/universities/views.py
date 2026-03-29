@@ -2794,7 +2794,49 @@ def proxy_image_b64(request):
 
 # ── Sinkronisasi Jadwal ──────────────────────────────────────────────────────
 
+import os
+import signal
+import subprocess
+import sys
+from pathlib import Path
+from django.utils import timezone
+
 from .models import SinkronisasiJadwal
+
+
+def _is_process_alive(pid):
+    """Cek apakah proses dengan PID masih berjalan."""
+    try:
+        os.kill(pid, 0)
+        return True
+    except (OSError, ProcessLookupError):
+        return False
+
+
+def _jadwal_to_dict(j):
+    return {
+        'id': j.id,
+        'tipe_sync': j.tipe_sync,
+        'tipe_sync_label': j.get_tipe_sync_display(),
+        'mode_pt': j.mode_pt,
+        'pt_list': [{'id': p.id, 'nama': p.nama, 'singkatan': p.singkatan, 'kode_pt': p.kode_pt}
+                    for p in j.pt_list.all()],
+        'tipe_jadwal': j.tipe_jadwal,
+        'tipe_jadwal_label': j.get_tipe_jadwal_display(),
+        'hari_mulai': j.hari_mulai,
+        'hari_mulai_label': dict(SinkronisasiJadwal.HARI_CHOICES).get(j.hari_mulai, ''),
+        'jam_mulai': j.jam_mulai.strftime('%H:%M') if j.jam_mulai else '',
+        'hari_selesai': j.hari_selesai,
+        'hari_selesai_label': dict(SinkronisasiJadwal.HARI_CHOICES).get(j.hari_selesai, ''),
+        'jam_selesai': j.jam_selesai.strftime('%H:%M') if j.jam_selesai else '',
+        'is_active': j.is_active,
+        'status_terakhir': j.status_terakhir,
+        'pesan_terakhir': j.pesan_terakhir,
+        'pid': j.pid,
+        'last_run': j.last_run.isoformat() if j.last_run else None,
+        'created_at': j.created_at.isoformat(),
+    }
+
 
 class IsSuperAdmin(IsAuthenticated):
     def has_permission(self, request, view):
@@ -2807,30 +2849,7 @@ def sync_jadwal_list(request):
     """List semua jadwal (GET) atau buat jadwal baru (POST)."""
     if request.method == 'GET':
         jadwals = SinkronisasiJadwal.objects.prefetch_related('pt_list').all()
-        data = []
-        for j in jadwals:
-            data.append({
-                'id': j.id,
-                'tipe_sync': j.tipe_sync,
-                'tipe_sync_label': j.get_tipe_sync_display(),
-                'mode_pt': j.mode_pt,
-                'pt_list': [{'id': p.id, 'nama': p.nama, 'singkatan': p.singkatan, 'kode_pt': p.kode_pt}
-                             for p in j.pt_list.all()],
-                'tipe_jadwal': j.tipe_jadwal,
-                'tipe_jadwal_label': j.get_tipe_jadwal_display(),
-                'hari_mulai': j.hari_mulai,
-                'hari_mulai_label': dict(SinkronisasiJadwal.HARI_CHOICES).get(j.hari_mulai, ''),
-                'jam_mulai': j.jam_mulai.strftime('%H:%M') if j.jam_mulai else '',
-                'hari_selesai': j.hari_selesai,
-                'hari_selesai_label': dict(SinkronisasiJadwal.HARI_CHOICES).get(j.hari_selesai, ''),
-                'jam_selesai': j.jam_selesai.strftime('%H:%M') if j.jam_selesai else '',
-                'is_active': j.is_active,
-                'status_terakhir': j.status_terakhir,
-                'pesan_terakhir': j.pesan_terakhir,
-                'last_run': j.last_run.isoformat() if j.last_run else None,
-                'created_at': j.created_at.isoformat(),
-            })
-        return Response(data)
+        return Response([_jadwal_to_dict(j) for j in jadwals])
 
     # POST — buat jadwal baru
     d = request.data
@@ -2889,3 +2908,98 @@ def sync_pt_list(request):
     """Daftar semua PT untuk dropdown pemilihan (id, nama, singkatan, kode_pt)."""
     pts = PerguruanTinggi.objects.values('id', 'nama', 'singkatan', 'kode_pt').order_by('nama')
     return Response(list(pts))
+
+
+@api_view(['GET'])
+@permission_classes([IsSuperAdmin])
+def sync_status(request, pk):
+    """Status terkini satu jadwal — dengan zombie detection."""
+    try:
+        jadwal = SinkronisasiJadwal.objects.prefetch_related('pt_list').get(pk=pk)
+    except SinkronisasiJadwal.DoesNotExist:
+        return Response({'detail': 'Tidak ditemukan.'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Zombie detection: proses tandai berjalan tapi sudah mati
+    if jadwal.status_terakhir == 'berjalan' and jadwal.pid:
+        if not _is_process_alive(jadwal.pid):
+            jadwal.status_terakhir = 'error'
+            jadwal.pesan_terakhir  = f'Proses (PID {jadwal.pid}) berhenti tidak normal.'
+            jadwal.pid = None
+            jadwal.save(update_fields=['status_terakhir', 'pesan_terakhir', 'pid'])
+
+    return Response({
+        'id':               jadwal.id,
+        'status_terakhir':  jadwal.status_terakhir,
+        'pesan_terakhir':   jadwal.pesan_terakhir,
+        'pid':              jadwal.pid,
+        'last_run':         jadwal.last_run.isoformat() if jadwal.last_run else None,
+    })
+
+
+@api_view(['POST'])
+@permission_classes([IsSuperAdmin])
+def sync_jalankan(request, pk):
+    """Jalankan proses sync untuk jadwal ini sebagai subprocess."""
+    try:
+        jadwal = SinkronisasiJadwal.objects.get(pk=pk)
+    except SinkronisasiJadwal.DoesNotExist:
+        return Response({'detail': 'Tidak ditemukan.'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Cegah double-run
+    if jadwal.status_terakhir == 'berjalan' and jadwal.pid:
+        if _is_process_alive(jadwal.pid):
+            return Response(
+                {'detail': f'Proses sync masih berjalan (PID {jadwal.pid}).'},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+    script_path = (
+        Path(__file__).resolve().parent.parent.parent
+        / 'utils' / 'pddikti' / 'sync_runner.py'
+    )
+    if not script_path.exists():
+        return Response({'detail': f'Script tidak ditemukan: {script_path}'}, status=500)
+
+    cmd = [sys.executable, str(script_path), '--jadwal_id', str(pk)]
+    if request.data.get('dry_run'):
+        cmd.append('--dry-run')
+
+    proc = subprocess.Popen(
+        cmd,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+
+    jadwal.status_terakhir = 'berjalan'
+    jadwal.pid             = proc.pid
+    jadwal.pesan_terakhir  = 'Proses dimulai...'
+    jadwal.last_run        = timezone.now()
+    jadwal.save(update_fields=['status_terakhir', 'pid', 'pesan_terakhir', 'last_run'])
+
+    return Response({'detail': 'Proses sync dimulai.', 'pid': proc.pid})
+
+
+@api_view(['POST'])
+@permission_classes([IsSuperAdmin])
+def sync_hentikan(request, pk):
+    """Hentikan proses sync yang sedang berjalan (SIGTERM)."""
+    try:
+        jadwal = SinkronisasiJadwal.objects.get(pk=pk)
+    except SinkronisasiJadwal.DoesNotExist:
+        return Response({'detail': 'Tidak ditemukan.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if jadwal.status_terakhir != 'berjalan' or not jadwal.pid:
+        return Response({'detail': 'Tidak ada proses yang sedang berjalan.'}, status=400)
+
+    try:
+        os.kill(jadwal.pid, signal.SIGTERM)
+    except (OSError, ProcessLookupError):
+        pass  # Sudah mati
+
+    jadwal.status_terakhir = 'error'
+    jadwal.pesan_terakhir  = f'Proses dihentikan manual (PID {jadwal.pid}).'
+    jadwal.pid             = None
+    jadwal.save(update_fields=['status_terakhir', 'pesan_terakhir', 'pid'])
+
+    return Response({'detail': 'Proses dihentikan.'})

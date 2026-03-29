@@ -1196,6 +1196,7 @@ class SinkronisasiJadwal(models.Model):
         max_length=10, choices=StatusTerakhir.choices, default=StatusTerakhir.MENUNGGU
     )
     pesan_terakhir = models.TextField(blank=True)
+    pid          = models.IntegerField(null=True, blank=True)
     last_run     = models.DateTimeField(null=True, blank=True)
     created_by   = models.ForeignKey(
         'users.User', on_delete=models.SET_NULL, null=True, blank=True,
