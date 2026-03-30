@@ -20,5 +20,3 @@ venv/
 **/htmlcov/
 **/.tox/
 public/media/
-media/*
-!media/.gitkeep
