@@ -7,6 +7,8 @@ Prioritas binary Firefox:
   3. /usr/bin/firefox
   4. /usr/lib/firefox/firefox
   5. Tidak di-set → Selenium cari sendiri via PATH
+
+geckodriver: pakai sistem (via PATH), bukan binary lokal.
 """
 
 import os
@@ -16,34 +18,40 @@ from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
 
-GECKODRIVER_PATH = Path(__file__).resolve().parent.parent / "geckodriver"
-
-_FIREFOX_CANDIDATES = [
-    os.environ.get("FIREFOX_BINARY", ""),
-    "/snap/firefox/current/usr/lib/firefox/firefox",
-    "/usr/bin/firefox",
+_FIREFOX_HEADLESS_CANDIDATES = [
+    "/usr/lib/firefox-esr/firefox-esr",   # binary langsung, tidak butuh display
     "/usr/lib/firefox/firefox",
-    "/usr/lib/firefox-esr/firefox-esr",
+    "/snap/firefox/current/usr/lib/firefox/firefox",
+]
+
+_FIREFOX_GUI_CANDIDATES = [
+    "/usr/bin/firefox-esr",               # wrapper script, setup env GUI dengan benar
+    "/usr/bin/firefox",
 ]
 
 
-def _find_firefox_bin():
-    for p in _FIREFOX_CANDIDATES:
+def _find_firefox_bin(headless=True):
+    candidates = _FIREFOX_HEADLESS_CANDIDATES if headless else _FIREFOX_GUI_CANDIDATES
+    for p in candidates:
         if p and Path(p).exists():
             return p
     return None  # biarkan Selenium cari via PATH
 
 
 def make_driver(headless=True, page_load_timeout=None, extra_prefs=None):
-    """Buat Firefox WebDriver dengan geckodriver lokal."""
+    """Buat Firefox WebDriver dengan geckodriver sistem."""
     options = Options()
     if headless:
         options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--window-size=1920,1080")
+    # Preferences untuk lingkungan headless/server tanpa desktop session
+    options.set_preference("browser.tabs.remote.autostart", False)
+    options.set_preference("security.sandbox.content.level", 0)
+    options.set_preference("extensions.enabled", False)
+    options.set_preference("datareporting.healthreport.uploadEnabled", False)
+    options.set_preference("datareporting.policy.dataSubmissionEnabled", False)
 
-    ff_bin = _find_firefox_bin()
+    ff_bin = _find_firefox_bin(headless=headless)
     if ff_bin:
         options.binary_location = ff_bin
 
@@ -51,11 +59,22 @@ def make_driver(headless=True, page_load_timeout=None, extra_prefs=None):
         for key, val in extra_prefs.items():
             options.set_preference(key, val)
 
-    # Snap Firefox membutuhkan TMPDIR=/tmp agar geckodriver bisa launch
-    svc_env = os.environ.copy()
-    svc_env.setdefault("TMPDIR", "/tmp")
+    # Paksa headless — set di os.environ agar diwarisi geckodriver & Firefox
+    os.environ.pop("FIREFOX_BINARY", None)  # hapus override lama jika ada
+    os.environ.setdefault("TMPDIR", "/tmp")
+    if headless:
+        # Mode headless: hapus display agar Firefox tidak mencoba buka GUI
+        os.environ.pop("DISPLAY", None)
+        os.environ.pop("DBUS_SESSION_BUS_ADDRESS", None)
+        os.environ.pop("XDG_RUNTIME_DIR", None)
+        os.environ["MOZ_HEADLESS"] = "1"
+        os.environ["MOZ_DISABLE_CONTENT_SANDBOX"] = "1"
 
-    service = Service(str(GECKODRIVER_PATH), env=svc_env)
+    # Gunakan geckodriver dari sistem (PATH), bukan binary lokal
+    # Cari path eksplisit agar tidak memicu selenium-manager (lambat)
+    import shutil
+    gecko_path = shutil.which("geckodriver") or "geckodriver"
+    service = Service(executable_path=gecko_path)
     driver = webdriver.Firefox(service=service, options=options)
     if page_load_timeout:
         driver.set_page_load_timeout(page_load_timeout)

@@ -203,8 +203,11 @@ def _load_pt_page_with_semua(driver, pt_url):
     return sem_val, sem_txt
 
 
-def scrape_pt_page(driver, pt_url):
-    """Buka halaman PT, baca tabel prodi, dan capture URL detail tiap prodi dengan klik."""
+def scrape_pt_page(driver, pt_url, filter_prodi=None):
+    """Buka halaman PT, baca tabel prodi, dan capture URL detail tiap prodi dengan klik.
+
+    filter_prodi: jika diisi, hanya klik prodi dengan kode tersebut (lebih cepat untuk testing).
+    """
     log(f"Membuka halaman profil PT...")
     sem_val, sem_txt = _load_pt_page_with_semua(driver, pt_url)
     if not sem_txt:
@@ -223,13 +226,18 @@ def scrape_pt_page(driver, pt_url):
 
     # Capture URL detail tiap prodi dengan klik nama prodi lalu kembali
     aktif_rows = [r for r in prodi_list if r.get("Status", "").strip().upper() == "AKTIF"]
-    log(f"  Mengambil URL detail untuk {len(aktif_rows)} prodi aktif (klik tiap nama)...")
+    if filter_prodi:
+        aktif_rows_to_click = [r for r in aktif_rows if r.get("Kode", "").strip() == filter_prodi]
+        log(f"  Mengambil URL detail untuk 1 prodi (filter {filter_prodi!r})...")
+    else:
+        aktif_rows_to_click = aktif_rows
+        log(f"  Mengambil URL detail untuk {len(aktif_rows)} prodi aktif (klik tiap nama)...")
 
     kode_to_detail = {}
-    for i, item in enumerate(aktif_rows):
+    for i, item in enumerate(aktif_rows_to_click):
         kode = item.get("Kode", "").strip()
         nama = item.get("Nama Program Studi", "").strip()
-        log(f"    [{i+1}/{len(aktif_rows)}] Klik nama prodi: {nama}")
+        log(f"    [{i+1}/{len(aktif_rows_to_click)}] Klik nama prodi: {nama}")
         try:
             tables = driver.find_elements(By.TAG_NAME, "table")
             if not tables:
@@ -512,7 +520,14 @@ def _read_dosen_paginated(driver):
 
     while True:
         log(f"      Halaman dosen #{page}...")
-        rows = _read_table_rows(driver, KOLOM_DOSEN, skip_header=1)
+        # Retry jika tabel masih loading (Angular SPA re-render)
+        rows = []
+        for attempt in range(4):
+            rows = _read_table_rows(driver, KOLOM_DOSEN, skip_header=1)
+            if rows:
+                break
+            if attempt < 3:
+                time.sleep(2)
         if not rows:
             break
         all_dosen.extend(rows)
@@ -521,7 +536,7 @@ def _read_dosen_paginated(driver):
         if not _click_next_page(driver):
             break
         page += 1
-        wait(3, "halaman berikutnya")
+        wait(4, "halaman berikutnya")
         if page > 30:  # safety limit
             break
 
@@ -569,55 +584,65 @@ def _read_mahasiswa_table(driver, max_rows=3):
 
 
 def _read_table_rows(driver, kolom, skip_header=1):
-    """Baca baris dari tabel yang punya header sesuai kolom[2] (NIDN untuk dosen)."""
+    """Baca baris dari tabel yang punya header sesuai kolom[2] (NIDN untuk dosen).
+
+    Menggunakan JavaScript untuk membaca DOM secara atomik — menghindari
+    StaleElementReferenceException akibat Angular re-render.
+    """
     key_col = kolom[2] if len(kolom) > 2 else kolom[0]
-    for table in driver.find_elements(By.TAG_NAME, "table"):
-        rows = table.find_elements(By.TAG_NAME, "tr")
-        if len(rows) <= skip_header:
-            continue
-        # Cek apakah tabel ini punya header yang sesuai
-        header_row = rows[0].find_elements(By.TAG_NAME, "th") or rows[0].find_elements(By.TAG_NAME, "td")
-        header_texts = [c.text.strip() for c in header_row]
-        if key_col not in header_texts:
-            continue
-        result = []
-        for row in rows[skip_header:]:
-            cells = row.find_elements(By.TAG_NAME, "td")
-            if not cells or not any(c.text.strip() for c in cells):
-                continue
-            values   = [c.text.strip() for c in cells]
-            row_dict = {col: (values[j] if j < len(values) else "")
-                        for j, col in enumerate(kolom)}
-            if any(row_dict.values()):
-                result.append(row_dict)
-        if result:
-            return result
-    return []
+    try:
+        raw = driver.execute_script("""
+            var key_col = arguments[0];
+            var skip = arguments[1];
+            for (var tbl of document.querySelectorAll('table')) {
+                var allRows = tbl.querySelectorAll('tr');
+                if (allRows.length <= skip) continue;
+                // Cek header
+                var hdrCells = allRows[0].querySelectorAll('th, td');
+                var hdrs = Array.from(hdrCells).map(function(c){ return c.textContent.trim(); });
+                if (hdrs.indexOf(key_col) < 0) continue;
+                // Baca data rows
+                var result = [];
+                for (var i = skip; i < allRows.length; i++) {
+                    var cells = allRows[i].querySelectorAll('td');
+                    if (!cells.length) continue;
+                    var vals = Array.from(cells).map(function(c){ return c.textContent.trim(); });
+                    if (!vals.some(function(v){ return v; })) continue;
+                    result.push(vals);
+                }
+                if (result.length > 0) return {headers: hdrs, rows: result};
+            }
+            return null;
+        """, key_col, skip_header)
+    except Exception:
+        return []
+
+    if not raw:
+        return []
+
+    hdrs = raw["headers"]
+    result = []
+    for vals in raw["rows"]:
+        row_dict = {col: (vals[j] if j < len(vals) else "") for j, col in enumerate(kolom)}
+        if any(row_dict.values()):
+            result.append(row_dict)
+    return result
 
 
 def _click_next_page(driver):
-    """Klik tombol next pagination. Return True jika berhasil.
+    """Klik tombol next pagination dosen. Return True jika berhasil.
 
-    PDDikti menggunakan icon button tanpa teks dan tanpa aria-label.
-    Penanda: aria-disabled="false" (aktif) vs aria-disabled="true" (nonaktif).
-    Strategi: ambil tabel dosen, cari button SETELAH tabel dengan aria-disabled="false".
+    PDDikti detail prodi memiliki tepat 4 <button> di halaman.
+    Index 0 = prev page, index 1 = next page.
+    Jika button[1] aria-disabled="false" → klik (ada halaman berikutnya).
     """
-    # Prioritas 1: JavaScript — temukan button setelah tabel dosen dengan aria-disabled="false"
     try:
         btn = driver.execute_script("""
-            // Cari tabel dosen (ada header NIDN)
-            var dosen_tbl = null;
-            for (var tbl of document.querySelectorAll('table')) {
-                var hdrs = Array.from(tbl.querySelectorAll('tr:first-child th, tr:first-child td'))
-                               .map(function(c) { return c.textContent.trim(); });
-                if (hdrs.indexOf('NIDN') >= 0) { dosen_tbl = tbl; break; }
-            }
-            if (!dosen_tbl) return null;
-
-            // Cari button setelah tabel yang aria-disabled="false"
-            for (var btn of document.querySelectorAll('button')) {
-                if (!(dosen_tbl.compareDocumentPosition(btn) & 4)) continue; // harus setelah tabel
-                if (btn.getAttribute('aria-disabled') === 'false') return btn;
+            var btns = document.querySelectorAll('button');
+            if (btns.length < 2) return null;
+            var nextBtn = btns[1];
+            if (nextBtn.getAttribute('aria-disabled') === 'false' && !nextBtn.disabled) {
+                return nextBtn;
             }
             return null;
         """)
@@ -628,25 +653,6 @@ def _click_next_page(driver):
             return True
     except Exception:
         pass
-
-    # Fallback: cari button teks '>' atau aria-label "next" (untuk halaman lain yang berbeda)
-    for btn in driver.find_elements(By.TAG_NAME, "button"):
-        try:
-            txt      = btn.text.strip()
-            aria     = (btn.get_attribute("aria-label") or "").lower()
-            disabled = btn.get_attribute("disabled")
-            aria_dis = btn.get_attribute("aria-disabled") or ""
-            if (txt == ">" or txt in ("›", "»") or "next" in aria):
-                if not disabled and aria_dis != "true":
-                    driver.execute_script(
-                        "arguments[0].scrollIntoView({block:'center'});", btn)
-                    time.sleep(0.3)
-                    driver.execute_script("arguments[0].click();", btn)
-                    return True
-        except StaleElementReferenceException:
-            continue
-        except Exception:
-            continue
     return False
 
 
@@ -933,14 +939,16 @@ def db_upsert_datamahasiswa(cur, now, pt_id, prodi_id, mhs_list, dry_run):
 
 # ── Main ──────────────────────────────────────────────────────
 
-def sync(kode_pt, nama_pt, dry_run):
+def sync(kode_pt, nama_pt, dry_run, filter_prodi=None):
     log("=" * 65)
     log(f"Sync PDDikti  PT   : {nama_pt}")
     log(f"              Kode : {kode_pt}")
     log(f"              Mode : {'DRY RUN' if dry_run else 'LIVE'}")
     log("=" * 65)
 
+    log("Inisialisasi browser...")
     driver = init_driver()
+    log("Browser siap.")
     pt_url      = None
     sem_txt     = None
     prodi_rows  = []
@@ -953,7 +961,7 @@ def sync(kode_pt, nama_pt, dry_run):
             return
 
         # Langkah 2 & 3 — Baca semester aktif + tabel prodi
-        sem_txt, prodi_rows = scrape_pt_page(driver, pt_url)
+        sem_txt, prodi_rows = scrape_pt_page(driver, pt_url, filter_prodi=filter_prodi)
 
     except Exception as e:
         log(f"[ERROR scraping PT page] {e}")
@@ -977,6 +985,10 @@ def sync(kode_pt, nama_pt, dry_run):
     # Filter prodi aktif saja untuk langkah 5-7
     aktif_rows = [r for r in prodi_rows if r.get("Status", "").strip().upper() == "AKTIF"]
     log(f"Prodi aktif: {len(aktif_rows)}")
+
+    if filter_prodi:
+        aktif_rows = [r for r in aktif_rows if r.get("Kode", "").strip() == filter_prodi]
+        log(f"Filter --prodi {filter_prodi!r} → {len(aktif_rows)} prodi")
 
     now  = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     conn = pymysql.connect(**DB_CONFIG)
@@ -1119,8 +1131,9 @@ def main():
     parser.add_argument("--kode", required=True, help="Kode PT, contoh: 064167")
     parser.add_argument("--nama", required=True, help="Nama PT persis HURUF KAPITAL sesuai PDDikti")
     parser.add_argument("--dry-run", action="store_true", help="Preview tanpa menulis ke DB")
+    parser.add_argument("--prodi", default=None, help="Filter ke satu kode prodi saja (untuk testing)")
     args = parser.parse_args()
-    sync(args.kode, args.nama, args.dry_run)
+    sync(args.kode, args.nama, args.dry_run, filter_prodi=args.prodi)
 
 
 if __name__ == "__main__":
