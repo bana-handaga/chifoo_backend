@@ -211,7 +211,7 @@ def db_upsert_riwayat_pendidikan(cur, now, dosen_id, riwayat, dry_run):
 
 # ── Main ───────────────────────────────────────────────────
 
-def sync(kode_pt, nidn_filter, limit, dry_run):
+def sync(kode_pt, dry_run, nidn_filter=None, limit=None):
     log("=" * 65)
     log(f"Sync Detail Dosen  Kode PT : {kode_pt}")
     if nidn_filter:
