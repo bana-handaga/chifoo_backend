@@ -352,47 +352,54 @@ def import_author(conn, data):
             afiliasi=afiliasi, kode_dept=kode_dept
         ).first()
 
+    defaults: dict = {
+        "nama":        data.get("nama", ""),
+        "url_profil":  data.get("url_profil", ""),
+    }
+    foto_url = data.get("foto_url", "")
+    if foto_url:
+        defaults["foto_url"] = foto_url
+
+    defaults.update({
+        "bidang_keilmuan": data.get("bidang_keilmuan", []),
+        "afiliasi":    afiliasi,
+        "departemen":  departemen,
+        "sinta_score_overall": data.get("sinta_score_overall", 0),
+        "sinta_score_3year":   data.get("sinta_score_3year", 0),
+        "affil_score":         data.get("affil_score", 0),
+        "affil_score_3year":   data.get("affil_score_3year", 0),
+        "scopus_artikel":    data.get("scopus_artikel", 0),
+        "scopus_sitasi":     data.get("scopus_sitasi", 0),
+        "scopus_cited_doc":  data.get("scopus_cited_doc", 0),
+        "scopus_h_index":    data.get("scopus_h_index", 0),
+        "scopus_i10_index":  data.get("scopus_i10_index", 0),
+        "scopus_g_index":    data.get("scopus_g_index", 0),
+        "gscholar_artikel":   data.get("gscholar_artikel", 0),
+        "gscholar_sitasi":    data.get("gscholar_sitasi", 0),
+        "gscholar_cited_doc": data.get("gscholar_cited_doc", 0),
+        "gscholar_h_index":   data.get("gscholar_h_index", 0),
+        "gscholar_i10_index": data.get("gscholar_i10_index", 0),
+        "gscholar_g_index":   data.get("gscholar_g_index", 0),
+        "wos_artikel":   data.get("wos_artikel", 0),
+        "wos_sitasi":    data.get("wos_sitasi", 0),
+        "wos_cited_doc": data.get("wos_cited_doc", 0),
+        "wos_h_index":   data.get("wos_h_index", 0),
+        "wos_i10_index": data.get("wos_i10_index", 0),
+        "wos_g_index":   data.get("wos_g_index", 0),
+        "scopus_q1":  data.get("scopus_q1", 0),
+        "scopus_q2":  data.get("scopus_q2", 0),
+        "scopus_q3":  data.get("scopus_q3", 0),
+        "scopus_q4":  data.get("scopus_q4", 0),
+        "scopus_noq": data.get("scopus_noq", 0),
+        "research_conference": data.get("research_conference", 0),
+        "research_articles":   data.get("research_articles", 0),
+        "research_others":     data.get("research_others", 0),
+        "scraped_at": timezone.now(),
+    })
+
     author, _ = SintaAuthor.objects.update_or_create(
         sinta_id=sinta_id,
-        defaults={
-            "nama":        data.get("nama", ""),
-            "url_profil":  data.get("url_profil", ""),
-            "foto_url":    data.get("foto_url", ""),
-            "bidang_keilmuan": data.get("bidang_keilmuan", []),
-            "afiliasi":    afiliasi,
-            "departemen":  departemen,
-            "sinta_score_overall": data.get("sinta_score_overall", 0),
-            "sinta_score_3year":   data.get("sinta_score_3year", 0),
-            "affil_score":         data.get("affil_score", 0),
-            "affil_score_3year":   data.get("affil_score_3year", 0),
-            "scopus_artikel":    data.get("scopus_artikel", 0),
-            "scopus_sitasi":     data.get("scopus_sitasi", 0),
-            "scopus_cited_doc":  data.get("scopus_cited_doc", 0),
-            "scopus_h_index":    data.get("scopus_h_index", 0),
-            "scopus_i10_index":  data.get("scopus_i10_index", 0),
-            "scopus_g_index":    data.get("scopus_g_index", 0),
-            "gscholar_artikel":   data.get("gscholar_artikel", 0),
-            "gscholar_sitasi":    data.get("gscholar_sitasi", 0),
-            "gscholar_cited_doc": data.get("gscholar_cited_doc", 0),
-            "gscholar_h_index":   data.get("gscholar_h_index", 0),
-            "gscholar_i10_index": data.get("gscholar_i10_index", 0),
-            "gscholar_g_index":   data.get("gscholar_g_index", 0),
-            "wos_artikel":   data.get("wos_artikel", 0),
-            "wos_sitasi":    data.get("wos_sitasi", 0),
-            "wos_cited_doc": data.get("wos_cited_doc", 0),
-            "wos_h_index":   data.get("wos_h_index", 0),
-            "wos_i10_index": data.get("wos_i10_index", 0),
-            "wos_g_index":   data.get("wos_g_index", 0),
-            "scopus_q1":  data.get("scopus_q1", 0),
-            "scopus_q2":  data.get("scopus_q2", 0),
-            "scopus_q3":  data.get("scopus_q3", 0),
-            "scopus_q4":  data.get("scopus_q4", 0),
-            "scopus_noq": data.get("scopus_noq", 0),
-            "research_conference": data.get("research_conference", 0),
-            "research_articles":   data.get("research_articles", 0),
-            "research_others":     data.get("research_others", 0),
-            "scraped_at": timezone.now(),
-        }
+        defaults=defaults,
     )
 
     # Trend — hapus & insert ulang
