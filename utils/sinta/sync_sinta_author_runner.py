@@ -183,16 +183,17 @@ def _parse_num(s):
     return int(s) if s else 0
 
 
-def _chunk_after(raw, anchor):
-    """Ambil 6000 karakter setelah kemunculan pertama anchor (dicari dengan/tanpa tanda kutip)."""
+def _chunk_after(raw, anchor, size=12000):
+    """Ambil N karakter setelah kemunculan pertama anchor (dicari dengan/tanpa tanda kutip)."""
     for q in (f"'{anchor}'", f'"{anchor}"', anchor):
         idx = raw.find(q)
         if idx != -1:
-            return raw[idx: idx + 6000]
+            return raw[idx: idx + size]
     return ""
 
 
 def _parse_trend_chart(raw, chart_id):
+    """Parse chart tren satu seri (scopus, research, service)."""
     chunk = _chunk_after(raw, chart_id)
     if not chunk:
         return []
@@ -209,6 +210,45 @@ def _parse_trend_chart(raw, chart_id):
         except (ValueError, TypeError):
             pass
     return result
+
+
+def _parse_gscholar_chart(raw):
+    """
+    Parse chart Google Scholar yang memiliki 2 seri: Publications dan Citations.
+    Kembalikan (trend_pub, trend_cite) masing-masing list {tahun, jumlah}.
+    """
+    chunk = _chunk_after(raw, "google-chart-articles")
+    if not chunk:
+        return [], []
+
+    mx = re.search(r'xAxis.*?data\s*:\s*\[([^\]]+)\]', chunk, re.DOTALL)
+    if not mx:
+        return [], []
+    years = [x.strip().strip("'\"") for x in re.split(r',', mx.group(1)) if x.strip().strip("'\"")]
+
+    # Cari data series berdasarkan nama (Publications / Citations)
+    series_m = re.search(r'series\s*:\s*\[(.*)', chunk, re.DOTALL)
+    if not series_m:
+        return [], []
+    series_chunk = series_m.group(1)
+
+    def _extract_named(sc, name):
+        m = re.search(
+            rf"name\s*:\s*['\"]{{?{re.escape(name)}}}?['\"].*?data\s*:\s*\[([^\]]+)\]",
+            sc, re.DOTALL
+        )
+        if not m:
+            return []
+        vals = [x.strip() for x in re.split(r',', m.group(1)) if x.strip()]
+        result = []
+        for y, v in zip(years, vals):
+            try:
+                result.append({"tahun": int(y), "jumlah": int(v)})
+            except (ValueError, TypeError):
+                pass
+        return result
+
+    return _extract_named(series_chunk, "Publications"), _extract_named(series_chunk, "Citations")
 
 
 def _parse_quartile(raw):
@@ -349,6 +389,16 @@ def scrape_author(session, url_profil, sinta_id):
 
     time.sleep(DELAY)
 
+    # Tren Google Scholar
+    soup_gs, raw_gs = fetch(session, f"{base_url}/?view=googlescholar")
+    if soup_gs:
+        t_pub, t_cite = _parse_gscholar_chart(raw_gs)
+        if t_pub:
+            result["trend_gscholar_pub"]  = t_pub
+        if t_cite:
+            result["trend_gscholar_cite"] = t_cite
+    time.sleep(DELAY)
+
     # Tren Penelitian
     soup2, raw2 = fetch(session, f"{base_url}/?view=researches")
     if soup2:
@@ -444,7 +494,13 @@ def import_author(conn, data):
     # Trend — hapus & insert ulang
     author.trend.all().delete()
     trend_objs = []
-    for jenis, key in [("scopus", "trend_scopus"), ("research", "trend_research"), ("service", "trend_service")]:
+    for jenis, key in [
+        ("scopus",        "trend_scopus"),
+        ("gscholar_pub",  "trend_gscholar_pub"),
+        ("gscholar_cite", "trend_gscholar_cite"),
+        ("research",      "trend_research"),
+        ("service",       "trend_service"),
+    ]:
         for item in data.get(key, []):
             trend_objs.append(SintaAuthorTrend(
                 author=author, jenis=jenis,
