@@ -1709,11 +1709,6 @@ class SintaAuthorViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
             return [AllowAny()]
         return super().get_permissions()
 
-    def get_authenticators(self):
-        if self.action == 'sync_single':
-            return []
-        return super().get_authenticators()
-
     queryset = (
         SintaAuthor.objects
         .select_related('afiliasi__perguruan_tinggi', 'departemen')
