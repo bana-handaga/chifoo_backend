@@ -226,13 +226,25 @@ def scrape_author(session, url_profil, sinta_id):
         result["error"] = "fetch gagal"
         return result
 
-    # Foto
-    img = soup.select_one("div.profile-picture img")
+    # Foto — coba beberapa selector (HTML SINTA bisa berubah)
+    img = (
+        soup.select_one("img.round-corner")
+        or soup.select_one("div.profile-picture img")
+        or soup.select_one("img.au-photo")
+        or soup.select_one("img.img-thumbnail")
+    )
     if img:
-        result["foto_url"] = img.get("src", "")
+        src = img.get("src", "")
+        # Abaikan logo/brand bawaan SINTA
+        if src and "brand_" not in src and "logo" not in src.lower():
+            result["foto_url"] = src
 
-    # Nama
-    h3 = soup.select_one("h3.au-name")
+    # Nama — coba beberapa selector
+    h3 = (
+        soup.select_one("h3.au-name")
+        or soup.select_one("h3")
+        or soup.select_one("h2.au-name")
+    )
     if h3:
         result["nama"] = h3.get_text(strip=True)
 
