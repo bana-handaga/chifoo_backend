@@ -158,9 +158,36 @@ def load_authors(conn, jadwal_id, days_threshold):
 
 # ── Scraping helpers ──────────────────────────────────────────
 
+SINTA_USERNAME = os.environ.get("SINTA_USERNAME", "")
+SINTA_PASSWORD = os.environ.get("SINTA_PASSWORD", "")
+LOGIN_URL      = f"{SINTA_BASE}/logins/do_login"
+
+
+def sinta_login(session):
+    """Login ke SINTA menggunakan credentials dari .env. Return True jika berhasil."""
+    if not SINTA_USERNAME or not SINTA_PASSWORD:
+        log("SINTA_USERNAME/SINTA_PASSWORD tidak ada di .env — skip login")
+        return False
+    try:
+        resp = session.post(LOGIN_URL, data={
+            "username": SINTA_USERNAME,
+            "password": SINTA_PASSWORD,
+        }, timeout=TIMEOUT, allow_redirects=True)
+        # Indikator login berhasil: ada cookie ci_session dan halaman bukan error
+        if resp.status_code == 200 and "ci_session" in session.cookies:
+            log(f"Login SINTA berhasil sebagai {SINTA_USERNAME}")
+            return True
+        log(f"Login SINTA gagal (status={resp.status_code})")
+        return False
+    except Exception as e:
+        log(f"Login SINTA error: {e}")
+        return False
+
+
 def make_session():
     s = requests.Session()
     s.headers.update(HEADERS)
+    sinta_login(s)
     return s
 
 
