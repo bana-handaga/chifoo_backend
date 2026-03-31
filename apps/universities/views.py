@@ -1703,6 +1703,17 @@ class SintaAuthorViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
     Search  : nama, bidang_keilmuan
     Ordering: sinta_score_overall, sinta_score_3year, scopus_artikel, scopus_h_index
     """
+
+    def get_permissions(self):
+        if self.action == 'sync_single':
+            return [AllowAny()]
+        return super().get_permissions()
+
+    def get_authenticators(self):
+        if self.action == 'sync_single':
+            return []
+        return super().get_authenticators()
+
     queryset = (
         SintaAuthor.objects
         .select_related('afiliasi__perguruan_tinggi', 'departemen')
