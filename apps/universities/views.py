@@ -1806,40 +1806,20 @@ class SintaAuthorViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
     @action(detail=True, methods=['get'], url_path='gscholar-articles',
             authentication_classes=[], permission_classes=[AllowAny])
     def gscholar_articles(self, request, pk=None):
-        """Ambil maks 10 artikel Google Scholar terbaru langsung dari halaman SINTA (real-time)."""
-        import sys
-        from pathlib import Path as PPath
-        sys.path.insert(0, str(PPath(__file__).resolve().parent.parent.parent / 'utils' / 'sinta'))
-        import sync_sinta_author_runner as runner
-        import re as _re
-
+        """Ambil maks 10 artikel Google Scholar terbaru dari database (diisi saat sync)."""
+        from apps.universities.models import SintaAuthorPublication
         author = self.get_object()
-        if not author.url_profil:
-            return Response([])
-
-        session = runner.make_session()
-        url = author.url_profil.rstrip('/') + '/?view=googlescholar'
-        soup, _ = runner.fetch(session, url)
-        if not soup:
-            return Response([])
-
-        results = []
-        for item in soup.select('div.ar-list-item')[:10]:
-            link_el   = item.select_one('.ar-title a')
-            pub_el    = item.select_one('a.ar-pub')
-            year_el   = item.select_one('a.ar-year')
-            cited_el  = item.select_one('a.ar-cited')
-            author_el = item.select_one('.ar-meta a:not(.ar-pub):not(.ar-year):not(.ar-cited)')
-            sitasi_txt = cited_el.get_text(strip=True) if cited_el else '0 cited'
-            sitasi = int(_re.search(r'\d+', sitasi_txt).group()) if _re.search(r'\d+', sitasi_txt) else 0
-            results.append({
-                'judul':   link_el.get_text(strip=True) if link_el else '',
-                'url':     link_el.get('href', '') if link_el else '',
-                'jurnal':  pub_el.get_text(strip=True) if pub_el else '',
-                'tahun':   year_el.get_text(strip=True).strip() if year_el else '',
-                'sitasi':  sitasi,
-                'authors': author_el.get_text(strip=True).replace('Authors : ', '') if author_el else '',
-            })
+        pubs = SintaAuthorPublication.objects.filter(
+            author=author, sumber='gscholar'
+        ).order_by('-tahun', '-sitasi')[:10]
+        results = [{
+            'judul':   p.judul,
+            'url':     p.url,
+            'jurnal':  p.jurnal,
+            'tahun':   str(p.tahun) if p.tahun else '',
+            'sitasi':  p.sitasi,
+            'authors': p.penulis,
+        } for p in pubs]
         return Response(results)
 
 

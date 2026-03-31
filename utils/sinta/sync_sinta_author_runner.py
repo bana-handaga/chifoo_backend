@@ -416,7 +416,7 @@ def scrape_author(session, url_profil, sinta_id):
 
     time.sleep(DELAY)
 
-    # Tren Google Scholar
+    # Tren & Artikel Google Scholar
     soup_gs, raw_gs = fetch(session, f"{base_url}/?view=googlescholar")
     if soup_gs:
         t_pub, t_cite = _parse_gscholar_chart(raw_gs)
@@ -424,6 +424,31 @@ def scrape_author(session, url_profil, sinta_id):
             result["trend_gscholar_pub"]  = t_pub
         if t_cite:
             result["trend_gscholar_cite"] = t_cite
+
+        # Parse artikel GScholar untuk disimpan ke DB
+        artikels = []
+        for item in soup_gs.select("div.ar-list-item")[:10]:
+            link_el   = item.select_one(".ar-title a")
+            pub_el    = item.select_one("a.ar-pub")
+            year_el   = item.select_one("a.ar-year")
+            cited_el  = item.select_one("a.ar-cited")
+            author_el = item.select_one(".ar-meta a:not(.ar-pub):not(.ar-year):not(.ar-cited)")
+            sitasi_txt = cited_el.get_text(strip=True) if cited_el else "0 cited"
+            m_cit = re.search(r"\d+", sitasi_txt)
+            sitasi = int(m_cit.group()) if m_cit else 0
+            judul  = link_el.get_text(strip=True) if link_el else ""
+            url_art = link_el.get("href", "") if link_el else ""
+            if judul:
+                artikels.append({
+                    "judul":   judul,
+                    "url":     url_art,
+                    "jurnal":  pub_el.get_text(strip=True) if pub_el else "",
+                    "tahun":   year_el.get_text(strip=True).strip() if year_el else "",
+                    "sitasi":  sitasi,
+                    "authors": author_el.get_text(strip=True).replace("Authors : ", "") if author_el else "",
+                })
+        if artikels:
+            result["gscholar_articles"] = artikels
     time.sleep(DELAY)
 
     # Tren Penelitian
@@ -450,7 +475,10 @@ def import_author(conn, data):
     """Import satu author hasil scrape langsung ke DB via Django ORM."""
     import django
     django.setup()
-    from apps.universities.models import SintaAfiliasi, SintaDepartemen, SintaAuthor, SintaAuthorTrend
+    from apps.universities.models import (
+        SintaAfiliasi, SintaDepartemen, SintaAuthor, SintaAuthorTrend,
+        SintaAuthorPublication,
+    )
     from django.utils import timezone
 
     sinta_id = data.get("sinta_id", "")
@@ -535,6 +563,32 @@ def import_author(conn, data):
             ))
     if trend_objs:
         SintaAuthorTrend.objects.bulk_create(trend_objs, ignore_conflicts=True)
+
+    # GScholar articles — hapus yang lama & insert ulang
+    gscholar_articles = data.get("gscholar_articles", [])
+    if gscholar_articles:
+        author.publications.filter(sumber="gscholar").delete()
+        pub_objs = []
+        for i, art in enumerate(gscholar_articles):
+            tahun = None
+            try:
+                tahun = int(art.get("tahun", ""))
+            except (ValueError, TypeError):
+                pass
+            pub_id = (art.get("url", "") or f"gs_{sinta_id}_{i}")[:200]
+            pub_objs.append(SintaAuthorPublication(
+                author=author,
+                sumber="gscholar",
+                pub_id=pub_id,
+                judul=art.get("judul", "")[:1000],
+                penulis=art.get("authors", ""),
+                jurnal=art.get("jurnal", "")[:500],
+                tahun=tahun,
+                sitasi=art.get("sitasi", 0),
+                url=art.get("url", "")[:800],
+            ))
+        if pub_objs:
+            SintaAuthorPublication.objects.bulk_create(pub_objs, ignore_conflicts=True)
 
     return True
 
