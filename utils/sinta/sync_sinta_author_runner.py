@@ -183,37 +183,61 @@ def _parse_num(s):
     return int(s) if s else 0
 
 
+def _chunk_after(raw, anchor):
+    """Ambil 6000 karakter setelah kemunculan pertama anchor (dicari dengan/tanpa tanda kutip)."""
+    for q in (f"'{anchor}'", f'"{anchor}"', anchor):
+        idx = raw.find(q)
+        if idx != -1:
+            return raw[idx: idx + 6000]
+    return ""
+
+
 def _parse_trend_chart(raw, chart_id):
-    pattern = rf'id="{chart_id}".*?xAxis.*?"data"\s*:\s*(\[[^\]]+\]).*?series.*?"data"\s*:\s*(\[[^\]]+\])'
-    m = re.search(pattern, raw, re.DOTALL)
-    if not m:
+    chunk = _chunk_after(raw, chart_id)
+    if not chunk:
         return []
-    try:
-        years  = [int(x.strip().strip('"\'')) for x in m.group(1).strip("[]").split(",") if x.strip()]
-        values = [int(x.strip()) for x in m.group(2).strip("[]").split(",") if x.strip()]
-        return [{"tahun": y, "jumlah": v} for y, v in zip(years, values)]
-    except Exception:
+    mx = re.search(r'xAxis.*?data\s*:\s*\[([^\]]+)\]', chunk, re.DOTALL)
+    ms = re.search(r'series\s*:.*?data\s*:\s*\[([^\]]+)\]', chunk, re.DOTALL)
+    if not mx or not ms:
         return []
+    years  = [x.strip().strip("'\"") for x in re.split(r',', mx.group(1)) if x.strip().strip("'\"")]
+    values = [x.strip() for x in re.split(r',', ms.group(1)) if x.strip()]
+    result = []
+    for y, v in zip(years, values):
+        try:
+            result.append({"tahun": int(y), "jumlah": int(v)})
+        except (ValueError, TypeError):
+            pass
+    return result
 
 
 def _parse_quartile(raw):
-    m = re.search(r"quartilePie\s*=\s*echarts\.init.*?data\s*:\s*(\[.*?\])", raw, re.DOTALL)
-    if not m:
+    chunk = _chunk_after(raw, "quartile-pie")
+    if not chunk:
         return {}
     result = {}
-    for item in re.finditer(r'\{[^}]*"value"\s*:\s*(\d+)[^}]*"name"\s*:\s*"([^"]+)"[^}]*\}', m.group(1)):
-        result[item.group(2)] = int(item.group(1))
-    for item in re.finditer(r'\{[^}]*"name"\s*:\s*"([^"]+)"[^}]*"value"\s*:\s*(\d+)[^}]*\}', m.group(1)):
-        result[item.group(1)] = int(item.group(2))
+    for m in re.finditer(
+        r'value\s*:\s*(\d+)[\s\S]{0,30}?name\s*:\s*[\'\"](Q\d+|No-Q)[\'\"]\s*}'
+        r'|name\s*:\s*[\'\"](Q\d+|No-Q)[\'\"][\s\S]{0,30}?value\s*:\s*(\d+)',
+        chunk
+    ):
+        if m.group(1):
+            result[m.group(2)] = int(m.group(1))
+        else:
+            result[m.group(3)] = int(m.group(4))
     return result
 
 
 def _parse_radar(raw):
-    m = re.search(r'research-radar.*?series.*?"data"\s*:\s*\[(\[[^\]]+\])\]', raw, re.DOTALL)
+    chunk = _chunk_after(raw, "research-radar")
+    if not chunk:
+        return {}
+    m = re.search(r'value\s*:\s*\[([^\]]+)\]', chunk, re.DOTALL)
     if not m:
         return {}
-    vals = [int(x.strip()) for x in m.group(1).strip("[]").split(",") if x.strip().isdigit()]
-    keys = ["conference", "articles", "others"]
+    vals = [int(x.strip()) for x in re.split(r',', m.group(1)) if x.strip().isdigit()]
+    # urutan indikator di halaman SINTA: Articles, Conference, Others
+    keys = ["articles", "conference", "others"]
     return {k: v for k, v in zip(keys, vals)}
 
 
