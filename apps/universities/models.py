@@ -1163,6 +1163,7 @@ class SinkronisasiJadwal(models.Model):
     class TipeSync(models.TextChoices):
         PRODI_DOSEN   = 'prodi_dosen',   'Prodi + Dosen + Mahasiswa'
         DETAIL_DOSEN  = 'detail_dosen',  'Detail Dosen'
+        SINTA_AUTHOR  = 'sinta_author',  'SINTA — Author'
 
     class ModePT(models.TextChoices):
         SEMUA   = 'semua',   'Semua PT'
@@ -1192,6 +1193,8 @@ class SinkronisasiJadwal(models.Model):
     hari_selesai = models.IntegerField(choices=HARI_CHOICES, default=6)
     jam_selesai  = models.TimeField(default='05:00')
     is_active    = models.BooleanField(default=True)
+    sinta_days   = models.IntegerField(default=30, help_text='Scrape ulang author > N hari lalu (0=semua)')
+    sinta_limit  = models.IntegerField(default=500, help_text='Maks. author per run (0=tidak dibatasi)')
     status_terakhir = models.CharField(
         max_length=10, choices=StatusTerakhir.choices, default=StatusTerakhir.MENUNGGU
     )

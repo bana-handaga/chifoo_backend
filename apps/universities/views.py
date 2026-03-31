@@ -2882,6 +2882,8 @@ def _jadwal_to_dict(j):
         'hari_selesai_label': dict(SinkronisasiJadwal.HARI_CHOICES).get(j.hari_selesai, ''),
         'jam_selesai': j.jam_selesai.strftime('%H:%M') if j.jam_selesai else '',
         'is_active': j.is_active,
+        'sinta_days': j.sinta_days,
+        'sinta_limit': j.sinta_limit,
         'status_terakhir': j.status_terakhir,
         'pesan_terakhir': j.pesan_terakhir,
         'pid': j.pid,
@@ -2915,6 +2917,8 @@ def sync_jadwal_list(request):
             hari_selesai = int(d.get('hari_selesai', 6)),
             jam_selesai  = d.get('jam_selesai', '05:00'),
             is_active    = bool(d.get('is_active', True)),
+            sinta_days   = int(d.get('sinta_days', 30)),
+            sinta_limit  = int(d.get('sinta_limit', 500)),
             created_by   = request.user,
         )
         pt_ids = d.get('pt_ids', [])
@@ -2947,6 +2951,8 @@ def sync_jadwal_detail(request, pk):
     jadwal.hari_selesai = int(d.get('hari_selesai', jadwal.hari_selesai))
     jadwal.jam_selesai  = d.get('jam_selesai', jadwal.jam_selesai)
     jadwal.is_active    = bool(d.get('is_active', jadwal.is_active))
+    jadwal.sinta_days   = int(d.get('sinta_days', jadwal.sinta_days))
+    jadwal.sinta_limit  = int(d.get('sinta_limit', jadwal.sinta_limit))
     jadwal.save()
     pt_ids = d.get('pt_ids')
     if pt_ids is not None:

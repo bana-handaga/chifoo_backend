@@ -131,6 +131,28 @@ def run(jadwal_id, dry_run=False):
                     log(f"  ✗ {msg}")
                     errors.append(msg)
 
+        elif tipe == "sinta_author":
+            sinta_runner_path = (
+                Path(__file__).resolve().parent.parent
+                / 'sinta' / 'sync_sinta_author_runner.py'
+            )
+            import subprocess as _sp
+            sinta_days  = jadwal.get("sinta_days",  30)
+            sinta_limit = jadwal.get("sinta_limit", 500)
+            cmd_sinta = [
+                sys.executable, str(sinta_runner_path),
+                '--jadwal_id', str(jadwal_id),
+                '--days',      str(sinta_days),
+            ]
+            if sinta_limit and int(sinta_limit) > 0:
+                cmd_sinta += ['--limit', str(sinta_limit)]
+            if dry_run:
+                cmd_sinta.append('--dry-run')
+            log(f"Menjalankan sync SINTA Author (days={sinta_days}, limit={sinta_limit})...")
+            _sp.run(cmd_sinta, cwd=str(sinta_runner_path.parent))
+            # Status sudah diupdate oleh runner sendiri
+            return
+
         else:
             raise ValueError(f"Tipe sync tidak dikenal: {tipe}")
 
