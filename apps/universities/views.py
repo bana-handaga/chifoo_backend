@@ -1727,6 +1727,26 @@ class SintaAuthorViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
             return SintaAuthorDetailSerializer
         return SintaAuthorListSerializer
 
+    @action(detail=False, methods=['get'], url_path='pt-options',
+            authentication_classes=[], permission_classes=[AllowAny])
+    def pt_options(self, request):
+        """Daftar PT unik yang memiliki author di SINTA (tanpa paginasi)."""
+        rows = (
+            SintaAuthor.objects
+            .select_related('afiliasi')
+            .values('afiliasi__sinta_kode', 'afiliasi__singkatan_sinta', 'afiliasi__nama_sinta')
+            .distinct()
+            .order_by('afiliasi__singkatan_sinta')
+        )
+        result = [
+            {'kode': r['afiliasi__sinta_kode'],
+             'singkatan': r['afiliasi__singkatan_sinta']
+                         if r['afiliasi__singkatan_sinta'] and r['afiliasi__singkatan_sinta'] != '-'
+                         else r['afiliasi__nama_sinta']}
+            for r in rows if r['afiliasi__sinta_kode']
+        ]
+        return Response(result)
+
     @action(detail=False, methods=['get'], url_path='stats')
     def stats(self, request):
         """Statistik agregat author seluruh PTMA."""
