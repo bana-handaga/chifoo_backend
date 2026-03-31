@@ -257,9 +257,12 @@ def scrape_author(session, url_profil, sinta_id):
             if m:
                 result["sinta_id_pt"] = m.group(1)
         elif "/departments/profile/" in href:
-            m = re.search(r"/departments/profile/\d+/\w+/(\d+)$", href)
-            if m:
-                result["kode_dept"] = m.group(1)
+            # Format lama: /departments/profile/{afiliasi_id}/{kode_dept}
+            # Format baru: /departments/profile/{afiliasi_id}/{kode_prodi}/{kode_pt}
+            # Ambil segmen terakhir yang berisi angka sebagai kode_dept
+            segments = [s for s in href.rstrip("/").split("/") if s.isdigit()]
+            if len(segments) >= 2:
+                result["kode_dept"] = segments[-1]
 
     # Bidang keilmuan
     subjects = [a.get_text(strip=True) for a in soup.select("ul.subject-list li a")]
