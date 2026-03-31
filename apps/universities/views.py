@@ -7,7 +7,7 @@ from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 from django.db.models import Count, Sum, Q, Case, When, Value, IntegerField
 from rest_framework import viewsets, status
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action, api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny, IsAdminUser
 from rest_framework.pagination import PageNumberPagination
@@ -966,6 +966,32 @@ class DataDosenViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
 
 
 @api_view(['GET'])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def dosen_dropdown_options(request):
+    """Opsi dropdown untuk filter dosen: daftar PT dan (opsional) prodi per PT."""
+    pt_kode = request.query_params.get('pt_kode', '').strip()
+
+    pt_list = list(
+        PerguruanTinggi.objects.filter(is_active=True)
+        .values('id', 'kode_pt', 'nama', 'singkatan')
+        .order_by('nama')
+    )
+
+    prodi_list = []
+    if pt_kode:
+        prodi_list = list(
+            ProgramStudi.objects.filter(
+                perguruan_tinggi__kode_pt=pt_kode, is_active=True
+            )
+            .values('kode_prodi', 'nama', 'jenjang')
+            .order_by('nama')
+        )
+
+    return Response({'pt': pt_list, 'prodi': prodi_list})
+
+
+@api_view(['GET'])
 @permission_classes([AllowAny])
 def dosen_stats(request):
     """Statistik profil dosen untuk halaman infografik."""
@@ -1076,6 +1102,7 @@ def dosen_search(request):
     nama       = request.query_params.get('nama', '').strip()
     pt_kode    = request.query_params.get('pt_kode', '').strip()
     pt_nama    = request.query_params.get('pt_nama', '').strip()
+    prodi_kode = request.query_params.get('prodi_kode', '').strip()
     prodi_nama = request.query_params.get('prodi_nama', '').strip()
     jabatan    = request.query_params.get('jabatan', '').strip()
     pendidikan = request.query_params.get('pendidikan', '').strip()
@@ -1105,6 +1132,8 @@ def dosen_search(request):
         qs = qs.filter(perguruan_tinggi__kode_pt=pt_kode)
     if pt_nama:
         qs = qs.filter(perguruan_tinggi__nama__icontains=pt_nama)
+    if prodi_kode:
+        qs = qs.filter(program_studi__kode_prodi=prodi_kode)
     if prodi_nama:
         qs = qs.filter(program_studi_nama__icontains=prodi_nama)
     if jabatan:

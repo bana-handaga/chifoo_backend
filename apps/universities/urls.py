@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     WilayahViewSet, PerguruanTinggiViewSet,
     ProgramStudiViewSet, DataMahasiswaViewSet, DataDosenViewSet,
-    banpt_prodi_search, dosen_stats, dosen_search, riwayat_pendidikan_search,
+    banpt_prodi_search, dosen_dropdown_options, dosen_stats, dosen_search, riwayat_pendidikan_search,
     prodi_distribusi, prodi_daftar, SintaJurnalViewSet, SintaAfiliasiViewSet,
     SintaDepartemenViewSet, SintaAuthorViewSet, SintaScopusArtikelViewSet,
     SintaPengabdianViewSet, SintaPenelitianViewSet, KolaboasiViewSet,
@@ -32,6 +32,7 @@ router.register(r'sinta-kolaborasi',    KolaboasiViewSet,            basename='s
 urlpatterns = [
     path('', include(router.urls)),
     path('banpt-prodi-search/', banpt_prodi_search, name='banpt-prodi-search'),
+    path('dosen-dropdown/', dosen_dropdown_options, name='dosen-dropdown'),
     path('dosen-stats/', dosen_stats, name='dosen-stats'),
     path('dosen-search/', dosen_search, name='dosen-search'),
     path('riwayat-pendidikan/', riwayat_pendidikan_search, name='riwayat-pendidikan'),
