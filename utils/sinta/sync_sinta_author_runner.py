@@ -209,7 +209,7 @@ def _parse_quartile(raw):
 
 
 def _parse_radar(raw):
-    m = re.search(r"research-radar.*?series.*?"data"\s*:\s*\[(\[[^\]]+\])\]", raw, re.DOTALL)
+    m = re.search(r'research-radar.*?series.*?"data"\s*:\s*\[(\[[^\]]+\])\]', raw, re.DOTALL)
     if not m:
         return {}
     vals = [int(x.strip()) for x in m.group(1).strip("[]").split(",") if x.strip().isdigit()]
