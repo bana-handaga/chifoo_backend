@@ -174,15 +174,12 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         exp_filter = self.request.query_params.get('exp_filter')
         if exp_filter:
             today = date.today()
-            if exp_filter == 'less_12m':
+            _month_map = {'less_1m': 1, 'less_2m': 2, 'less_3m': 3, 'less_5m': 5,
+                          'less_7m': 7, 'less_12m': 12}
+            if exp_filter in _month_map:
                 qs = qs.filter(
                     tanggal_kadaluarsa_akreditasi__isnull=False,
-                    tanggal_kadaluarsa_akreditasi__lte=today + relativedelta(months=12)
-                )
-            elif exp_filter == 'less_7m':
-                qs = qs.filter(
-                    tanggal_kadaluarsa_akreditasi__isnull=False,
-                    tanggal_kadaluarsa_akreditasi__lte=today + relativedelta(months=7)
+                    tanggal_kadaluarsa_akreditasi__lte=today + relativedelta(months=_month_map[exp_filter])
                 )
         return qs
 
@@ -854,9 +851,15 @@ class ProgramStudiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         """Hitung jumlah prodi yang kedaluarsa < 7 bulan dan < 12 bulan"""
         today = date.today()
         qs = ProgramStudi.objects.filter(is_active=True, tanggal_kedaluarsa_akreditasi__isnull=False)
+        count_1m  = qs.filter(tanggal_kedaluarsa_akreditasi__lte=today + relativedelta(months=1)).count()
+        count_2m  = qs.filter(tanggal_kedaluarsa_akreditasi__lte=today + relativedelta(months=2)).count()
+        count_3m  = qs.filter(tanggal_kedaluarsa_akreditasi__lte=today + relativedelta(months=3)).count()
+        count_5m  = qs.filter(tanggal_kedaluarsa_akreditasi__lte=today + relativedelta(months=5)).count()
         count_7m  = qs.filter(tanggal_kedaluarsa_akreditasi__lte=today + relativedelta(months=7)).count()
         count_12m = qs.filter(tanggal_kedaluarsa_akreditasi__lte=today + relativedelta(months=12)).count()
-        return Response({'count_7m': count_7m, 'count_12m': count_12m})
+        return Response({'count_1m': count_1m, 'count_2m': count_2m,
+                         'count_3m': count_3m, 'count_5m': count_5m,
+                         'count_7m': count_7m, 'count_12m': count_12m})
 
     @action(detail=False, methods=['get'])
     def statistik_jenjang(self, request):
