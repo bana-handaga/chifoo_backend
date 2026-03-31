@@ -1774,6 +1774,29 @@ class SintaAuthorViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSe
             'total_scopus_sitasi':  agg['total_sitasi'] or 0,
         })
 
+    @action(detail=True, methods=['post'], url_path='sync',
+            authentication_classes=[], permission_classes=[AllowAny])
+    def sync_single(self, request, pk=None):
+        """Sinkron ulang satu author dari SINTA (hanya untuk env lokal)."""
+        import subprocess, sys
+        from pathlib import Path as PPath
+
+        author = self.get_object()
+        if not author.url_profil:
+            return Response({'detail': 'Author tidak memiliki url_profil.'}, status=400)
+
+        runner = PPath(__file__).resolve().parent.parent.parent / 'utils' / 'sinta' / 'sync_sinta_author_runner.py'
+        cmd = [sys.executable, str(runner), '--author_id', str(author.id)]
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+            if result.returncode != 0:
+                return Response({'detail': 'Sync gagal.', 'stderr': result.stderr[-500:]}, status=500)
+            return Response({'detail': 'Sync berhasil.', 'output': result.stdout[-500:]})
+        except subprocess.TimeoutExpired:
+            return Response({'detail': 'Sync timeout (>120 detik).'}, status=504)
+        except Exception as e:
+            return Response({'detail': str(e)}, status=500)
+
 
 class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyModelViewSet):
     """

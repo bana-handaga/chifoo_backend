@@ -412,19 +412,33 @@ def import_author(conn, data):
 
 # ── Main runner ───────────────────────────────────────────────
 
-def run(jadwal_id=None, dry_run=False, days=30, limit=None):
+def load_single_author(conn, author_id):
+    """Kembalikan list satu author berdasarkan id DB."""
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT id, sinta_id, url_profil FROM universities_sintaauthor "
+            "WHERE id = %s AND url_profil != '' AND url_profil IS NOT NULL",
+            (author_id,)
+        )
+        row = cur.fetchone()
+    return [row] if row else []
+
+
+def run(jadwal_id=None, dry_run=False, days=30, limit=None, author_id=None):
     import django
     django.setup()
 
     conn = get_conn()
     session = make_session()
 
-    if jadwal_id:
-        update_status(conn, jadwal_id, "berjalan", "Memuat daftar author...")
-
-    authors = load_authors(conn, jadwal_id, days)
-    if limit:
-        authors = authors[:limit]
+    if author_id:
+        authors = load_single_author(conn, author_id)
+    else:
+        if jadwal_id:
+            update_status(conn, jadwal_id, "berjalan", "Memuat daftar author...")
+        authors = load_authors(conn, jadwal_id, days)
+        if limit:
+            authors = authors[:limit]
 
     total = len(authors)
     log(f"Author yang akan di-sync: {total} (days={days}, limit={limit}, dry_run={dry_run})")
@@ -498,8 +512,11 @@ def main():
                         help="Scrape ulang author yang scraped_at > N hari lalu (0=semua)")
     parser.add_argument("--limit",     type=int, default=None,
                         help="Maksimum author per run")
+    parser.add_argument("--author_id", type=int, default=None,
+                        help="Sync satu author berdasarkan id DB")
     args = parser.parse_args()
-    run(jadwal_id=args.jadwal_id, dry_run=args.dry_run, days=args.days, limit=args.limit)
+    run(jadwal_id=args.jadwal_id, dry_run=args.dry_run, days=args.days,
+        limit=args.limit, author_id=args.author_id)
 
 
 if __name__ == "__main__":
