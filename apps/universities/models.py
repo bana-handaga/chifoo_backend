@@ -400,9 +400,11 @@ class SintaTrendTahunan(models.Model):
     """
 
     class Jenis(models.TextChoices):
-        SCOPUS   = 'scopus',   'Publikasi Scopus'
-        RESEARCH = 'research', 'Penelitian'
-        SERVICE  = 'service',  'Pengabdian Masyarakat'
+        SCOPUS      = 'scopus',   'Publikasi Scopus'
+        RESEARCH    = 'research', 'Penelitian'
+        SERVICE     = 'service',  'Pengabdian Masyarakat'
+        GS_PUB      = 'gs_pub',   'Google Scholar Publikasi'
+        GS_CITE     = 'gs_cite',  'Google Scholar Sitasi'
 
     afiliasi = models.ForeignKey(
         SintaAfiliasi, on_delete=models.CASCADE,
@@ -428,6 +430,37 @@ class SintaTrendTahunan(models.Model):
 
     def __str__(self):
         return f"{self.afiliasi.perguruan_tinggi.singkatan} — {self.jenis} {self.tahun}: {self.jumlah}"
+
+
+class SintaAfiliasiGScholarArtikel(models.Model):
+    """
+    Artikel Google Scholar terbaru (2 tahun terakhir) per afiliasi PT di SINTA.
+    Diisi saat sync afiliasi dari ?view=googlescholar.
+    """
+    afiliasi   = models.ForeignKey(
+        SintaAfiliasi, on_delete=models.CASCADE,
+        related_name='gscholar_artikels', verbose_name='SINTA Afiliasi'
+    )
+    pub_id     = models.CharField(max_length=200, db_index=True, verbose_name='Publication ID / URL key')
+    judul      = models.CharField(max_length=1000, verbose_name='Judul')
+    penulis    = models.TextField(blank=True, verbose_name='Penulis')
+    jurnal     = models.CharField(max_length=500, blank=True, verbose_name='Jurnal')
+    tahun      = models.PositiveSmallIntegerField(null=True, blank=True, db_index=True, verbose_name='Tahun')
+    sitasi     = models.PositiveIntegerField(default=0, verbose_name='Jumlah Sitasi')
+    url        = models.URLField(max_length=800, blank=True, verbose_name='URL Artikel')
+    scraped_at = models.DateTimeField(auto_now=True, verbose_name='Waktu Scrape')
+
+    class Meta:
+        verbose_name        = 'SINTA Afiliasi GScholar Artikel'
+        verbose_name_plural = 'SINTA Afiliasi GScholar Artikel'
+        unique_together     = ('afiliasi', 'pub_id')
+        ordering            = ['-tahun', '-sitasi']
+        indexes             = [
+            models.Index(fields=['afiliasi', 'tahun']),
+        ]
+
+    def __str__(self):
+        return f"{self.afiliasi.perguruan_tinggi.singkatan} — {self.tahun}: {self.judul[:60]}"
 
 
 class SintaWcuTahunan(models.Model):

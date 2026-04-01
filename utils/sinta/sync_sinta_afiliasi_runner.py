@@ -224,6 +224,94 @@ def _parse_quartile(raw):
     return result
 
 
+def _parse_gscholar_chart(raw):
+    """
+    Parse chart Google Scholar afiliasi yang memiliki 2 seri: Publications dan Citations.
+    Kembalikan (trend_pub, trend_cite) masing-masing list {tahun, jumlah}.
+    """
+    chunk = _chunk_after(raw, "google-chart-articles", 12000)
+    if not chunk:
+        return [], []
+
+    mx = re.search(r'xAxis.*?data\s*:\s*\[([^\]]+)\]', chunk, re.DOTALL)
+    if not mx:
+        return [], []
+    years = [x.strip().strip("'\"") for x in re.split(r',', mx.group(1)) if x.strip().strip("'\"")]
+
+    series_m = re.search(r'series\s*:\s*\[(.*)', chunk, re.DOTALL)
+    if not series_m:
+        return [], []
+    series_chunk = series_m.group(1)
+
+    def _extract_named(sc, name):
+        m = re.search(
+            rf"name\s*:\s*['\"]{{?{re.escape(name)}}}?['\"].*?data\s*:\s*\[([^\]]+)\]",
+            sc, re.DOTALL
+        )
+        if not m:
+            return []
+        vals = [x.strip() for x in re.split(r',', m.group(1)) if x.strip()]
+        result = []
+        for y, v in zip(years, vals):
+            try:
+                result.append({"tahun": int(y), "jumlah": int(v)})
+            except (ValueError, TypeError):
+                pass
+        return result
+
+    return _extract_named(series_chunk, "Publications"), _extract_named(series_chunk, "Citations")
+
+
+def _parse_gscholar_articles(soup, years_limit=2):
+    """
+    Parse daftar artikel Google Scholar dari soup halaman ?view=googlescholar.
+    Hanya ambil artikel dengan tahun >= (tahun sekarang - years_limit + 1).
+    Return list of dict {pub_id, judul, penulis, jurnal, tahun, sitasi, url}.
+    """
+    from datetime import datetime
+    cutoff_year = datetime.now().year - years_limit + 1
+
+    artikels = []
+    for item in soup.select("div.ar-list-item"):
+        link_el   = item.select_one(".ar-title a")
+        pub_el    = item.select_one("a.ar-pub")
+        year_el   = item.select_one("a.ar-year")
+        cited_el  = item.select_one("a.ar-cited")
+        author_el = item.select_one(".ar-meta a:not(.ar-pub):not(.ar-year):not(.ar-cited)")
+
+        tahun = None
+        try:
+            tahun = int(year_el.get_text(strip=True).strip()) if year_el else None
+        except (ValueError, TypeError):
+            pass
+
+        # Filter: hanya 2 tahun terakhir
+        if tahun is None or tahun < cutoff_year:
+            continue
+
+        sitasi_txt = cited_el.get_text(strip=True) if cited_el else "0"
+        m_cit = re.search(r"\d+", sitasi_txt)
+        sitasi = int(m_cit.group()) if m_cit else 0
+
+        judul   = link_el.get_text(strip=True) if link_el else ""
+        url_art = link_el.get("href", "") if link_el else ""
+        if not judul:
+            continue
+
+        pub_id = url_art or f"gs_aff_{len(artikels)}"
+        artikels.append({
+            "pub_id":  pub_id[:200],
+            "judul":   judul,
+            "url":     url_art,
+            "jurnal":  pub_el.get_text(strip=True) if pub_el else "",
+            "tahun":   tahun,
+            "sitasi":  sitasi,
+            "penulis": author_el.get_text(strip=True).replace("Authors : ", "") if author_el else "",
+        })
+
+    return artikels
+
+
 def _parse_research_radar(raw):
     """
     Parse radar chart penelitian (research-radar).
@@ -392,6 +480,19 @@ def scrape_afiliasi(session, sinta_id, fetch_logo=True):
 
     time.sleep(DELAY)
 
+    # ── ?view=googlescholar ───────────────────────────────────
+    soup_gs, raw_gs = fetch(session, f"{profile_url}/?view=googlescholar")
+    if soup_gs:
+        t_pub, t_cite = _parse_gscholar_chart(raw_gs)
+        if t_pub:
+            result["trend_gscholar_pub"]  = t_pub
+        if t_cite:
+            result["trend_gscholar_cite"] = t_cite
+        artikels = _parse_gscholar_articles(soup_gs, years_limit=2)
+        if artikels:
+            result["gscholar_artikels"] = artikels
+    time.sleep(DELAY)
+
     # ── ?view=researches ──────────────────────────────────────
     soup_r, raw_r = fetch(session, f"{profile_url}/?view=researches")
     if soup_r:
@@ -430,7 +531,9 @@ def import_afiliasi(data):
     """
     import django
     django.setup()
-    from apps.universities.models import SintaAfiliasi, SintaTrendTahunan
+    from apps.universities.models import (
+        SintaAfiliasi, SintaTrendTahunan, SintaAfiliasiGScholarArtikel,
+    )
     from django.utils import timezone
 
     sinta_id = data.get("sinta_id", "")
@@ -503,6 +606,8 @@ def import_afiliasi(data):
 
     for jenis, key in [
         ("scopus",   "trend_scopus"),
+        ("gs_pub",   "trend_gscholar_pub"),
+        ("gs_cite",  "trend_gscholar_cite"),
         ("research", "trend_research"),
         ("service",  "trend_service"),
     ]:
@@ -528,6 +633,27 @@ def import_afiliasi(data):
             ))
         if trend_objs:
             SintaTrendTahunan.objects.bulk_create(trend_objs, ignore_conflicts=True)
+
+    # GScholar Artikel (2 tahun terakhir) — hapus yang lama & insert ulang
+    gscholar_artikels = data.get("gscholar_artikels", [])
+    if gscholar_artikels:
+        from datetime import datetime
+        cutoff_year = datetime.now().year - 1  # 2 tahun: tahun ini + tahun lalu
+        afiliasi.gscholar_artikels.filter(tahun__gte=cutoff_year).delete()
+        art_objs = []
+        for art in gscholar_artikels:
+            art_objs.append(SintaAfiliasiGScholarArtikel(
+                afiliasi=afiliasi,
+                pub_id=art.get("pub_id", "")[:200],
+                judul=art.get("judul", "")[:1000],
+                penulis=art.get("penulis", ""),
+                jurnal=art.get("jurnal", "")[:500],
+                tahun=art.get("tahun"),
+                sitasi=art.get("sitasi", 0),
+                url=art.get("url", "")[:800],
+            ))
+        if art_objs:
+            SintaAfiliasiGScholarArtikel.objects.bulk_create(art_objs, ignore_conflicts=True)
 
     return True
 
