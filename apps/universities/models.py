@@ -30,8 +30,8 @@ class PerguruanTinggi(models.Model):
         AKADEMI = 'akademi', _('Akademi')
 
     class OrganisasiInduk(models.TextChoices):
-        MUHAMMADIYAH = 'muhammadiyah', _('Muhammadiyah')
-        AISYIYAH = 'aisyiyah', _('Aisyiyah')
+        MUHAMMADIYAH = 'muhammadiyah', _('PTNBH')
+        AISYIYAH = 'aisyiyah', _('Non-PTNBH')
 
     class StatusAkreditasi(models.TextChoices):
         UNGGUL = 'unggul', _('Unggul')
