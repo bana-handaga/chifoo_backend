@@ -97,13 +97,13 @@ def OpenPTPage(d, namapt='Universitas Muhammadiyah Surakarta'):
     except:
         pass
 
-    PTNAME = namapt
-    d.find_element(By.XPATH, xp).send_keys(PTNAME)
+    PTMAAME = namapt
+    d.find_element(By.XPATH, xp).send_keys(PTMAAME)
     d.find_element(By.XPATH,btnPATH).click()
 
     rpath = '//*[@id="root"]/div/div[4]/div[6]/div/div[2]/div[2]/div'
     rPT = d.find_element(By.XPATH,rpath)
-    if PTNAME in rPT.text: 
+    if PTMAAME in rPT.text: 
         # ada
         detailPATH = '//*[@id="root"]/div/div[4]/div[6]/div/div[2]/div[2]/div[1]/div[4]/div/button[1]'
         rPT.find_element(By.XPATH,detailPATH).click()
@@ -1538,9 +1538,9 @@ def go(START=0,STOP=1, SEMESTER=20252,TERBATAS=False,PTMA="PTMA",KODEPTMA="01100
             btnPATH = '/html/body/div[1]/div/div[4]/div[6]/div/div[2]/div[1]/div[1]/div[2]'            
             
 
-            PTNAME = pt.namapt
+            PTMAAME = pt.namapt
             if pt.kodept=='023061':
-                PTNAME = 'Sekolah Tinggi Keguruan dan Ilmu Pendidikan Muhammadiyah Pagaralam'
+                PTMAAME = 'Sekolah Tinggi Keguruan dan Ilmu Pendidikan Muhammadiyah Pagaralam'
                 
             PTMA_NAMA = pt.namapt
             INPUT_PTMA=False
@@ -1550,7 +1550,7 @@ def go(START=0,STOP=1, SEMESTER=20252,TERBATAS=False,PTMA="PTMA",KODEPTMA="01100
                     el = getElement(d,xp,60)
 
                     print('send_keys')
-                    el.send_keys(PTNAME)
+                    el.send_keys(PTMAAME)
 
                     print('get elemen button search')
                     el = getElement(d,btnPATH,60)
@@ -1586,7 +1586,7 @@ def go(START=0,STOP=1, SEMESTER=20252,TERBATAS=False,PTMA="PTMA",KODEPTMA="01100
                     continue
             
             
-            out['namapt']      = PTNAME
+            out['namapt']      = PTMAAME
             x = getElementLengkap(d,'//*[@id="root"]/div/div[4]/div[4]/div/div/div[1]/div[1]/p[2]',60)
             out['kode'] = x.text.strip()
             x = getElementLengkap(d,'//*[@id="root"]/div/div[4]/div[4]/div/div/div[1]/div[2]/p[2]',60)

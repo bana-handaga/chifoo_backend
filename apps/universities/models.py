@@ -1,4 +1,4 @@
-"""Models for Universities (Perguruan Tinggi Muhammadiyah dan Aisyiyah)"""
+"""Models for Universities (PTMA — Muhammadiyah dan Aisyiyah)"""
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -20,7 +20,7 @@ class Wilayah(models.Model):
 
 
 class PerguruanTinggi(models.Model):
-    """Model utama Perguruan Tinggi Muhammadiyah dan Aisyiyah"""
+    """Model utama Perguruan Tinggi PTMA (Muhammadiyah dan Aisyiyah)"""
     
     class JenisPT(models.TextChoices):
         UNIVERSITAS = 'universitas', _('Universitas')
@@ -30,8 +30,8 @@ class PerguruanTinggi(models.Model):
         AKADEMI = 'akademi', _('Akademi')
 
     class OrganisasiInduk(models.TextChoices):
-        MUHAMMADIYAH = 'muhammadiyah', _('PTNBH')
-        AISYIYAH = 'aisyiyah', _('Non-PTNBH')
+        MUHAMMADIYAH = 'muhammadiyah', _('Muhammadiyah')
+        AISYIYAH     = 'aisyiyah',     _('Aisyiyah')
 
     class StatusAkreditasi(models.TextChoices):
         UNGGUL = 'unggul', _('Unggul')

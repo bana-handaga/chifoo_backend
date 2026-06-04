@@ -2156,7 +2156,7 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
 
         # 4. Fallback hardcoded
         _BUILTIN_DESCS = {
-            'Learning & Development & Based': 'Dosen PTMA aktif meneliti bidang pendidikan dan pengembangan pembelajaran berbasis konstruktivisme. Fokus riset mencakup efektivitas model pembelajaran aktif, integrasi teknologi digital, dan peningkatan kemampuan akademik siswa. Tren berkembang ke arah pembelajaran adaptif dan personalisasi kurikulum. Riset ini berkontribusi langsung pada peningkatan kualitas pendidikan nasional di lingkungan Muhammadiyah-Aisyiyah.',
+            'Learning & Development & Based': 'Dosen PTMA aktif meneliti bidang pendidikan dan pengembangan pembelajaran berbasis konstruktivisme. Fokus riset mencakup efektivitas model pembelajaran aktif, integrasi teknologi digital, dan peningkatan kemampuan akademik siswa. Tren berkembang ke arah pembelajaran adaptif dan personalisasi kurikulum. Riset ini berkontribusi langsung pada peningkatan kualitas pendidikan nasional di lingkungan PTMA (Muhammadiyah dan Aisyiyah).',
             'Indonesia & 19 & Study': 'Riset ini memusatkan perhatian pada dampak pandemi COVID-19 di Indonesia dari berbagai dimensi — kesehatan, ekonomi, dan sosial. Dosen PTMA aktif mengkaji pola penyebaran, kebijakan penanganan, serta dampak jangka panjang pandemi terhadap masyarakat. Tren riset berkembang ke arah analisis pemulihan pasca-pandemi dan ketahanan sistem kesehatan. Hasil riset berperan penting dalam memberikan rekomendasi kebijakan berbasis data.',
             'From & Oil & As': 'Bidang ini mencakup riset material dan rekayasa, khususnya pemanfaatan ekstrak alam dan limbah industri sebagai bahan konstruksi. Dosen PTMA meneliti sifat mekanis material alternatif seperti pemanfaatan minyak nabati dan produk sampingan industri untuk campuran beton. Tren mengarah pada material berkelanjutan dan ramah lingkungan. Riset ini relevan untuk mendukung industri konstruksi yang lebih efisien dan berwawasan lingkungan.',
             'Using & Learning & Students': 'Riset ini mengkaji metode pengajaran inovatif berbasis student-centered learning untuk meningkatkan hasil belajar mahasiswa. Fokus mencakup pendekatan inquiry-based, problem-solving, dan blended learning. Tren berkembang pada integrasi platform digital dan gamifikasi dalam proses pembelajaran. Dampaknya signifikan dalam meningkatkan motivasi, partisipasi aktif, dan prestasi akademik mahasiswa di perguruan tinggi.',
@@ -2184,7 +2184,7 @@ class SintaScopusArtikelViewSet(PublicReadAdminWriteMixin, viewsets.ReadOnlyMode
                     msgs = [
                         {'role': 'system', 'content': 'Kamu adalah analis riset perguruan tinggi Indonesia yang menulis laporan ilmiah.'},
                         {'role': 'user',   'content': (
-                            f"Dosen PTMA (Perguruan Tinggi Muhammadiyah-Aisyiyah) menerbitkan artikel Scopus "
+                            f"Dosen PTMA (Muhammadiyah dan Aisyiyah) menerbitkan artikel Scopus "
                             f"dengan kata kunci: {kw_str}. "
                             f"Tulis satu paragraf singkat (4-5 kalimat) dalam Bahasa Indonesia yang menjelaskan: "
                             f"(1) bidang riset utama yang sedang dikerjakan, "
