@@ -5,7 +5,7 @@ from difflib import SequenceMatcher
 from pathlib import Path
 from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
-from django.db.models import Count, Sum, Q, Case, When, Value, IntegerField
+from django.db.models import Count, Sum, Q, Case, When, Value, IntegerField, Max
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
@@ -297,6 +297,63 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             jabatan_fungsional__gt='',
         ).count()
 
+        # ── Update info ────────────────────────────────────────────────
+        sem_order_case = Case(
+            When(semester='ganjil', then=Value(1)),
+            When(semester='genap',  then=Value(2)),
+            default=Value(3),
+            output_field=IntegerField(),
+        )
+
+        def _latest_semester_label(qs_model, pt_filter=None):
+            qs = qs_model.objects.all()
+            if pt_filter is not None:
+                qs = qs.filter(perguruan_tinggi_id__in=pt_filter)
+            row = (qs.values('tahun_akademik', 'semester')
+                     .distinct()
+                     .annotate(so=Case(
+                         When(semester='ganjil', then=Value(1)),
+                         When(semester='genap',  then=Value(2)),
+                         default=Value(3),
+                         output_field=IntegerField(),
+                     ))
+                     .order_by('-tahun_akademik', '-so')
+                     .first())
+            if not row:
+                return None
+            return f"{row['tahun_akademik']} {row['semester'].capitalize()}"
+
+        from django.utils import timezone as tz
+
+        def _fmt_dt(dt):
+            if not dt:
+                return None
+            local = tz.localtime(dt) if tz.is_aware(dt) else dt
+            return local.strftime('%d %b %Y %H:%M')
+
+        mhs_last_label   = _latest_semester_label(DataMahasiswa,  pt_ids)
+        dosen_last_label = _latest_semester_label(DataDosen,       pt_ids)
+
+        profil_dosen_upd = ProfilDosen.objects.filter(
+            perguruan_tinggi_id__in=pt_ids
+        ).aggregate(latest=Max('updated_at'))['latest']
+
+        prodi_upd = ProgramStudi.objects.filter(
+            perguruan_tinggi_id__in=pt_ids
+        ).aggregate(latest=Max('updated_at'))['latest']
+
+        pt_upd = PerguruanTinggi.objects.filter(
+            id__in=pt_ids
+        ).aggregate(latest=Max('updated_at'))['latest']
+
+        update_info = {
+            'mahasiswa':    mhs_last_label,
+            'dosen':        dosen_last_label,
+            'profil_dosen': _fmt_dt(profil_dosen_upd),
+            'program_studi': _fmt_dt(prodi_upd),
+            'perguruan_tinggi': _fmt_dt(pt_upd),
+        }
+
         return Response({
             'total_pt': total_pt,
             'total_muhammadiyah': total_muhammadiyah,
@@ -314,6 +371,7 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             'top_mhs': top_mhs,
             'top_prodi': top_prodi,
             'top_dosen': top_dosen,
+            'update_info': update_info,
         })
 
     @action(detail=False, methods=['get'])
