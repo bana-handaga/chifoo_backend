@@ -170,6 +170,7 @@ class DataMahasiswa(models.Model):
         verbose_name = 'Data Mahasiswa'
         verbose_name_plural = 'Data Mahasiswa'
         ordering = ['-tahun_akademik', 'semester']
+        unique_together = ['perguruan_tinggi', 'program_studi', 'tahun_akademik', 'semester']
 
     def __str__(self):
         return f"{self.perguruan_tinggi.singkatan} - {self.tahun_akademik}/{self.semester}"

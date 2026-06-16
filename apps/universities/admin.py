@@ -3,6 +3,7 @@
 from django.contrib import admin
 from .models import (
     Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen,
+    ProfilDosen, RiwayatPendidikanDosen,
     SintaAfiliasi, SintaTrendTahunan, SintaWcuTahunan, SintaCluster, SintaClusterItem,
     SintaJurnal,
 )
@@ -39,6 +40,42 @@ class DataMahasiswaAdmin(admin.ModelAdmin):
 class DataDosenAdmin(admin.ModelAdmin):
     list_display = ['perguruan_tinggi', 'program_studi', 'tahun_akademik', 'semester', 'dosen_tetap', 'dosen_tidak_tetap']
     list_filter = ['tahun_akademik', 'semester']
+    search_fields = ['perguruan_tinggi__singkatan', 'perguruan_tinggi__nama', 'program_studi__nama']
+
+
+class RiwayatPendidikanDosenInline(admin.TabularInline):
+    model  = RiwayatPendidikanDosen
+    extra  = 0
+    fields = ['jenjang', 'perguruan_tinggi_asal', 'gelar', 'tahun_lulus', 'is_luar_negeri']
+    readonly_fields = ['jenjang', 'perguruan_tinggi_asal', 'gelar', 'tahun_lulus', 'is_luar_negeri']
+    can_delete = False
+
+
+@admin.register(ProfilDosen)
+class ProfilDosenAdmin(admin.ModelAdmin):
+    list_display  = [
+        'nama', 'nidn', 'nuptk', 'perguruan_tinggi', 'program_studi_nama',
+        'jabatan_fungsional', 'pendidikan_tertinggi', 'ikatan_kerja', 'status',
+    ]
+    list_filter   = ['pendidikan_tertinggi', 'ikatan_kerja', 'jenis_kelamin', 'status']
+    search_fields = ['nama', 'nidn', 'nuptk', 'perguruan_tinggi__singkatan', 'perguruan_tinggi__nama', 'program_studi_nama']
+    readonly_fields = ['created_at', 'updated_at', 'url_pencarian']
+    inlines       = [RiwayatPendidikanDosenInline]
+    list_per_page = 50
+
+    fieldsets = [
+        ('Identitas', {'fields': ['nama', 'nidn', 'nuptk', 'jenis_kelamin']}),
+        ('Institusi', {'fields': ['perguruan_tinggi', 'program_studi', 'program_studi_nama']}),
+        ('Jabatan & Status', {'fields': ['jabatan_fungsional', 'pendidikan_tertinggi', 'ikatan_kerja', 'status']}),
+        ('Referensi', {'fields': ['url_pencarian', 'scraped_at', 'created_at', 'updated_at'], 'classes': ['collapse']}),
+    ]
+
+
+@admin.register(RiwayatPendidikanDosen)
+class RiwayatPendidikanDosenAdmin(admin.ModelAdmin):
+    list_display  = ['profil_dosen', 'jenjang', 'perguruan_tinggi_asal', 'gelar', 'tahun_lulus', 'is_luar_negeri']
+    list_filter   = ['jenjang', 'is_luar_negeri']
+    search_fields = ['profil_dosen__nama', 'profil_dosen__nidn', 'perguruan_tinggi_asal', 'gelar']
 
 
 @admin.register(SintaAfiliasi)
