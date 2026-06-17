@@ -5,7 +5,7 @@ Output: outs/{kode_pt}/{kode_pt}_listprodi.json
 Usage:
     cd /home/ubuntu/_chifoo/chifoo_backend/utils/pddikti
     conda run -n chifoo python run_scrape_pelaporan_all.py
-    conda run -n chifoo python run_scrape_pelaporan_all.py --semester 5
+    conda run -n chifoo python run_scrape_pelaporan_all.py --semester 12
     conda run -n chifoo python run_scrape_pelaporan_all.py --resume
     conda run -n chifoo python run_scrape_pelaporan_all.py --kode_pt 011003 051007
 """
@@ -90,8 +90,8 @@ def run(n_semester: int, resume: bool, kode_pt_filter: list):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--semester', type=int, default=5,
-                        help='Jumlah semester terakhir (default: 5)')
+    parser.add_argument('--semester', type=int, default=12,
+                        help='Jumlah semester terakhir (default: 12)')
     parser.add_argument('--resume', action='store_true',
                         help='Lewati PT yang sudah punya file output')
     parser.add_argument('--kode_pt', nargs='+', default=None,

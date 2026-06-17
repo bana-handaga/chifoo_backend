@@ -1,10 +1,20 @@
 """
-Import / Update DataDosen (aggregate per prodi) dari dosen_homebase['Genap 2025']
-di setiap *_detailprodi.json ke tabel universities_datadosen.
+Import / Update DataDosen (aggregate per prodi) dari dosen_homebase di
+setiap *_detailprodi.json ke tabel universities_datadosen.
+
+Mapping label → DB (konvensi detailprodi PDDikti):
+    "Gasal YYYY" / "Ganjil YYYY"  →  tahun='{YYYY}/{YYYY+1}', semester='ganjil'
+    "Genap YYYY"                   →  tahun='{YYYY}/{YYYY+1}', semester='genap'
+
+Misal:
+    "Gasal 2025"  →  2025/2026 ganjil
+    "Genap 2025"  →  2025/2026 genap
+    "Genap 2024"  →  2024/2025 genap
 
 Usage:
     cd /home/ubuntu/_chifoo/chifoo_backend
     conda run -n chifoo python utils/import_data_dosen.py
+    conda run -n chifoo python utils/import_data_dosen.py --label "Genap 2024"
     conda run -n chifoo python utils/import_data_dosen.py --dry-run
     conda run -n chifoo python utils/import_data_dosen.py --kode_pt 011003
 """
@@ -22,9 +32,20 @@ django.setup()
 from apps.universities.models import PerguruanTinggi, ProgramStudi, DataDosen
 
 OUTS_DIR = BASE_DIR / 'utils' / 'outs'
-TAHUN    = '2025/2026'
-SEMESTER = 'genap'
-KUNCI_HB = 'Genap 2025'
+
+
+def label_to_tahun_semester(label: str):
+    """'Genap 2024' → ('2024/2025', 'genap')  |  'Gasal 2025' → ('2025/2026', 'ganjil')"""
+    parts = label.strip().split()
+    if len(parts) != 2:
+        raise ValueError(f"Label tidak valid: {label!r}. Gunakan format 'Genap YYYY' atau 'Gasal YYYY'.")
+    tipe, yr_str = parts[0].lower(), parts[1]
+    yr = int(yr_str)
+    if tipe in ('gasal', 'ganjil'):
+        return f'{yr}/{yr + 1}', 'ganjil'
+    elif tipe == 'genap':
+        return f'{yr}/{yr + 1}', 'genap'
+    raise ValueError(f"Tipe semester tidak dikenal: {tipe!r}")
 
 S3_PEND  = {'S3', 'S3 Terapan', 'Sp-2'}
 S2_PEND  = {'S2', 'S2 Terapan', 'Sp-1'}
@@ -64,12 +85,22 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--kode_pt', nargs='+', default=None)
+    parser.add_argument('--label', default='Genap 2025',
+                        help="Label semester di dosen_homebase, misal 'Genap 2024' (default: 'Genap 2025')")
     args = parser.parse_args()
     dry_run        = args.dry_run
     kode_pt_filter = set(args.kode_pt) if args.kode_pt else None
 
+    TAHUN, SEMESTER = label_to_tahun_semester(args.label)
+    KUNCI_HB = args.label
+
     if dry_run:
         print('[DRY-RUN] Tidak ada perubahan yang disimpan.')
+
+    print(f'Label HB     : {KUNCI_HB}')
+    print(f'Tahun Akad.  : {TAHUN}')
+    print(f'Semester     : {SEMESTER}')
+    print()
 
     pt_cache    = {pt.kode_pt: pt for pt in PerguruanTinggi.objects.all()}
     prodi_cache = {

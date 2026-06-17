@@ -14,7 +14,7 @@ Perbaikan:
 
 Mapping semester PDDikti → DB:
     Ganjil YYYY  →  tahun='{YYYY}/{YYYY+1}', semester='ganjil'
-    Genap  YYYY  →  tahun='{YYYY-1}/{YYYY}', semester='genap'
+    Genap  YYYY  →  tahun='{YYYY}/{YYYY+1}', semester='genap'
 
 Usage:
     cd /home/ubuntu/_chifoo/chifoo_backend
@@ -59,7 +59,9 @@ def parse_semester(label: str):
     if tipe == 'ganjil':
         return f'{yr}/{yr + 1}', 'ganjil'
     elif tipe == 'genap':
-        return f'{yr - 1}/{yr}', 'genap'
+        # "Genap YYYY" = semester genap tahun akademik YYYY/YYYY+1
+        # (YYYY = tahun akademik dimulai, bukan tahun kalender semester berjalan)
+        return f'{yr}/{yr + 1}', 'genap'
     return None, None
 
 

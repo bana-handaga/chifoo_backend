@@ -533,6 +533,99 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             return Response({'labels': labels, 'datasets': [{'label': label, 'data': data_points}], 'mode': 'gabung'})
 
     @action(detail=False, methods=['get'])
+    def tren_dosen(self, request):
+        """
+        Tren jumlah dosen 5 semester terakhir (agregasi DataDosen per PTMA).
+        Params:
+          pt_id[] - filter PT (bisa multiple)
+          mode    - 'gabung' | 'perbandingan'
+          metric  - 'tetap' | 'tidak_tetap' | 'total' | 's3' | 's2'  (default: 'tetap')
+          n       - jumlah semester terakhir (default: 5)
+        """
+        sem_order = Case(
+            When(semester='ganjil', then=Value(1)),
+            When(semester='genap',  then=Value(2)),
+            default=Value(3),
+            output_field=IntegerField(),
+        )
+        n = min(int(request.query_params.get('n', 5)), 20)
+        semesters = list(
+            DataDosen.objects
+            .values('tahun_akademik', 'semester')
+            .distinct()
+            .annotate(sem_order=sem_order)
+            .order_by('tahun_akademik', 'sem_order')
+        )
+        semesters = semesters[-n:]
+        labels = [f"{s['tahun_akademik']} {s['semester'].capitalize()}" for s in semesters]
+
+        pt_ids = request.query_params.getlist('pt_id')
+        mode   = request.query_params.get('mode', 'gabung')
+        metric = request.query_params.get('metric', 'tetap')
+
+        METRIC_FIELD = {
+            'tetap':       'dosen_tetap',
+            'tidak_tetap': 'dosen_tidak_tetap',
+            's3':          'dosen_s3',
+            's2':          'dosen_s2',
+            's1':          'dosen_s1',
+        }
+        metric_field = METRIC_FIELD.get(metric, 'dosen_tetap')
+
+        def _base_qs(s, extra_filter=None):
+            qs = DataDosen.objects.filter(
+                tahun_akademik=s['tahun_akademik'],
+                semester=s['semester'],
+            )
+            if pt_ids:
+                qs = qs.filter(perguruan_tinggi_id__in=pt_ids)
+            if extra_filter:
+                qs = qs.filter(**extra_filter)
+            if metric == 'total':
+                agg = qs.aggregate(
+                    t=Sum('dosen_tetap'), tt=Sum('dosen_tidak_tetap')
+                )
+                return (agg['t'] or 0) + (agg['tt'] or 0)
+            return qs.aggregate(total=Sum(metric_field))['total'] or 0
+
+        if mode == 'perbandingan' and pt_ids:
+            datasets = []
+            for pt_id in pt_ids:
+                try:
+                    pt = PerguruanTinggi.objects.get(pk=pt_id)
+                except PerguruanTinggi.DoesNotExist:
+                    continue
+                data_points = []
+                for s in semesters:
+                    qs = DataDosen.objects.filter(
+                        perguruan_tinggi_id=pt_id,
+                        tahun_akademik=s['tahun_akademik'],
+                        semester=s['semester'],
+                    )
+                    if metric == 'total':
+                        agg = qs.aggregate(t=Sum('dosen_tetap'), tt=Sum('dosen_tidak_tetap'))
+                        data_points.append((agg['t'] or 0) + (agg['tt'] or 0))
+                    else:
+                        data_points.append(qs.aggregate(total=Sum(metric_field))['total'] or 0)
+                datasets.append({'label': pt.singkatan or pt.nama, 'data': data_points})
+            if not datasets:
+                data_points = [_base_qs(s) for s in semesters]
+                datasets = [{'label': 'Semua PT', 'data': data_points}]
+            return Response({'labels': labels, 'datasets': datasets, 'mode': 'perbandingan'})
+
+        data_points = [_base_qs(s) for s in semesters]
+        label = 'Semua PT'
+        if pt_ids and len(pt_ids) == 1:
+            try:
+                pt = PerguruanTinggi.objects.get(pk=pt_ids[0])
+                label = pt.singkatan or pt.nama
+            except PerguruanTinggi.DoesNotExist:
+                pass
+        elif pt_ids:
+            label = f'{len(pt_ids)} PT (gabung)'
+        return Response({'labels': labels, 'datasets': [{'label': label, 'data': data_points}], 'mode': 'gabung'})
+
+    @action(detail=False, methods=['get'])
     def estimasi_mahasiswa(self, request):
         """
         Estimasi mahasiswa baru / lulus per tahun akademik.

@@ -372,8 +372,8 @@ if __name__ == "__main__":
                         help="Nama PT persis (huruf kapital)")
     parser.add_argument("--kode",     default="051007",
                         help="Kode PT (prefix nama file output)")
-    parser.add_argument("--semester", default=7, type=int,
-                        help="Jumlah semester terakhir (default: 7)")
+    parser.add_argument("--semester", default=12, type=int,
+                        help="Jumlah semester terakhir (default: 12)")
     args = parser.parse_args()
 
     main(
