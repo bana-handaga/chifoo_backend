@@ -1,13 +1,13 @@
 """
 Import ProfilDosen dan RiwayatPendidikanDosen dari file JSON
-di folder utils/outs/dosen/{kode_pt}/*.json
+di folder utils/outs/{kode_pt}/dosen/*_detaildosen.json
 
-Format file: {nidn}_{nama}.json (hasil scrape scrape_pddikti_detaildosen*.py)
+Format file: {nuptk}_{nidn}_detaildosen.json  (nidn='x' jika tidak ada NIDN)
 Struktur JSON:
-  - profil      : dict → ProfilDosen
+  - profil             : dict → ProfilDosen
   - riwayat_pendidikan : list → RiwayatPendidikanDosen
-  - input       : dict (nidn, nuptk, pt_kode, dll)
-  - url_pencarian: str
+  - source             : dict (nidn, nuptk, kode_pt, nama, dll)
+  - url_pencarian      : str
 
 Upsert ProfilDosen: (perguruan_tinggi, nidn) untuk dosen ber-NIDN;
                     (perguruan_tinggi, nuptk) untuk dosen tanpa NIDN.
@@ -34,7 +34,7 @@ from apps.universities.models import (
     PerguruanTinggi, ProgramStudi, ProfilDosen, RiwayatPendidikanDosen
 )
 
-DOSEN_DIR = BASE_DIR / 'utils' / 'outs' / 'dosen'
+OUTS_DIR = BASE_DIR / 'utils' / 'outs'
 
 # ── Mapping ──────────────────────────────────────────────────────────────────
 JK_MAP = {
@@ -105,15 +105,16 @@ def main():
     print(f'Prodi di DB : {len(prodi_cache)}')
 
     # ── Kumpulkan file ─────────────────────────────────────────────────────
-    folders = sorted(p for p in DOSEN_DIR.iterdir() if p.is_dir())
+    # Struktur: outs/{kode_pt}/dosen/*_detaildosen.json
+    pt_dirs = sorted(p for p in OUTS_DIR.iterdir() if p.is_dir() and (p / 'dosen').is_dir())
     if kode_pt_filter:
-        folders = [f for f in folders if f.name in kode_pt_filter]
+        pt_dirs = [d for d in pt_dirs if d.name in kode_pt_filter]
 
     files = []
-    for folder in folders:
-        files.extend(sorted(folder.glob('*.json')))
+    for pt_dir in pt_dirs:
+        files.extend(sorted((pt_dir / 'dosen').glob('*_detaildosen.json')))
 
-    print(f'Folder PT   : {len(folders)}')
+    print(f'Folder PT   : {len(pt_dirs)}')
     print(f'File JSON   : {len(files)}')
     print()
 
@@ -128,11 +129,14 @@ def main():
             error += 1
             continue
 
-        inp    = d.get('input', {})
+        inp    = d.get('source', {})
         profil = d.get('profil', {})
 
-        kode_pt = str(inp.get('pt_kode') or fpath.parent.name).strip()
-        nidn    = str(inp.get('nidn') or '').strip() or None
+        # kode_pt dari source atau dari nama folder induk (outs/{kode_pt}/dosen/)
+        kode_pt = str(inp.get('kode_pt') or fpath.parent.parent.name).strip()
+        # nidn: 'x' di nama file berarti tidak ada NIDN
+        nidn_raw = str(inp.get('nidn') or '').strip()
+        nidn = nidn_raw if nidn_raw and nidn_raw.lower() != 'x' else None
         nuptk   = str(inp.get('nuptk') or profil.get('NUPTK') or '').strip()
 
         if kode_pt not in pt_cache:
@@ -148,7 +152,7 @@ def main():
 
         # Nama dosen
         _nm = str(profil.get('Nama') or '').strip()
-        nama = (_nm if _nm and _nm != '...' else str(inp.get('nama') or _nm)).strip()[:200]
+        nama = (_nm if _nm and _nm != '...' else str(inp.get('nama') or inp.get('nama_dosen') or _nm)).strip()[:200]
 
         defaults = {
             'nuptk':               nuptk,
@@ -159,7 +163,7 @@ def main():
                 profil.get('Pendidikan Tertinggi') or inp.get('pendidikan', '')
             ),
             'ikatan_kerja':        map_ik(profil.get('Ikatan Kerja', '')),
-            'status':              str(profil.get('Status Aktif') or inp.get('status') or '').strip()[:30],
+            'status':              str(profil.get('Status Aktif') or inp.get('status') or inp.get('status_aktif') or '').strip()[:30],
             'program_studi_nama':  prodi_nama_raw,
             'program_studi':       prodi_obj,
             'url_pencarian':       str(d.get('url_pencarian') or '').strip()[:500],

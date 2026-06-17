@@ -94,7 +94,7 @@ class PT10Pagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 500
 
-from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, RiwayatPendidikanDosen, SintaJurnal, SintaAfiliasi, SintaDepartemen, SintaAuthor, SintaScopusArtikel, SintaScopusArtikelAuthor, SintaAuthorTrend, SintaPengabdian, SintaPengabdianAuthor, SintaPenelitian, SintaPenelitianAuthor, KolaboasiSnapshot
+from .models import Wilayah, PerguruanTinggi, ProgramStudi, DataMahasiswa, DataDosen, ProfilDosen, DosenSemester, RiwayatPendidikanDosen, SintaJurnal, SintaAfiliasi, SintaDepartemen, SintaAuthor, SintaScopusArtikel, SintaScopusArtikelAuthor, SintaAuthorTrend, SintaPengabdian, SintaPengabdianAuthor, SintaPenelitian, SintaPenelitianAuthor, KolaboasiSnapshot
 from django.db.models import OuterRef, Subquery
 from .serializers import _get_periode_aktif
 from apps.monitoring.models import PeriodePelaporan
@@ -570,23 +570,17 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             's2':          'dosen_s2',
             's1':          'dosen_s1',
         }
-        metric_field = METRIC_FIELD.get(metric, 'dosen_tetap')
-
-        def _base_qs(s, extra_filter=None):
+        def _agg(s, pt_id_filter=None):
             qs = DataDosen.objects.filter(
                 tahun_akademik=s['tahun_akademik'],
                 semester=s['semester'],
             )
-            if pt_ids:
+            if pt_id_filter:
+                qs = qs.filter(perguruan_tinggi_id__in=pt_id_filter)
+            elif pt_ids:
                 qs = qs.filter(perguruan_tinggi_id__in=pt_ids)
-            if extra_filter:
-                qs = qs.filter(**extra_filter)
-            if metric == 'total':
-                agg = qs.aggregate(
-                    t=Sum('dosen_tetap'), tt=Sum('dosen_tidak_tetap')
-                )
-                return (agg['t'] or 0) + (agg['tt'] or 0)
-            return qs.aggregate(total=Sum(metric_field))['total'] or 0
+            a = qs.aggregate(t=Sum('dosen_tetap'), tt=Sum('dosen_tidak_tetap'))
+            return (a['t'] or 0), (a['t'] or 0) + (a['tt'] or 0)
 
         if mode == 'perbandingan' and pt_ids:
             datasets = []
@@ -595,35 +589,34 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
                     pt = PerguruanTinggi.objects.get(pk=pt_id)
                 except PerguruanTinggi.DoesNotExist:
                     continue
-                data_points = []
-                for s in semesters:
-                    qs = DataDosen.objects.filter(
-                        perguruan_tinggi_id=pt_id,
-                        tahun_akademik=s['tahun_akademik'],
-                        semester=s['semester'],
-                    )
-                    if metric == 'total':
-                        agg = qs.aggregate(t=Sum('dosen_tetap'), tt=Sum('dosen_tidak_tetap'))
-                        data_points.append((agg['t'] or 0) + (agg['tt'] or 0))
-                    else:
-                        data_points.append(qs.aggregate(total=Sum(metric_field))['total'] or 0)
-                datasets.append({'label': pt.singkatan or pt.nama, 'data': data_points})
+                tetap_pts, total_pts = zip(*[_agg(s, [pt_id]) for s in semesters])
+                lbl = pt.singkatan or pt.nama
+                datasets.append({'label': f'{lbl} — Tetap', 'data': list(tetap_pts)})
+                datasets.append({'label': f'{lbl} — Total', 'data': list(total_pts)})
             if not datasets:
-                data_points = [_base_qs(s) for s in semesters]
-                datasets = [{'label': 'Semua PT', 'data': data_points}]
+                tetap_pts, total_pts = zip(*[_agg(s) for s in semesters])
+                datasets = [
+                    {'label': 'Semua PT — Tetap',  'data': list(tetap_pts)},
+                    {'label': 'Semua PT — Total', 'data': list(total_pts)},
+                ]
             return Response({'labels': labels, 'datasets': datasets, 'mode': 'perbandingan'})
 
-        data_points = [_base_qs(s) for s in semesters]
-        label = 'Semua PT'
+        prefix = 'Semua PT'
         if pt_ids and len(pt_ids) == 1:
             try:
                 pt = PerguruanTinggi.objects.get(pk=pt_ids[0])
-                label = pt.singkatan or pt.nama
+                prefix = pt.singkatan or pt.nama
             except PerguruanTinggi.DoesNotExist:
                 pass
         elif pt_ids:
-            label = f'{len(pt_ids)} PT (gabung)'
-        return Response({'labels': labels, 'datasets': [{'label': label, 'data': data_points}], 'mode': 'gabung'})
+            prefix = f'{len(pt_ids)} PT (gabung)'
+
+        tetap_pts, total_pts = zip(*[_agg(s) for s in semesters])
+        datasets = [
+            {'label': f'{prefix} — Dosen Tetap',  'data': list(tetap_pts)},
+            {'label': f'{prefix} — Total Dosen', 'data': list(total_pts)},
+        ]
+        return Response({'labels': labels, 'datasets': datasets, 'mode': 'gabung'})
 
     @action(detail=False, methods=['get'])
     def estimasi_mahasiswa(self, request):
@@ -1185,48 +1178,97 @@ def dosen_dropdown_options(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def dosen_stats(request):
-    """Statistik profil dosen untuk halaman infografik."""
-    qs = ProfilDosen.objects.all()
+    """
+    Statistik profil dosen untuk halaman infografik.
 
-    total         = qs.count()
-    total_tetap       = qs.filter(ikatan_kerja='tetap').count()
-    total_tidak_tetap = qs.filter(ikatan_kerja='tidak_tetap').count()
-    total_dtpk        = qs.filter(ikatan_kerja='dtpk').count()
-    total_profesor = qs.filter(jabatan_fungsional='Profesor').count()
-    total_s3      = qs.filter(pendidikan_tertinggi='s3').count()
+    Params:
+      tahun_akademik - mis. '2025/2026'  (default: dari PeriodePelaporan aktif)
+      semester       - 'ganjil' | 'genap'
+    """
+    tahun   = request.query_params.get('tahun_akademik', '').strip()
+    sem     = request.query_params.get('semester', '').strip().lower()
+
+    # Jika param tidak diberikan, gunakan PeriodePelaporan aktif
+    if not (tahun and sem):
+        periode = PeriodePelaporan.objects.filter(status='aktif').order_by('-tahun', 'semester').first()
+        if periode:
+            if periode.semester == 'genap':
+                tahun = f"{periode.tahun - 1}/{periode.tahun}"
+            else:
+                tahun = f"{periode.tahun}/{periode.tahun + 1}"
+            sem = periode.semester
+
+    sem_label = None
+    if tahun and sem:
+        aktif_ids = DosenSemester.objects.filter(
+            tahun_akademik=tahun, semester=sem
+        ).values_list('profil_dosen_id', flat=True)
+        qs        = ProfilDosen.objects.filter(id__in=aktif_ids)
+        sem_label = f'{tahun} {sem.capitalize()}'
+    else:
+        qs        = ProfilDosen.objects.all()
+        sem_label = None
+
+    # Ikatan kerja dari DosenSemester (lebih akurat dari field ProfilDosen)
+    if sem_label and tahun and sem:
+        ds_qs             = DosenSemester.objects.filter(tahun_akademik=tahun, semester=sem)
+        total_tetap       = ds_qs.filter(ikatan_kerja='tetap').count()
+        total_tidak_tetap = ds_qs.filter(ikatan_kerja='tidak_tetap').count()
+    else:
+        total_tetap       = qs.filter(ikatan_kerja='tetap').count()
+        total_tidak_tetap = qs.filter(ikatan_kerja='tidak_tetap').count()
+
+    total      = qs.count()
+    total_dtpk = qs.filter(ikatan_kerja='dtpk').count()
+
+    # Dosen dilaporkan di DataDosen tapi belum punya ProfilDosen
+    if tahun and sem:
+        dd_agg = DataDosen.objects.filter(
+            tahun_akademik=tahun, semester=sem
+        ).aggregate(t=Sum('dosen_tetap'), tt=Sum('dosen_tidak_tetap'))
+        total_dilaporkan   = (dd_agg['t'] or 0) + (dd_agg['tt'] or 0)
+        dosen_tanpa_profil = max(0, total_dilaporkan - total)
+    else:
+        total_dilaporkan   = total
+        dosen_tanpa_profil = 0
+
+    total_profesor      = qs.filter(jabatan_fungsional='Profesor').count()
+    total_s3            = qs.filter(pendidikan_tertinggi='s3').count()
     total_aktif         = qs.filter(status='Aktif').count()
     total_tugas_belajar = qs.filter(status='TUGAS BELAJAR').count()
     total_ijin_belajar  = qs.filter(status='IJIN BELAJAR').count()
     total_cuti          = qs.filter(status='CUTI').count()
 
     # S3 luar negeri / dalam negeri dari RiwayatPendidikanDosen
-    total_s3_ln = RiwayatPendidikanDosen.objects.filter(jenjang='S3', is_luar_negeri=True).count()
-    total_s3_dn = RiwayatPendidikanDosen.objects.filter(jenjang='S3', is_luar_negeri=False).count()
+    pd_ids       = qs.values_list('id', flat=True)
+    total_s3_ln  = RiwayatPendidikanDosen.objects.filter(
+        profil_dosen_id__in=pd_ids, jenjang='S3', is_luar_negeri=True
+    ).count()
+    total_s3_dn  = RiwayatPendidikanDosen.objects.filter(
+        profil_dosen_id__in=pd_ids, jenjang='S3', is_luar_negeri=False
+    ).count()
 
-    # Profesor dengan S3 LN / DN
-    prof_s3_ln = ProfilDosen.objects.filter(
+    prof_s3_ln = qs.filter(
         jabatan_fungsional='Profesor',
         riwayat_pendidikan__jenjang='S3', riwayat_pendidikan__is_luar_negeri=True
     ).distinct().count()
-    prof_s3_dn = ProfilDosen.objects.filter(
+    prof_s3_dn = qs.filter(
         jabatan_fungsional='Profesor',
         riwayat_pendidikan__jenjang='S3', riwayat_pendidikan__is_luar_negeri=False
     ).distinct().count()
 
-    # Distribusi jabatan fungsional
+    jabatan_order = ['Profesor', 'Lektor Kepala', 'Lektor', 'Asisten Ahli']
     per_jabatan_raw = (
         qs.exclude(jabatan_fungsional='')
           .values('jabatan_fungsional')
           .annotate(total=Count('id'))
           .order_by('-total')
     )
-    jabatan_order = ['Profesor', 'Lektor Kepala', 'Lektor', 'Asisten Ahli']
     per_jabatan = sorted(
         [r for r in per_jabatan_raw if r['jabatan_fungsional'] in jabatan_order],
         key=lambda r: jabatan_order.index(r['jabatan_fungsional'])
     )
 
-    # Distribusi pendidikan tertinggi
     pend_label = {'s1': 'S1', 's2': 'S2', 's3': 'S3', 'profesi': 'Profesi', 'lainnya': 'Lainnya'}
     per_pendidikan = [
         {'label': pend_label.get(r['pendidikan_tertinggi'], r['pendidikan_tertinggi']),
@@ -1237,25 +1279,21 @@ def dosen_stats(request):
                    .order_by('-total')
     ]
 
-    # Distribusi jenis kelamin
     per_jk = {
         r['jenis_kelamin']: r['total']
         for r in qs.exclude(jenis_kelamin='').values('jenis_kelamin').annotate(total=Count('id'))
     }
 
-    # Distribusi status
     per_status = list(
         qs.exclude(status='').values('status').annotate(total=Count('id')).order_by('-total')[:6]
     )
 
-    # Top 20 PT dengan dosen terbanyak
     per_pt = list(
         qs.values('perguruan_tinggi__nama', 'perguruan_tinggi__singkatan', 'perguruan_tinggi__kode_pt')
           .annotate(total=Count('id'))
           .order_by('-total')[:20]
     )
 
-    # Distribusi per wilayah
     per_wilayah = list(
         qs.values('perguruan_tinggi__wilayah__nama')
           .annotate(total=Count('id'))
@@ -1263,26 +1301,29 @@ def dosen_stats(request):
     )
 
     return Response({
-        'total_dosen':    total,
-        'total_tetap':       total_tetap,
-        'total_tidak_tetap': total_tidak_tetap,
-        'total_dtpk':        total_dtpk,
-        'total_profesor': total_profesor,
-        'prof_s3_ln':     prof_s3_ln,
-        'prof_s3_dn':     prof_s3_dn,
-        'total_s3':       total_s3,
-        'total_s3_ln':    total_s3_ln,
-        'total_s3_dn':    total_s3_dn,
+        'semester_aktif':      sem_label,
+        'total_dilaporkan':    total_dilaporkan,
+        'total_dosen':         total,
+        'dosen_tanpa_profil':  dosen_tanpa_profil,
+        'total_tetap':         total_tetap,
+        'total_tidak_tetap':   total_tidak_tetap,
+        'total_dtpk':          total_dtpk,
+        'total_profesor':    total_profesor,
+        'prof_s3_ln':        prof_s3_ln,
+        'prof_s3_dn':        prof_s3_dn,
+        'total_s3':          total_s3,
+        'total_s3_ln':       total_s3_ln,
+        'total_s3_dn':       total_s3_dn,
         'total_aktif':          total_aktif,
         'total_tugas_belajar':  total_tugas_belajar,
         'total_ijin_belajar':   total_ijin_belajar,
         'total_cuti':           total_cuti,
-        'per_jabatan':    per_jabatan,
-        'per_pendidikan': per_pendidikan,
-        'per_jk':         {'L': per_jk.get('L', 0), 'P': per_jk.get('P', 0)},
-        'per_status':     per_status,
-        'per_pt':         per_pt,
-        'per_wilayah':    per_wilayah,
+        'per_jabatan':       per_jabatan,
+        'per_pendidikan':    per_pendidikan,
+        'per_jk':            {'L': per_jk.get('L', 0), 'P': per_jk.get('P', 0)},
+        'per_status':        per_status,
+        'per_pt':            per_pt,
+        'per_wilayah':       per_wilayah,
     })
 
 

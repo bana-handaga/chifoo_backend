@@ -314,6 +314,39 @@ class RiwayatPendidikanDosen(models.Model):
         return f"{self.profil_dosen.nama} — {self.jenjang} {self.tahun_lulus}"
 
 
+class DosenSemester(models.Model):
+    """Junction table: dosen aktif per semester pelaporan PDDikti."""
+
+    class Semester(models.TextChoices):
+        GANJIL = 'ganjil', 'Ganjil'
+        GENAP  = 'genap',  'Genap'
+
+    class IkatanKerja(models.TextChoices):
+        TETAP       = 'tetap',       'Dosen Tetap'
+        TIDAK_TETAP = 'tidak_tetap', 'Dosen Tidak Tetap'
+
+    profil_dosen     = models.ForeignKey(
+        ProfilDosen, on_delete=models.CASCADE,
+        related_name='semester_aktif', verbose_name='Profil Dosen'
+    )
+    tahun_akademik   = models.CharField(max_length=9, db_index=True, verbose_name='Tahun Akademik')
+    semester         = models.CharField(max_length=6, choices=Semester.choices, db_index=True)
+    ikatan_kerja     = models.CharField(max_length=15, choices=IkatanKerja.choices, blank=True)
+    status           = models.CharField(max_length=30, blank=True)
+
+    class Meta:
+        verbose_name        = 'Dosen Semester'
+        verbose_name_plural = 'Dosen Semester'
+        unique_together     = [['profil_dosen', 'tahun_akademik', 'semester']]
+        indexes             = [
+            models.Index(fields=['tahun_akademik', 'semester']),
+            models.Index(fields=['profil_dosen', 'tahun_akademik', 'semester']),
+        ]
+
+    def __str__(self):
+        return f"{self.profil_dosen.nama} — {self.tahun_akademik} {self.semester}"
+
+
 class SintaAfiliasi(models.Model):
     """Profil afiliasi Perguruan Tinggi dari SINTA (Science and Technology Index)."""
 

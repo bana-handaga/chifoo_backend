@@ -14,7 +14,7 @@ from collections import defaultdict
 from django.db.models import Count, Sum, Q
 
 from apps.universities.models import (
-    PerguruanTinggi, ProgramStudi, ProfilDosen, DataMahasiswa
+    PerguruanTinggi, ProgramStudi, ProfilDosen, DataMahasiswa, DataDosen, DosenSemester
 )
 
 from .models import (
@@ -196,63 +196,88 @@ def _compute_snapshot(keterangan: str = '') -> SnapshotLaporan:
     # urut dari lama → baru untuk kolom sem_1..sem_7
     semesters_asc = list(reversed(semesters))
 
-    # ── 2. Agregasi bulk ──────────────────────────────────────────
+    # ── 2. Semester dilaporkan dari PeriodePelaporan aktif ────────
+    periode_aktif = PeriodePelaporan.objects.filter(status='aktif').order_by('-tahun', 'semester').first()
+    if periode_aktif:
+        if periode_aktif.semester == 'genap':
+            _ta_aktif  = f"{periode_aktif.tahun - 1}/{periode_aktif.tahun}"
+        else:
+            _ta_aktif  = f"{periode_aktif.tahun}/{periode_aktif.tahun + 1}"
+        _sem_aktif = periode_aktif.semester
+    else:
+        # Fallback: semester terbaru di DataDosen
+        _latest = DataDosen.objects.order_by('-tahun_akademik', '-semester').values('tahun_akademik', 'semester').first()
+        _ta_aktif  = _latest['tahun_akademik'] if _latest else ''
+        _sem_aktif = _latest['semester']       if _latest else ''
+
+    # ── 3. Agregasi bulk ──────────────────────────────────────────
+
+    # Prodi aktif dari DataDosen semester dilaporkan (per PT, per jenjang prodi)
     prodi_qs = (
-        ProgramStudi.objects.filter(is_active=True)
-        .values('perguruan_tinggi_id', 'jenjang')
-        .annotate(n=Count('id'))
+        DataDosen.objects
+        .filter(tahun_akademik=_ta_aktif, semester=_sem_aktif, program_studi__isnull=False)
+        .values('perguruan_tinggi_id', 'program_studi__jenjang')
+        .annotate(n=Count('program_studi_id', distinct=True))
     )
     prodi_total_qs = (
-        ProgramStudi.objects
+        DataDosen.objects
+        .filter(tahun_akademik=_ta_aktif, semester=_sem_aktif, program_studi__isnull=False)
         .values('perguruan_tinggi_id')
-        .annotate(n=Count('id'))
+        .annotate(n=Count('program_studi_id', distinct=True))
     )
+
+    # ProfilDosen — filter hanya yang aktif di semester dilaporkan via DosenSemester
+    _aktif_pd_ids = DosenSemester.objects.filter(
+        tahun_akademik=_ta_aktif, semester=_sem_aktif
+    ).values_list('profil_dosen_id', flat=True)
+    _pd_aktif = ProfilDosen.objects.filter(id__in=_aktif_pd_ids)
+
     gender_qs = (
-        ProfilDosen.objects
+        _pd_aktif
         .values('perguruan_tinggi_id', 'jenis_kelamin')
         .annotate(n=Count('id'))
     )
     detail_qs = (
-        ProfilDosen.objects
+        _pd_aktif
         .values('perguruan_tinggi_id')
-        .annotate(
-            with_detail=Count('id', filter=Q(jabatan_fungsional__gt='')),
-        )
+        .annotate(with_detail=Count('id', filter=Q(jabatan_fungsional__gt='')))
     )
-    # DataDosen aggregate — ambil semester terbaru untuk total dosen per PT
-    from apps.universities.models import DataDosen as _DataDosen
-    _latest_dd = (
-        _DataDosen.objects
-        .order_by('-tahun_akademik', '-semester')
-        .values('tahun_akademik', 'semester')
-        .first()
-    )
+
+    # DataDosen aggregate — semester dilaporkan untuk total dosen per PT
     datadosen_idx: dict = {}
-    if _latest_dd:
-        for r in (
-            _DataDosen.objects
-            .filter(tahun_akademik=_latest_dd['tahun_akademik'], semester=_latest_dd['semester'])
-            .values('perguruan_tinggi_id')
-            .annotate(total=Sum('dosen_tetap') + Sum('dosen_tidak_tetap'))
-        ):
-            datadosen_idx[r['perguruan_tinggi_id']] = r['total'] or 0
+    for r in (
+        DataDosen.objects
+        .filter(tahun_akademik=_ta_aktif, semester=_sem_aktif)
+        .values('perguruan_tinggi_id')
+        .annotate(total=Sum('dosen_tetap') + Sum('dosen_tidak_tetap'))
+    ):
+        datadosen_idx[r['perguruan_tinggi_id']] = r['total'] or 0
+
+    # DosenSemester — ikatan kerja per PT (lebih akurat dari ProfilDosen.ikatan_kerja)
+    ikatan_ds_qs = (
+        DosenSemester.objects
+        .filter(tahun_akademik=_ta_aktif, semester=_sem_aktif)
+        .values('profil_dosen__perguruan_tinggi_id', 'ikatan_kerja')
+        .annotate(n=Count('id'))
+    )
+
     jabatan_qs = (
-        ProfilDosen.objects
+        _pd_aktif
         .values('perguruan_tinggi_id', 'jabatan_fungsional')
         .annotate(n=Count('id'))
     )
     pendidikan_qs = (
-        ProfilDosen.objects
+        _pd_aktif
         .values('perguruan_tinggi_id', 'pendidikan_tertinggi')
         .annotate(n=Count('id'))
     )
     status_qs = (
-        ProfilDosen.objects
+        _pd_aktif
         .values('perguruan_tinggi_id', 'status')
         .annotate(n=Count('id'))
     )
     ikatan_qs = (
-        ProfilDosen.objects
+        _pd_aktif
         .values('perguruan_tinggi_id', 'ikatan_kerja')
         .annotate(n=Count('id'))
     )
@@ -266,19 +291,20 @@ def _compute_snapshot(keterangan: str = '') -> SnapshotLaporan:
         .annotate(total=Sum('mahasiswa_aktif'))
     ) if semesters else []
 
-    # ── 3. Indeks per PT_id ───────────────────────────────────────
+    # ── 4. Indeks per PT_id ───────────────────────────────────────
     prodi_idx       = defaultdict(dict)
     prodi_total_idx = defaultdict(int)
-    gender_idx  = defaultdict(lambda: {'L': 0, 'P': 0})
-    detail_idx  = defaultdict(lambda: {'with': 0})
-    jabatan_idx = defaultdict(dict)
-    pend_idx    = defaultdict(dict)
-    status_idx  = defaultdict(dict)
-    ikatan_idx  = defaultdict(dict)
-    mhs_idx     = defaultdict(dict)  # pt_id → {(ta, sem): total}
+    gender_idx   = defaultdict(lambda: {'L': 0, 'P': 0})
+    detail_idx   = defaultdict(lambda: {'with': 0})
+    jabatan_idx  = defaultdict(dict)
+    pend_idx     = defaultdict(dict)
+    status_idx   = defaultdict(dict)
+    ikatan_idx   = defaultdict(dict)
+    ikatan_ds_idx = defaultdict(dict)
+    mhs_idx      = defaultdict(dict)  # pt_id → {(ta, sem): total}
 
     for r in prodi_qs:
-        prodi_idx[r['perguruan_tinggi_id']][r['jenjang'] or ''] = r['n']
+        prodi_idx[r['perguruan_tinggi_id']][r['program_studi__jenjang'] or ''] = r['n']
     for r in prodi_total_qs:
         prodi_total_idx[r['perguruan_tinggi_id']] = r['n']
     for r in gender_qs:
@@ -293,10 +319,12 @@ def _compute_snapshot(keterangan: str = '') -> SnapshotLaporan:
         status_idx[r['perguruan_tinggi_id']][r['status'] or ''] = r['n']
     for r in ikatan_qs:
         ikatan_idx[r['perguruan_tinggi_id']][r['ikatan_kerja'] or ''] = r['n']
+    for r in ikatan_ds_qs:
+        ikatan_ds_idx[r['profil_dosen__perguruan_tinggi_id']][r['ikatan_kerja'] or ''] = r['n']
     for r in mhs_qs:
         mhs_idx[r['perguruan_tinggi_id']][(r['tahun_akademik'], r['semester'])] = r['total'] or 0
 
-    # ── 4. Daftar semua PT (aktif & tidak aktif) ──────────────────
+    # ── 5. Daftar semua PT (aktif & tidak aktif) ──────────────────
     aktif_pt_ids    = set(PerguruanTinggi.objects.filter(is_active=True).values_list('id', flat=True))
     all_pt          = list(PerguruanTinggi.objects.values_list('id', flat=True))
     tidak_aktif     = len(all_pt) - len(aktif_pt_ids)
@@ -308,15 +336,21 @@ def _compute_snapshot(keterangan: str = '') -> SnapshotLaporan:
             + (f" ({tidak_aktif} PT tidak aktif/dinonaktifkan)" if tidak_aktif else "")
         )
 
-    # ── 5. Hapus snapshot minggu ini jika sudah ada (overwrite) ───
+    # ── 6. Hapus snapshot minggu ini jika sudah ada (overwrite) ───
     now = timezone.now()
     # Awal minggu = Senin pagi pukul 00:00 waktu lokal (UTC)
     week_start = now - timezone.timedelta(days=now.weekday())
     week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
     SnapshotLaporan.objects.filter(dibuat_pada__gte=week_start).delete()
 
-    # ── 6. Buat snapshot & bulk_create rows ───────────────────────
-    snap = SnapshotLaporan.objects.create(keterangan=keterangan, total_pt=len(aktif_pt_ids), total_pt_non_aktif=tidak_aktif)
+    # ── 7. Buat snapshot & bulk_create rows ───────────────────────
+    _sem_label = f"{_ta_aktif} {_sem_aktif.capitalize()}" if _ta_aktif else ''
+    snap = SnapshotLaporan.objects.create(
+        keterangan=keterangan,
+        total_pt=len(aktif_pt_ids),
+        total_pt_non_aktif=tidak_aktif,
+        semester_dilaporkan=_sem_label,
+    )
 
     bulk = []
     for pt_id in all_pt:
@@ -346,8 +380,8 @@ def _compute_snapshot(keterangan: str = '') -> SnapshotLaporan:
         sts_lainnya = max(0, total_dosen - sts.get('Aktif', 0) - sts.get('TUGAS BELAJAR', 0)
                          - sts.get('IJIN BELAJAR', 0) - sts.get('CUTI', 0))
 
-        # Ikatan kerja — lainnya = total_dosen - yg sudah diketahui
-        ik = ikatan_idx[pt_id]
+        # Ikatan kerja — dari DosenSemester (lebih akurat), fallback ProfilDosen
+        ik = ikatan_ds_idx[pt_id] if ikatan_ds_idx[pt_id] else ikatan_idx[pt_id]
         ik_lainnya = max(0, total_dosen - ik.get('tetap', 0) - ik.get('tidak_tetap', 0)
                         - ik.get('dtpk', 0))
 
@@ -361,9 +395,11 @@ def _compute_snapshot(keterangan: str = '') -> SnapshotLaporan:
             mhs_fields[f'mhs_label_{i}'] = ''
             mhs_fields[f'mhs_sem_{i}']   = 0
 
-        prodi_aktif_count = sum(pj.values())
-        prodi_total       = prodi_total_idx[pt_id]
-        prodi_non_aktif   = max(0, prodi_total - prodi_aktif_count)
+        # Prodi aktif = jumlah distinct prodi di DataDosen semester dilaporkan
+        prodi_aktif_count = prodi_total_idx[pt_id]
+        pj                = prodi_idx[pt_id]
+        prodi_total       = prodi_aktif_count   # semua yang dilaporkan = aktif
+        prodi_non_aktif   = 0
         bulk.append(SnapshotPerPT(
             snapshot_id           = snap.id,
             perguruan_tinggi_id   = pt_id,
@@ -380,7 +416,7 @@ def _compute_snapshot(keterangan: str = '') -> SnapshotLaporan:
             prodi_jenjang_lainnya = prodi_lainnya,
             total_dosen           = total_dosen,
             dosen_with_detail     = detail_idx[pt_id]['with'],
-            dosen_no_detail       = max(0, datadosen_idx.get(pt_id, total_dosen) - detail_idx[pt_id]['with']),
+            dosen_no_detail       = max(0, total_dosen - detail_idx[pt_id]['with']),
             dosen_pria            = pria,
             dosen_wanita          = wanita,
             dosen_gender_no_info  = gender_no_info,

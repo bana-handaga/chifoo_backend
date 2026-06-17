@@ -160,10 +160,10 @@ class SnapshotLaporanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = SnapshotLaporan
-        fields = ['id', 'dibuat_pada', 'keterangan', 'total_pt', 'total_pt_non_aktif', 'per_pt']
+        fields = ['id', 'dibuat_pada', 'keterangan', 'semester_dilaporkan', 'total_pt', 'total_pt_non_aktif', 'per_pt']
 
 
 class SnapshotLaporanListSerializer(serializers.ModelSerializer):
     class Meta:
         model  = SnapshotLaporan
-        fields = ['id', 'dibuat_pada', 'keterangan', 'total_pt', 'total_pt_non_aktif']
+        fields = ['id', 'dibuat_pada', 'keterangan', 'semester_dilaporkan', 'total_pt', 'total_pt_non_aktif']

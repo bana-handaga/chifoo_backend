@@ -148,10 +148,13 @@ class IsiLaporan(models.Model):
 
 class SnapshotLaporan(models.Model):
     """Snapshot perhitungan performa PT — satu baris per sesi generate."""
-    dibuat_pada        = models.DateTimeField(auto_now_add=True)
-    keterangan         = models.CharField(max_length=200, blank=True)
-    total_pt           = models.IntegerField(default=0)
-    total_pt_non_aktif = models.IntegerField(default=0)
+    dibuat_pada           = models.DateTimeField(auto_now_add=True)
+    keterangan            = models.CharField(max_length=200, blank=True)
+    total_pt              = models.IntegerField(default=0)
+    total_pt_non_aktif    = models.IntegerField(default=0)
+    semester_dilaporkan   = models.CharField(max_length=20, blank=True,
+                                             verbose_name='Semester Dilaporkan',
+                                             help_text='mis. 2025/2026 Ganjil')
 
     class Meta:
         ordering = ['-dibuat_pada']
