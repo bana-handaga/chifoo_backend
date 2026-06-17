@@ -145,8 +145,6 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         return PerguruanTinggiDetailSerializer
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        # Annotate mhs_sort berdasarkan periode aktif (sama dengan serializer)
         periode = PeriodePelaporan.objects.filter(status='aktif').first()
         if periode:
             if periode.semester == 'genap':
@@ -165,10 +163,49 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         else:
             mhs_filter = Q(data_mahasiswa__program_studi__is_active=True)
             dsn_filter = Q()
-        qs = qs.annotate(
-            mhs_sort=Sum('data_mahasiswa__mahasiswa_aktif', filter=mhs_filter),
-            dosen_sort=Sum('data_dosen__dosen_tetap', filter=dsn_filter),
-        )
+
+        if getattr(self, 'action', None) == 'list':
+            # Queryset ringan untuk list: tanpa prefetch, gunakan correlated Subquery
+            # agar tidak ada Cartesian product antar tabel besar (data_mahasiswa × data_dosen)
+            if periode:
+                mhs_subq = (DataMahasiswa.objects
+                    .filter(perguruan_tinggi=OuterRef('pk'),
+                            program_studi__is_active=True,
+                            tahun_akademik=tahun_akademik,
+                            semester=periode.semester)
+                    .order_by().values('perguruan_tinggi')
+                    .annotate(s=Sum('mahasiswa_aktif')).values('s'))
+                dsn_subq = (DataDosen.objects
+                    .filter(perguruan_tinggi=OuterRef('pk'),
+                            tahun_akademik=tahun_akademik,
+                            semester=periode.semester)
+                    .order_by().values('perguruan_tinggi')
+                    .annotate(s=Sum('dosen_tetap')).values('s'))
+            else:
+                mhs_subq = (DataMahasiswa.objects
+                    .filter(perguruan_tinggi=OuterRef('pk'),
+                            program_studi__is_active=True)
+                    .order_by().values('perguruan_tinggi')
+                    .annotate(s=Sum('mahasiswa_aktif')).values('s'))
+                dsn_subq = (DataDosen.objects
+                    .filter(perguruan_tinggi=OuterRef('pk'))
+                    .order_by().values('perguruan_tinggi')
+                    .annotate(s=Sum('dosen_tetap')).values('s'))
+            prodi_subq = (ProgramStudi.objects
+                .filter(perguruan_tinggi=OuterRef('pk'), is_active=True)
+                .order_by().values('perguruan_tinggi')
+                .annotate(c=Count('id')).values('c'))
+            qs = PerguruanTinggi.objects.select_related('wilayah').annotate(
+                mhs_sort=Subquery(mhs_subq, output_field=IntegerField()),
+                dosen_sort=Subquery(dsn_subq, output_field=IntegerField()),
+                prodi_count=Subquery(prodi_subq, output_field=IntegerField()),
+            )
+        else:
+            qs = super().get_queryset().annotate(
+                mhs_sort=Sum('data_mahasiswa__mahasiswa_aktif', filter=mhs_filter),
+                dosen_sort=Sum('data_dosen__dosen_tetap', filter=dsn_filter),
+            )
+
         if not self.request.query_params.get('ordering'):
             qs = qs.order_by('-mhs_sort')
         exp_filter = self.request.query_params.get('exp_filter')

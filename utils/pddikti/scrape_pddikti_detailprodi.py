@@ -33,10 +33,10 @@ from firefox_helper import make_driver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 
-OUT_DIR  = "/home/ubuntu/_chifoo/chifoo_backend/utils/outs"
+OUT_DIR  = str(Path(__file__).resolve().parent.parent / "outs")
 BASE_URL = "https://pddikti.kemdiktisaintek.go.id"
-N_SEMESTER_DOSEN = 7    # Jumlah semester terakhir untuk data dosen
-N_SEMESTER_MHS   = 12  # Jumlah semester terakhir untuk data mahasiswa
+N_SEMESTER_DOSEN = 2    # Jumlah semester terakhir untuk data dosen (Genap 2025, Gasal 2025)
+N_SEMESTER_MHS   = 15  # Jumlah semester terakhir untuk data mahasiswa
 # ---------------------------------------------------------------------------
 # Driver
 # ---------------------------------------------------------------------------
@@ -100,75 +100,159 @@ def _inject_interceptor(driver):
     """)
 
 
-def _select_semua(driver):
+def _close_modal(driver):
+    """Tutup modal popup (misal survei kepuasan) jika muncul."""
     try:
-        selects = driver.find_elements(By.TAG_NAME, "select")
-        if selects:
-            Select(selects[0]).select_by_value("semua")
-            time.sleep(4)
+        for btn in driver.find_elements(By.XPATH,
+                "//button[normalize-space(text())='×' or normalize-space(text())='✕' or "
+                "normalize-space(text())='x' or normalize-space(text())='X' or "
+                "@aria-label='Close' or @aria-label='close' or contains(@class,'close')]"):
+            if btn.is_displayed():
+                driver.execute_script("arguments[0].click();", btn)
+                time.sleep(1)
+                return True
+    except Exception:
+        pass
+    # Fallback: tutup via Escape key
+    try:
+        from selenium.webdriver.common.keys import Keys
+        driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
+        time.sleep(0.5)
+    except Exception:
+        pass
+    return False
+
+
+def _select_semua(driver):
+    """Pilih opsi 'semua' pada dropdown daftar prodi via teks label (case-insensitive)."""
+    try:
+        for sel_el in driver.find_elements(By.TAG_NAME, "select"):
+            opts = sel_el.find_elements(By.TAG_NAME, "option")
+            for opt in opts:
+                if opt.text.strip().lower() == "semua":
+                    val = opt.get_attribute("value")
+                    driver.execute_script(
+                        "arguments[0].value = arguments[1];"
+                        "arguments[0].dispatchEvent(new Event('change', {bubbles:true}));",
+                        sel_el, val
+                    )
+                    print(f"  _select_semua: pilih nilai '{val}' (label 'semua')")
+                    time.sleep(4)
+                    return
     except Exception:
         pass
 
 
 def get_prodi_list(driver, pt_detail_url):
-    """Buka halaman PT, pilih 'semua', ambil daftar prodi yang berstatus Aktif."""
+    """Buka halaman PT, pilih 'semua', ambil daftar prodi aktif dengan pagination."""
     print(f"\n  Membuka halaman PT: {pt_detail_url[:70]}...")
     driver.get(pt_detail_url)
     time.sleep(7)
+    _close_modal(driver)
     _select_semua(driver)
 
-    tables = driver.find_elements(By.TAG_NAME, "table")
-    if not tables:
-        print("  [PERINGATAN] Tabel prodi tidak ditemukan.")
+    # Tunggu tabel muncul, maks 20 detik
+    deadline = time.time() + 20
+    while time.time() < deadline:
+        if driver.find_elements(By.TAG_NAME, "table"):
+            break
+        time.sleep(2)
+
+    if not driver.find_elements(By.TAG_NAME, "table"):
+        print("  [PERINGATAN] Tabel prodi tidak ditemukan (timeout 20s).")
         return []
 
-    tabel = tables[0]
+    def _detect_header(tabel):
+        header_idx = {}
+        for row in tabel.find_elements(By.TAG_NAME, "tr")[:3]:
+            cells = row.find_elements(By.TAG_NAME, "th") or row.find_elements(By.TAG_NAME, "td")
+            texts = [c.text.strip().lower() for c in cells]
+            for key, candidates in {
+                "kode":    ["kode", "kode prodi"],
+                "nama":    ["nama", "nama prodi", "program studi"],
+                "jenjang": ["jenjang"],
+                "status":  ["status"],
+            }.items():
+                for cand in candidates:
+                    if cand in texts:
+                        header_idx[key] = texts.index(cand)
+                        break
+            if header_idx:
+                break
+        return header_idx
 
-    # Deteksi indeks kolom dari baris header
-    header_idx = {}
-    for row in tabel.find_elements(By.TAG_NAME, "tr")[:3]:
-        cells = row.find_elements(By.TAG_NAME, "th") or row.find_elements(By.TAG_NAME, "td")
-        texts = [c.text.strip().lower() for c in cells]
-        for key, candidates in {
-            "kode":    ["kode", "kode prodi"],
-            "nama":    ["nama", "nama prodi", "program studi"],
-            "jenjang": ["jenjang"],
-            "status":  ["status"],
-        }.items():
-            for cand in candidates:
-                if cand in texts:
-                    header_idx[key] = texts.index(cand)
-                    break
-        if header_idx:
-            break
+    def _read_page(tabel, idx_kode, idx_nama, idx_jenjang, idx_status):
+        rows_data = []
+        skipped = 0
+        for row in tabel.find_elements(By.TAG_NAME, "tr")[3:]:
+            cells = row.find_elements(By.TAG_NAME, "td")
+            if not cells or len(cells) < 2:
+                continue
+            kode    = cells[idx_kode].text.strip()    if len(cells) > idx_kode    else ""
+            nama    = cells[idx_nama].text.strip()    if len(cells) > idx_nama    else ""
+            jenjang = cells[idx_jenjang].text.strip() if len(cells) > idx_jenjang else ""
+            status  = cells[idx_status].text.strip()  if len(cells) > idx_status  else ""
+            if not kode:
+                continue
+            if status and status.lower() != "aktif":
+                skipped += 1
+                continue
+            rows_data.append({"kode": kode, "nama": nama, "jenjang": jenjang, "status": status})
+        return rows_data, skipped
 
-    # Fallback posisi kolom jika header tidak terdeteksi
-    idx_kode    = header_idx.get("kode",    0)
-    idx_nama    = header_idx.get("nama",    1)
-    idx_jenjang = header_idx.get("jenjang", 2)
-    idx_status  = header_idx.get("status",  3)
+    def _find_next_btn():
+        for btn in driver.find_elements(By.TAG_NAME, "button"):
+            try:
+                txt  = btn.text.strip()
+                aria = (btn.get_attribute("aria-label") or "").lower()
+                if (txt in (">", "›", "»") or "next" in aria) and not btn.get_attribute("disabled"):
+                    return btn
+            except Exception:
+                continue
+        return None
 
     prodi_list = []
     skipped_nonaktif = 0
-    rows = tabel.find_elements(By.TAG_NAME, "tr")
-    for row in rows[3:]:
-        cells = row.find_elements(By.TAG_NAME, "td")
-        if not cells or len(cells) < 2:
-            continue
-        kode    = cells[idx_kode].text.strip()   if len(cells) > idx_kode    else ""
-        nama    = cells[idx_nama].text.strip()   if len(cells) > idx_nama    else ""
-        jenjang = cells[idx_jenjang].text.strip() if len(cells) > idx_jenjang else ""
-        status  = cells[idx_status].text.strip() if len(cells) > idx_status  else ""
+    seen_kodes = set()
+    page = 1
 
-        if not kode:
-            continue
-        if status and status.lower() != "aktif":
-            skipped_nonaktif += 1
-            continue
+    while True:
+        tables = driver.find_elements(By.TAG_NAME, "table")
+        if not tables:
+            break
+        tabel = tables[0]
 
-        prodi_list.append({"kode": kode, "nama": nama, "jenjang": jenjang, "status": status})
+        header_idx = _detect_header(tabel)
+        idx_kode    = header_idx.get("kode",    0)
+        idx_nama    = header_idx.get("nama",    1)
+        idx_jenjang = header_idx.get("jenjang", 2)
+        idx_status  = header_idx.get("status",  3)
 
-    print(f"  Ditemukan {len(prodi_list)} prodi aktif (dilewati {skipped_nonaktif} non-aktif).")
+        rows_data, skipped = _read_page(tabel, idx_kode, idx_nama, idx_jenjang, idx_status)
+        skipped_nonaktif += skipped
+
+        new_rows = [r for r in rows_data if r["kode"] not in seen_kodes]
+        if not new_rows:
+            break  # tidak ada data baru, stop
+        for r in new_rows:
+            seen_kodes.add(r["kode"])
+        prodi_list.extend(new_rows)
+
+        if page == 1:
+            print(f"    Hal.1: {len(new_rows)} prodi")
+
+        next_btn = _find_next_btn()
+        if not next_btn:
+            break
+
+        driver.execute_script("arguments[0].scrollIntoView({block:'center'});", next_btn)
+        time.sleep(0.3)
+        driver.execute_script("arguments[0].click();", next_btn)
+        page += 1
+        time.sleep(3)
+        print(f"    Hal.{page}: baca halaman berikutnya...")
+
+    print(f"  Ditemukan {len(prodi_list)} prodi aktif dari {page} hal. (dilewati {skipped_nonaktif} non-aktif).")
     return prodi_list
 
 
@@ -206,9 +290,25 @@ def get_fresh_prodi_url(driver, pt_detail_url, kode, nama):
         print(f"    Cell prodi {kode} tidak ditemukan di halaman PT")
         return None
 
+    # Tunggu overlay loading hilang sebelum klik (maks 15 detik)
+    deadline_overlay = time.time() + 15
+    while time.time() < deadline_overlay:
+        overlays = driver.find_elements(
+            By.CSS_SELECTOR,
+            "div.absolute.inset-0, div[class*='bg-black/50'], div[class*='backdrop-blur']"
+        )
+        visible = [o for o in overlays if o.is_displayed()]
+        if not visible:
+            break
+        time.sleep(1)
+
     driver.execute_script("arguments[0].scrollIntoView({block:'center'});", cell_nama)
-    time.sleep(0.3)
-    cell_nama.click()
+    time.sleep(0.5)
+    # Gunakan JS click sebagai fallback jika native click diblokir overlay
+    try:
+        cell_nama.click()
+    except Exception:
+        driver.execute_script("arguments[0].click();", cell_nama)
     time.sleep(2)
 
     captured = driver.execute_script("return window.__capturedURL;")
@@ -270,50 +370,35 @@ def scrape_prodi_profile(driver):
 
 
 # ---------------------------------------------------------------------------
+# Helper: tunggu overlay loading hilang
+# ---------------------------------------------------------------------------
+
+def _wait_overlay_gone(driver, timeout=15):
+    """Tunggu overlay loading (bg-black/50 backdrop-blur) hilang dari DOM."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        overlays = driver.find_elements(
+            By.CSS_SELECTOR,
+            "div[class*='bg-black/50'], div[class*='backdrop-blur']"
+        )
+        if not any(o.is_displayed() for o in overlays):
+            return
+        time.sleep(1)
+
+
+# ---------------------------------------------------------------------------
 # Dosen Homebase per Semester
 # ---------------------------------------------------------------------------
 
 def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
     """
-    Klik tab 'Tenaga Pendidik', baca dropdown semester,
-    ambil N semester terakhir. Untuk tiap semester: baca semua halaman tabel dosen.
+    Baca tabel dosen homebase (tab Tenaga Pendidik sudah aktif secara default).
+    Ambil N semester terakhir, tiap semester baca semua halaman tabel.
 
     Returns: dict { semester_label: [list_dosen] }
     """
 
-    # Klik tab Tenaga Pendidik — utamakan pencarian via teks
-    tab_clicked = False
-    try:
-        el = driver.find_element(
-            By.XPATH,
-            "//*[normalize-space(text())='Tenaga Pendidik' or "
-            "normalize-space(.)='Tenaga Pendidik']"
-        )
-        driver.execute_script("arguments[0].scrollIntoView({block:'center'});", el)
-        time.sleep(0.5)
-        el.click()
-        tab_clicked = True
-        print("      Tab klik via teks 'Tenaga Pendidik'")
-    except Exception:
-        pass
-
-    if not tab_clicked:
-        for css in ["[data-value='dosen_homebase']", "[data-tab='dosen_homebase']"]:
-            try:
-                el = driver.find_element(By.CSS_SELECTOR, css)
-                driver.execute_script("arguments[0].scrollIntoView({block:'center'});", el)
-                time.sleep(0.5)
-                el.click()
-                tab_clicked = True
-                print(f"      Tab klik via: {css}")
-                break
-            except Exception:
-                continue
-
-    if not tab_clicked:
-        print("      [PERINGATAN] Tab Tenaga Pendidik tidak ditemukan.")
-
-    time.sleep(3)
+    time.sleep(2)
 
     # Tunggu dropdown semester muncul di DALAM tab panel, maks 15 detik
     # Scroll ke bawah untuk memastikan tab content ter-render
@@ -370,45 +455,6 @@ def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
         return {}
     semester_opt_values = [v for v, _ in target_semesters]
 
-    # Pilih dropdown jumlah baris = 15 setelah semester_opt_values tersimpan
-    try:
-        for sel_el in driver.find_elements(By.TAG_NAME, "select"):
-            if _is_semester_select(sel_el):
-                continue
-            opt_vals = [o.get_attribute("value") for o in sel_el.find_elements(By.TAG_NAME, "option")]
-            if "15" in opt_vals:
-                driver.execute_script(
-                    "arguments[0].scrollIntoView({block:'center'});", sel_el)
-                time.sleep(0.3)
-                driver.execute_script(
-                    "arguments[0].value = '15';"
-                    "arguments[0].dispatchEvent(new Event('change', {bubbles:true}));",
-                    sel_el)
-                print("      Dropdown baris: pilih 15")
-                time.sleep(2)
-                break
-    except Exception as e:
-        print(f"      [PERINGATAN] Gagal pilih dropdown baris: {e}")
-
-    # Re-baca opsi semester setelah DOM mungkin reload karena pilih baris=15
-    try:
-        fresh_sel = next(
-            (s for s in driver.find_elements(By.TAG_NAME, "select") if _is_semester_select(s)),
-            None
-        )
-        if fresh_sel:
-            fresh_opts = fresh_sel.find_elements(By.TAG_NAME, "option")
-            fresh_targets = [
-                (o.get_attribute("value"), o.text.strip())
-                for o in fresh_opts[:n_semester]
-            ]
-            if fresh_targets:
-                target_semesters = fresh_targets
-                semester_opt_values = [v for v, _ in target_semesters]
-                print(f"      Semester (fresh): {[t for _, t in target_semesters]}")
-    except Exception:
-        pass  # tetap pakai target_semesters yang sudah disimpan sebelumnya
-
     COLS_DOSEN = ["No", "Nama", "NIDN", "NUPTK", "Pendidikan", "Status", "Ikatan Kerja"]
 
     def _refetch_semester_select():
@@ -418,7 +464,7 @@ def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
                 return sel_el
         return None
 
-    TIMEOUT_DOSEN = 30
+    TIMEOUT_DOSEN = 60
 
     def _find_dosen_table_with_data():
         try:
@@ -426,6 +472,7 @@ def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
                 try:
                     hdrs = [c.text.strip() for c in tbl.find_elements(
                         By.CSS_SELECTOR, "tr:first-child th, tr:first-child td")]
+                    # Deteksi normal: header punya kolom Nama + NIDN
                     if "Nama" in hdrs and "NIDN" in hdrs:
                         data_rows = [
                             r for r in tbl.find_elements(By.TAG_NAME, "tr")[1:]
@@ -433,6 +480,19 @@ def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
                         ]
                         if data_rows:
                             return tbl
+                    # Deteksi alternatif: header kosong tapi innerHTML mengandung pola NIDN
+                    # (React kadang render header sebagai icon/span tanpa teks)
+                    elif not any(hdrs):
+                        html = tbl.get_attribute("innerHTML") or ""
+                        import re as _re
+                        # NIDN adalah 10 digit angka
+                        if _re.search(r'\b\d{10}\b', html):
+                            data_rows = [
+                                r for r in tbl.find_elements(By.TAG_NAME, "tr")
+                                if any(c.text.strip() for c in r.find_elements(By.TAG_NAME, "td"))
+                            ]
+                            if data_rows:
+                                return tbl
                 except Exception:
                     continue
         except Exception:
@@ -442,10 +502,16 @@ def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
     dosen_per_semester = {}
 
     for sem_val, sem_txt in target_semesters:
+        _wait_overlay_gone(driver)
         sel = _refetch_semester_select()
         if sel:
             try:
-                Select(sel).select_by_value(sem_val)
+                # Gunakan JS set value agar tidak diblokir overlay (bypass klik)
+                driver.execute_script(
+                    "arguments[0].value = arguments[1];"
+                    "arguments[0].dispatchEvent(new Event('change', {bubbles:true}));",
+                    sel, sem_val
+                )
             except Exception as e:
                 print(f"        [{sem_txt}] gagal pilih semester: {e}, lewati")
                 dosen_per_semester[sem_txt] = []
@@ -464,6 +530,9 @@ def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
             print(f"        [{sem_txt}] timeout {TIMEOUT_DOSEN}s — tidak ada dosen homebase, berhenti iterasi semester")
             break
 
+        # Beri jeda agar React selesai render pagination setelah data pertama muncul
+        time.sleep(2)
+
         def _find_dosen_table():
             """Cari tabel dosen (ada header Nama + NIDN), tanpa syarat ada data."""
             for tbl in driver.find_elements(By.TAG_NAME, "table"):
@@ -476,21 +545,80 @@ def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
                     continue
             return None
 
-        def _find_next_btn():
-            """Cari tombol '>' (next page) yang tidak disabled di area pagination dosen."""
-            # Utama: cari tombol dengan teks persis '>'
-            for btn in driver.find_elements(By.TAG_NAME, "button"):
-                try:
-                    txt      = btn.text.strip()
-                    aria     = (btn.get_attribute("aria-label") or "").lower()
-                    disabled = btn.get_attribute("disabled")
-                    if (txt == ">" or txt in ("›", "»") or "next" in aria) and not disabled:
-                        return btn
-                except Exception:
-                    continue
-            return None
+        def _click_next_btn_dosen():
+            """Cari dan klik tombol next-page tabel dosen dalam satu JS call.
+            Return dict {clicked, cur, total, reason} untuk diagnostik.
+
+            Dari HTML PDDikti:
+              Tombol PREV : <button> tanpa aria-disabled
+              Tombol NEXT : <button aria-disabled="false"> saat aktif
+              Halaman terakhir: NEXT tetap aria-disabled="false" tapi ditambah attr disabled
+            Selector button[aria-disabled='false']:not([disabled]) = NEXT aktif saja.
+
+            Struktur pagination:
+              <div>
+                <button>SVG-prev</button>
+                <div><p>CUR</p><span>dari</span><p>TOTAL</p></div>
+                <button aria-disabled="false">SVG-next</button>
+              </div>
+            cur/total diambil dari <p> dalam sibling container tombol NEXT.
+            """
+            return driver.execute_script("""
+                // Query langsung ke tabpanel dosen_homebase — tidak pakai walk-up
+                // supaya tidak bisa melompat ke tabpanel lain (dosen_rasio, mahasiswa, dsb.)
+                var tabpanel = document.querySelector(
+                    '[role="tabpanel"][data-value="dosen_homebase"]');
+                if (!tabpanel)
+                    return {clicked: false, reason: "no_dosen_homebase_tabpanel", cur: 0, total: 0};
+
+                // button[aria-disabled='false']:not([disabled]) = tombol NEXT yang aktif.
+                // Halaman terakhir: NEXT punya attr native 'disabled' + aria-disabled='false'.
+                var allNavBtns = Array.from(
+                    tabpanel.querySelectorAll(
+                        "button[aria-disabled='false']:not([disabled]) svg.text-linear-main-2")
+                ).map(function(svg){ return svg.closest("button"); })
+                 .filter(function(b){ return b !== null; });
+
+                if (allNavBtns.length === 0)
+                    return {clicked: false, reason: "last_page", cur: 0, total: 0};
+                var nextBtn = allNavBtns[0];
+
+                // Ambil cur/total dari <p> di parent langsung nextBtn
+                var cur = 0, total = 0, pNums = [];
+                try {
+                    var paginContainer = nextBtn.parentElement;
+                    pNums = Array.from(paginContainer.querySelectorAll("p"))
+                                .filter(function(el){
+                                    return /^\\d+$/.test(el.textContent.trim());
+                                });
+                    if (pNums.length >= 2) {
+                        cur   = parseInt(pNums[0].textContent.trim());
+                        total = parseInt(pNums[pNums.length - 1].textContent.trim());
+                    }
+                } catch(e) {}
+
+                // dispatchEvent agar React synthetic event terpicu
+                nextBtn.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}));
+                nextBtn.dispatchEvent(new MouseEvent('mouseup',   {bubbles: true, cancelable: true}));
+                nextBtn.dispatchEvent(new MouseEvent('click',     {bubbles: true, cancelable: true}));
+                return {clicked: true, reason: "ok navBtns=" + allNavBtns.length,
+                        cur: cur, total: total};
+            """)
+
+        def _snapshot_first_row(tbl):
+            """Ambil teks baris data pertama tabel sebagai penanda halaman."""
+            try:
+                rows = tbl.find_elements(By.TAG_NAME, "tr")
+                for row in rows[1:]:
+                    txt = row.text.strip()
+                    if txt:
+                        return txt
+            except Exception:
+                pass
+            return ""
 
         all_dosen = []
+        seen_rows = set()
         page = 1
         try:
             while True:
@@ -505,24 +633,47 @@ def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
                         if not cells or not any(c.text.strip() for c in cells):
                             continue
                         vals = [c.text.strip() for c in cells]
+                        row_key = tuple(vals[:3])  # No+Nama+NIDN sebagai dedup key
+                        if row_key in seen_rows:
+                            continue
+                        seen_rows.add(row_key)
                         all_dosen.append(dict(zip(COLS_DOSEN, vals)))
                     except Exception:
                         continue
 
                 rows_added = len(all_dosen) - rows_before
-                if page > 1 or rows_added > 0:
-                    print(f"          hal.{page}: +{rows_added} dosen (total {len(all_dosen)})")
+                print(f"          hal.{page}: +{rows_added} dosen (total {len(all_dosen)})")
 
-                # Klik '>' ke halaman berikutnya jika ada
-                next_btn = _find_next_btn()
-                if next_btn:
-                    driver.execute_script(
-                        "arguments[0].scrollIntoView({block:'center'});", next_btn)
-                    time.sleep(0.3)
-                    driver.execute_script("arguments[0].click();", next_btn)
-                    page += 1
-                    time.sleep(3)
-                else:
+                if rows_added == 0 and page > 1:
+                    break  # tidak ada data baru, berhenti
+
+                # Ambil snapshot baris pertama lalu langsung klik next dalam satu JS call
+                snap_before = _snapshot_first_row(dosen_table)
+
+                result = _click_next_btn_dosen()
+                print(f"          [next_btn] {result}")
+                if not result.get("clicked"):
+                    break
+
+                page += 1
+
+                # Tunggu tabel berubah (maks 20 detik)
+                _wait_overlay_gone(driver)
+                deadline_next = time.time() + 20
+                changed = False
+                while time.time() < deadline_next:
+                    try:
+                        new_tbl = _find_dosen_table()
+                        snap_after = _snapshot_first_row(new_tbl) if new_tbl else None
+                        if snap_after and snap_after != snap_before:
+                            changed = True
+                            break
+                    except Exception:
+                        pass
+                    time.sleep(1)
+                print(f"          [next_btn] changed={changed}")
+                if not changed:
+                    # Klik berhasil tapi halaman tidak berubah — hentikan
                     break
 
         except Exception as e:
@@ -539,14 +690,19 @@ def scrape_dosen_homebase(driver, n_semester=N_SEMESTER_DOSEN):
 # ---------------------------------------------------------------------------
 
 def scrape_mahasiswa_per_semester(driver, n_semester=N_SEMESTER_MHS):
+    MAX_PAGE_MHS = 3  # Baca maks 3 halaman saja
+
+    _wait_overlay_gone(driver)
     try:
         driver.find_element(By.CSS_SELECTOR, "[data-value='mahasiswa']").click()
         time.sleep(3)
     except Exception as e:
-        # Coba via teks
         try:
             el = driver.find_element(By.XPATH, "//*[normalize-space(text())='Mahasiswa']")
-            el.click()
+            try:
+                el.click()
+            except Exception:
+                driver.execute_script("arguments[0].click();", el)
             time.sleep(3)
         except Exception:
             print(f"      [PERINGATAN] Gagal klik tab Mahasiswa: {e}")
@@ -560,6 +716,51 @@ def scrape_mahasiswa_per_semester(driver, n_semester=N_SEMESTER_MHS):
                 return tbl
         return None
 
+    def _snapshot_mhs(tbl):
+        try:
+            rows = tbl.find_elements(By.TAG_NAME, "tr")
+            for r in rows[1:]:
+                txt = r.text.strip()
+                if txt:
+                    return txt
+        except Exception:
+            pass
+        return None
+
+    def _click_next_btn_mhs():
+        return driver.execute_script("""
+            var tabpanel = document.querySelector('[role="tabpanel"][data-value="mahasiswa"]');
+            if (!tabpanel)
+                return {clicked: false, reason: "no_mahasiswa_tabpanel"};
+
+            var allNavBtns = Array.from(
+                tabpanel.querySelectorAll(
+                    "button[aria-disabled='false']:not([disabled]) svg.text-linear-main-2")
+            ).map(function(svg){ return svg.closest("button"); })
+             .filter(function(b){ return b !== null; });
+
+            if (allNavBtns.length === 0)
+                return {clicked: false, reason: "last_page"};
+            var nextBtn = allNavBtns[0];
+
+            var cur = 0, total = 0;
+            try {
+                var pNums = Array.from(nextBtn.parentElement.querySelectorAll("p"))
+                                .filter(function(el){
+                                    return /^\\d+$/.test(el.textContent.trim());
+                                });
+                if (pNums.length >= 2) {
+                    cur   = parseInt(pNums[0].textContent.trim());
+                    total = parseInt(pNums[pNums.length - 1].textContent.trim());
+                }
+            } catch(e) {}
+
+            nextBtn.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}));
+            nextBtn.dispatchEvent(new MouseEvent('mouseup',   {bubbles: true, cancelable: true}));
+            nextBtn.dispatchEvent(new MouseEvent('click',     {bubbles: true, cancelable: true}));
+            return {clicked: true, reason: "ok", cur: cur, total: total};
+        """)
+
     # Tunggu tabel mahasiswa muncul, maks 15 detik
     deadline_mhs = time.time() + 15
     while time.time() < deadline_mhs:
@@ -572,7 +773,8 @@ def scrape_mahasiswa_per_semester(driver, n_semester=N_SEMESTER_MHS):
         return []
 
     mahasiswa = []
-    while len(mahasiswa) < n_semester:
+    page = 1
+    while len(mahasiswa) < n_semester and page <= MAX_PAGE_MHS:
         tbl = _find_mhs_table()
         if not tbl:
             break
@@ -587,53 +789,29 @@ def scrape_mahasiswa_per_semester(driver, n_semester=N_SEMESTER_MHS):
             if len(mahasiswa) >= n_semester:
                 break
 
-        if len(mahasiswa) >= n_semester:
+        if len(mahasiswa) >= n_semester or page >= MAX_PAGE_MHS:
             break
 
-        # Deteksi dan klik tombol halaman berikutnya
-        has_next = False
-        next_btn = None
-        try:
-            pag_els = driver.find_elements(By.XPATH, "//*[contains(text(),' dari ')]")
-            for pag_el in pag_els:
-                txt = pag_el.text.strip()
-                m = re.search(r"(\d+)\s+dari\s+(\d+)", txt)
-                if m and len(txt) < 30:
-                    cur_p, tot_p = int(m.group(1)), int(m.group(2))
-                    if cur_p < tot_p:
-                        has_next = True
-                    container = pag_el
-                    for _ in range(6):
-                        try:
-                            parent = container.find_element(By.XPATH, "..")
-                            btns = parent.find_elements(By.TAG_NAME, "button")
-                            enabled = [b for b in btns if not b.get_attribute("disabled")]
-                            if len(enabled) >= 2 and has_next:
-                                next_btn = enabled[-1]
-                                break
-                            container = parent
-                        except Exception:
-                            break
-                    break
-        except Exception:
-            pass
+        snap_before = _snapshot_mhs(tbl)
+        result = _click_next_btn_mhs()
+        if not result.get("clicked"):
+            break
+        page += 1
 
-        if not next_btn and has_next:
+        _wait_overlay_gone(driver)
+        deadline_next = time.time() + 20
+        changed = False
+        while time.time() < deadline_next:
             try:
-                for btn in driver.find_elements(By.TAG_NAME, "button"):
-                    aria = (btn.get_attribute("aria-label") or "").lower()
-                    txt  = btn.text.strip()
-                    if ("next" in aria or txt in (">", "›", "»")) \
-                            and not btn.get_attribute("disabled"):
-                        next_btn = btn
-                        break
+                new_tbl = _find_mhs_table()
+                snap_after = _snapshot_mhs(new_tbl) if new_tbl else None
+                if snap_after and snap_after != snap_before:
+                    changed = True
+                    break
             except Exception:
                 pass
-
-        if next_btn:
-            next_btn.click()
-            time.sleep(3)
-        else:
+            time.sleep(1)
+        if not changed:
             break
 
     print(f"        {len(mahasiswa)} semester mahasiswa (target {n_semester})")
@@ -663,7 +841,7 @@ def scrape_detail_prodi(driver):
 # Main
 # ---------------------------------------------------------------------------
 
-def main(keyword, nama_pt, kode_pt, resume, force, start, end):
+def main(keyword, nama_pt, kode_pt, resume, force, start, end, kode_ps_filter=None):
     pt_out_dir = os.path.join(OUT_DIR, kode_pt)
     os.makedirs(pt_out_dir, exist_ok=True)
 
@@ -696,6 +874,13 @@ def main(keyword, nama_pt, kode_pt, resume, force, start, end):
 
         target_list = prodi_list[start_idx:end_idx]
 
+        # Filter per kode prodi jika --kode_ps diberikan
+        if kode_ps_filter:
+            target_list = [p for p in target_list if p["kode"] in kode_ps_filter]
+            if not target_list:
+                print(f"Tidak ada prodi dengan kode {kode_ps_filter} di range #{start}–#{end_idx}.")
+                return
+
         print("=" * 60)
         print(f"PDDikti Scraper (Detail Prodi)  PT    : {nama_pt} ({kode_pt})")
         print(f"                                Prodi : {total}")
@@ -724,6 +909,7 @@ def main(keyword, nama_pt, kode_pt, resume, force, start, end):
                 #     agar interceptor bersih dan dropdown dalam keadaan awal
                 driver.get(pt_url)
                 time.sleep(7)
+                _close_modal(driver)
                 _select_semua(driver)
                 _inject_interceptor(driver)
 
@@ -740,6 +926,7 @@ def main(keyword, nama_pt, kode_pt, resume, force, start, end):
                 # 3c. Buka halaman detail prodi
                 driver.get(fresh_url)
                 time.sleep(7)
+                _close_modal(driver)
 
                 # 3d. Scrape
                 detail = scrape_detail_prodi(driver)
@@ -786,14 +973,17 @@ if __name__ == "__main__":
                         help="Nomor urut prodi awal (1-based, default: 1)")
     parser.add_argument("--end",     type=int, default=None,
                         help="Nomor urut prodi akhir inklusif (1-based, default: sampai prodi terakhir)")
+    parser.add_argument("--kode_ps", nargs='+', default=None,
+                        help="Filter kode prodi tertentu (bisa lebih dari satu)")
     args = parser.parse_args()
 
     main(
-        keyword  = args.keyword,
-        nama_pt  = args.nama,
-        kode_pt  = args.kode,
-        resume   = args.resume,
-        force    = args.force,
-        start    = args.start,
-        end      = args.end,
+        keyword        = args.keyword,
+        nama_pt        = args.nama,
+        kode_pt        = args.kode,
+        resume         = args.resume,
+        force          = args.force,
+        start          = args.start,
+        end            = args.end,
+        kode_ps_filter = set(args.kode_ps) if args.kode_ps else None,
     )

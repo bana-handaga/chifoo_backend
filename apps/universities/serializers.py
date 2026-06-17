@@ -99,6 +99,9 @@ class PerguruanTinggiListSerializer(serializers.ModelSerializer):
         ]
 
     def get_total_prodi(self, obj):
+        val = getattr(obj, 'prodi_count', None)
+        if val is not None:
+            return val
         return obj.program_studi.filter(is_active=True).count()
 
     def _get_tahun_semester(self, periode_aktif):
@@ -107,6 +110,9 @@ class PerguruanTinggiListSerializer(serializers.ModelSerializer):
         return f"{periode_aktif.tahun}/{periode_aktif.tahun + 1}"
 
     def get_total_mahasiswa(self, obj):
+        val = getattr(obj, 'mhs_sort', None)
+        if val is not None:
+            return val
         periode_aktif = _get_periode_aktif()
         if not periode_aktif:
             return 0
@@ -123,6 +129,9 @@ class PerguruanTinggiListSerializer(serializers.ModelSerializer):
         return total or 0
 
     def get_total_dosen(self, obj):
+        val = getattr(obj, 'dosen_sort', None)
+        if val is not None:
+            return val
         periode_aktif = _get_periode_aktif()
         if not periode_aktif:
             return 0

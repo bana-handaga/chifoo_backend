@@ -23,6 +23,9 @@ import json
 import argparse
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 from firefox_helper import make_driver
 from selenium.webdriver.support.ui import Select
 
@@ -44,12 +47,69 @@ def init_driver(headless=True):
     return make_driver(headless=headless)
 
 
+def _dismiss_overlay(driver):
+    """Tutup overlay/modal yang menghalangi halaman jika ada."""
+    from selenium.webdriver.common.keys import Keys
+    try:
+        overlays = driver.find_elements(By.CSS_SELECTOR, "div.absolute.inset-0")
+        if not overlays:
+            return
+        for overlay in overlays:
+            if not overlay.is_displayed():
+                continue
+            # Coba cari tombol close (×, X, Tutup, Close) di dalam/dekat overlay
+            for selector in [
+                "button[aria-label='close']", "button[aria-label='Close']",
+                "button.close", "[data-dismiss='modal']",
+                "button svg", "button",
+            ]:
+                btns = driver.find_elements(By.CSS_SELECTOR, selector)
+                for btn in btns:
+                    txt = (btn.text or btn.get_attribute("aria-label") or "").strip().lower()
+                    if txt in ("", "×", "x", "close", "tutup", "ok"):
+                        try:
+                            btn.click()
+                            time.sleep(1)
+                            return
+                        except Exception:
+                            pass
+            # Fallback: tekan Escape
+            driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
+            time.sleep(1)
+    except Exception:
+        pass
+
+
+def _wait_no_overlay(driver, timeout=15):
+    """Tutup overlay jika ada, lalu tunggu sampai hilang."""
+    _dismiss_overlay(driver)
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, "div.absolute.inset-0")
+            )
+        )
+    except Exception:
+        pass
+    time.sleep(0.5)
+
+
+def _js_select(driver, select_el, value):
+    """Set nilai select via JavaScript (bypass overlay)."""
+    driver.execute_script(
+        "arguments[0].value = arguments[1]; "
+        "arguments[0].dispatchEvent(new Event('change', {bubbles: true}));",
+        select_el, value
+    )
+
+
 # ---------------------------------------------------------------------------
 # Halaman pencarian → URL detail PT
 # ---------------------------------------------------------------------------
 
 def find_pt_detail_url(driver, keyword, nama_pt_target):
-    url = f"{BASE_URL}/search/{keyword.replace(' ', '%20')}"
+    from urllib.parse import quote
+    url = f"{BASE_URL}/search/{quote(keyword, safe='(),.')}"
     print(f"Membuka pencarian: {url}")
     driver.get(url)
     time.sleep(6)
@@ -160,6 +220,7 @@ def scrape_pelaporan(driver, pt_url, n_semester=5):
     print(f"\nMembuka detail PT: {pt_url[:70]}...")
     driver.get(pt_url)
     time.sleep(7)
+    _wait_no_overlay(driver)
 
     tampilkan_sel, semester_sel = _get_dropdowns(driver)
 
@@ -204,14 +265,19 @@ def scrape_pelaporan(driver, pt_url, n_semester=5):
         """Pilih 'semua' di Tampilkan jika belum terpilih. Return True jika ada reload."""
         if not tampilkan_target:
             return False
+        _wait_no_overlay(driver)
         tap = _refetch_tampilkan()
         if tap is None:
             return False
         sel_obj = Select(tap)
         if sel_obj.first_selected_option.get_attribute("value") != tampilkan_target:
-            sel_obj.select_by_value(tampilkan_target)
+            try:
+                sel_obj.select_by_value(tampilkan_target)
+            except Exception:
+                _js_select(driver, tap, tampilkan_target)
             print(f"    Tampilkan '{tampilkan_target}' dipilih, menunggu reload...")
             time.sleep(5)
+            _wait_no_overlay(driver)
             return True
         return False
 
@@ -223,11 +289,16 @@ def scrape_pelaporan(driver, pt_url, n_semester=5):
         _pilih_semua()
 
         # Langkah 2: pilih semester
+        _wait_no_overlay(driver)
         sem = _refetch_semester()
         if sem:
-            Select(sem).select_by_value(sem_val)
+            try:
+                Select(sem).select_by_value(sem_val)
+            except Exception:
+                _js_select(driver, sem, sem_val)
             print(f"    Semester '{sem_txt}' dipilih, menunggu reload...")
             time.sleep(4)
+            _wait_no_overlay(driver)
         else:
             print("    [PERINGATAN] Dropdown semester tidak ditemukan, lewati.")
             continue
@@ -275,7 +346,9 @@ def main(keyword, nama_pt_target, kode_pt, n_semester):
             "jumlah_semester": len(pelaporan),
             "pelaporan":       pelaporan,
         }
-        out_path = f"{OUT_DIR}/{kode_pt}_pelaporan.json"
+        pt_dir   = os.path.join(OUT_DIR, kode_pt)
+        os.makedirs(pt_dir, exist_ok=True)
+        out_path = os.path.join(pt_dir, f"{kode_pt}_listprodi.json")
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(output, f, ensure_ascii=False, indent=2)
 

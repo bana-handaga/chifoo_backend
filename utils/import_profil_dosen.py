@@ -70,7 +70,8 @@ def map_ik(raw: str) -> str:
 
 
 def build_defaults(profil: dict, source: dict, top: dict, prodi_obj) -> dict:
-    nama  = (profil.get('Nama') or source.get('nama') or '').strip()[:200]
+    _nama_profil = (profil.get('Nama') or '').strip()
+    nama = (_nama_profil if _nama_profil and _nama_profil != '...' else source.get('nama') or _nama_profil).strip()[:200]
     nuptk = (profil.get('NUPTK') or source.get('nuptk') or '').strip()[:20]
     jk    = map_jk(profil.get('Jenis Kelamin', ''))
     jabat = str(profil.get('Jabatan Fungsional') or '').strip()[:50]
