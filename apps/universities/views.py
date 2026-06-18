@@ -582,6 +582,41 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             a = qs.aggregate(t=Sum('dosen_tetap'), tt=Sum('dosen_tidak_tetap'))
             return (a['t'] or 0), (a['t'] or 0) + (a['tt'] or 0)
 
+        def _agg_profil(s, pt_id_filter=None):
+            qs = DosenSemester.objects.filter(
+                tahun_akademik=s['tahun_akademik'],
+                semester=s['semester'],
+            )
+            if pt_id_filter:
+                qs = qs.filter(profil_dosen__perguruan_tinggi_id__in=pt_id_filter)
+            elif pt_ids:
+                qs = qs.filter(profil_dosen__perguruan_tinggi_id__in=pt_ids)
+            return qs.values('profil_dosen_id').distinct().count()
+
+        def _agg_s3(s, pt_id_filter=None):
+            qs = DosenSemester.objects.filter(
+                tahun_akademik=s['tahun_akademik'],
+                semester=s['semester'],
+                profil_dosen__pendidikan_tertinggi='s3',
+            )
+            if pt_id_filter:
+                qs = qs.filter(profil_dosen__perguruan_tinggi_id__in=pt_id_filter)
+            elif pt_ids:
+                qs = qs.filter(profil_dosen__perguruan_tinggi_id__in=pt_ids)
+            return qs.values('profil_dosen_id').distinct().count()
+
+        def _agg_profesor(s, pt_id_filter=None):
+            qs = DosenSemester.objects.filter(
+                tahun_akademik=s['tahun_akademik'],
+                semester=s['semester'],
+                profil_dosen__jabatan_fungsional='Profesor',
+            )
+            if pt_id_filter:
+                qs = qs.filter(profil_dosen__perguruan_tinggi_id__in=pt_id_filter)
+            elif pt_ids:
+                qs = qs.filter(profil_dosen__perguruan_tinggi_id__in=pt_ids)
+            return qs.values('profil_dosen_id').distinct().count()
+
         if mode == 'perbandingan' and pt_ids:
             datasets = []
             for pt_id in pt_ids:
@@ -590,14 +625,26 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
                 except PerguruanTinggi.DoesNotExist:
                     continue
                 tetap_pts, total_pts = zip(*[_agg(s, [pt_id]) for s in semesters])
+                profil_pts   = [_agg_profil(s,   [pt_id]) for s in semesters]
+                s3_pts       = [_agg_s3(s,       [pt_id]) for s in semesters]
+                profesor_pts = [_agg_profesor(s, [pt_id]) for s in semesters]
                 lbl = pt.singkatan or pt.nama
-                datasets.append({'label': f'{lbl} — Tetap', 'data': list(tetap_pts)})
-                datasets.append({'label': f'{lbl} — Total', 'data': list(total_pts)})
+                datasets.append({'label': f'{lbl} — Tetap',      'data': list(tetap_pts)})
+                datasets.append({'label': f'{lbl} — Total',      'data': list(total_pts)})
+                datasets.append({'label': f'{lbl} — Ada Profil', 'data': profil_pts})
+                datasets.append({'label': f'{lbl} — S3',         'data': s3_pts})
+                datasets.append({'label': f'{lbl} — Profesor',   'data': profesor_pts})
             if not datasets:
                 tetap_pts, total_pts = zip(*[_agg(s) for s in semesters])
+                profil_pts   = [_agg_profil(s)   for s in semesters]
+                s3_pts       = [_agg_s3(s)       for s in semesters]
+                profesor_pts = [_agg_profesor(s) for s in semesters]
                 datasets = [
-                    {'label': 'Semua PT — Tetap',  'data': list(tetap_pts)},
-                    {'label': 'Semua PT — Total', 'data': list(total_pts)},
+                    {'label': 'Semua PT — Tetap',      'data': list(tetap_pts)},
+                    {'label': 'Semua PT — Total',      'data': list(total_pts)},
+                    {'label': 'Semua PT — Ada Profil', 'data': profil_pts},
+                    {'label': 'Semua PT — S3',         'data': s3_pts},
+                    {'label': 'Semua PT — Profesor',   'data': profesor_pts},
                 ]
             return Response({'labels': labels, 'datasets': datasets, 'mode': 'perbandingan'})
 
@@ -612,9 +659,15 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             prefix = f'{len(pt_ids)} PT (gabung)'
 
         tetap_pts, total_pts = zip(*[_agg(s) for s in semesters])
+        profil_pts   = [_agg_profil(s)   for s in semesters]
+        s3_pts       = [_agg_s3(s)       for s in semesters]
+        profesor_pts = [_agg_profesor(s) for s in semesters]
         datasets = [
             {'label': f'{prefix} — Dosen Tetap',  'data': list(tetap_pts)},
-            {'label': f'{prefix} — Total Dosen', 'data': list(total_pts)},
+            {'label': f'{prefix} — Total Dosen',  'data': list(total_pts)},
+            {'label': f'{prefix} — Ada Profil',   'data': profil_pts},
+            {'label': f'{prefix} — S3',           'data': s3_pts},
+            {'label': f'{prefix} — Profesor',     'data': profesor_pts},
         ]
         return Response({'labels': labels, 'datasets': datasets, 'mode': 'gabung'})
 
