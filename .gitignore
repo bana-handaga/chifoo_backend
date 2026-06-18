@@ -21,7 +21,4 @@ venv/
 **/.tox/
 public/media/
 public/static/browser/*.map
-utils/pddikti/*.log
-utils/pddikti/errors/
-utils/pddikti/tmp/
-utils/sinta/docs/
+utils/

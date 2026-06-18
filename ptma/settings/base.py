@@ -99,6 +99,9 @@ STATIC_ROOT = BASE_DIR / 'public' / 'static'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'public' / 'media'
 
+# Frontend Angular — serve langsung dari ptma_frontend tanpa copy ke static
+FRONTEND_DIR = BASE_DIR.parent / 'ptma_frontend'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ── Cache — database cache agar shared antar Gunicorn worker ────────────────
