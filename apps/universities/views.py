@@ -442,6 +442,9 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         mode      = request.query_params.get('mode', 'gabung')
         filter_by = request.query_params.get('filter_by', 'pt')  # 'pt' | 'prodi'
         metric    = request.query_params.get('metric', 'aktif')  # 'aktif'|'baru'|'lulus'|'dropout'
+        jenis_mhs = request.query_params.get('jenis_mhs', 'semua')  # 'semua'|'ppg'|'non_ppg'
+
+        PPG_FILTER = Q(program_studi__nama__icontains='Pendidikan Profesi Guru')
 
         METRIC_FIELD = {
             'aktif':   'mahasiswa_aktif',
@@ -450,6 +453,13 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             'dropout': 'mahasiswa_dropout',
         }
         metric_field = METRIC_FIELD.get(metric, 'mahasiswa_aktif')
+
+        def _apply_jenis(qs):
+            if jenis_mhs == 'ppg':
+                return qs.filter(PPG_FILTER)
+            if jenis_mhs == 'non_ppg':
+                return qs.exclude(PPG_FILTER)
+            return qs
 
         def _base_qs(s, extra_filter=None):
             qs = DataMahasiswa.objects.filter(
@@ -462,6 +472,7 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
                 qs = qs.filter(program_studi_id__in=prodi_ids)
             if extra_filter:
                 qs = qs.filter(**extra_filter)
+            qs = _apply_jenis(qs)
             return qs.aggregate(total=Sum(metric_field))['total'] or 0
 
         if mode == 'perbandingan':
@@ -492,6 +503,7 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
                         )
                         if pt_ids:
                             qs = qs.filter(perguruan_tinggi_id__in=pt_ids)
+                        qs = _apply_jenis(qs)
                         data_points.append(qs.aggregate(total=Sum(metric_field))['total'] or 0)
                     datasets.append({'label': label, 'data': data_points})
             elif pt_ids:  # filter_by == 'pt'
@@ -509,6 +521,7 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
                         )
                         if prodi_ids:
                             qs = qs.filter(program_studi_id__in=prodi_ids)
+                        qs = _apply_jenis(qs)
                         data_points.append(qs.aggregate(total=Sum(metric_field))['total'] or 0)
                     datasets.append({'label': pt.singkatan or pt.nama, 'data': data_points})
             if not datasets:
@@ -663,13 +676,355 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         s3_pts       = [_agg_s3(s)       for s in semesters]
         profesor_pts = [_agg_profesor(s) for s in semesters]
         datasets = [
-            {'label': f'{prefix} — Dosen Tetap',  'data': list(tetap_pts)},
-            {'label': f'{prefix} — Total Dosen',  'data': list(total_pts)},
-            {'label': f'{prefix} — Ada Profil',   'data': profil_pts},
-            {'label': f'{prefix} — S3',           'data': s3_pts},
-            {'label': f'{prefix} — Profesor',     'data': profesor_pts},
+            {'label': f'{prefix} — Tetap',      'data': list(tetap_pts)},
+            {'label': f'{prefix} — Total',      'data': list(total_pts)},
+            {'label': f'{prefix} — Ada Profil', 'data': profil_pts},
+            {'label': f'{prefix} — S3',         'data': s3_pts},
+            {'label': f'{prefix} — Profesor',   'data': profesor_pts},
         ]
         return Response({'labels': labels, 'datasets': datasets, 'mode': 'gabung'})
+
+    @action(detail=False, methods=['get'])
+    def ranking(self, request):
+        """
+        Perangkingan PTMA berdasarkan indikator akademik.
+        Bobot skor gabungan:
+          - % Dosen S3     : 30%
+          - % Profesor     : 20%
+          - Rasio Dosen/Mhs: 25%
+          - Tren Mahasiswa : 15%
+          - Akreditasi     : 10%
+        Params:
+          tahun_akademik - misal '2025/2026' (default: periode pelaporan aktif)
+          semester       - 'ganjil' | 'genap' (default: periode pelaporan aktif)
+        """
+        from django.db.models import Sum, Count, Q
+        from apps.monitoring.models import PeriodePelaporan
+
+        sem_order = Case(
+            When(semester='ganjil', then=Value(1)),
+            When(semester='genap',  then=Value(2)),
+            default=Value(3), output_field=IntegerField(),
+        )
+
+        # Daftar semua semester tersedia (untuk dropdown frontend)
+        all_sems = list(
+            DataDosen.objects
+            .values('tahun_akademik', 'semester')
+            .distinct()
+            .annotate(so=sem_order)
+            .order_by('-tahun_akademik', '-so')
+        )
+        if not all_sems:
+            return Response({'error': 'Data belum tersedia'}, status=404)
+
+        available_semesters = [
+            {'tahun_akademik': s['tahun_akademik'], 'semester': s['semester'],
+             'label': f"{s['tahun_akademik']} {s['semester'].capitalize()}"}
+            for s in all_sems
+        ]
+
+        # Tentukan semester yang digunakan
+        ta_param  = request.query_params.get('tahun_akademik', '').strip()
+        sem_param = request.query_params.get('semester', '').strip().lower()
+
+        if ta_param and sem_param:
+            ta_d, sem_d = ta_param, sem_param
+        else:
+            # Default: periode pelaporan aktif → konversi ke tahun_akademik DataDosen
+            aktif = PeriodePelaporan.objects.filter(status='aktif').first()
+            if aktif:
+                tahun = aktif.tahun
+                sem_d = aktif.semester  # 'ganjil' atau 'genap'
+                if sem_d == 'ganjil':
+                    ta_d = f"{tahun}/{tahun + 1}"
+                else:
+                    ta_d = f"{tahun - 1}/{tahun}"
+                # Pastikan ada datanya, kalau tidak fallback ke terbaru
+                if not DataDosen.objects.filter(tahun_akademik=ta_d, semester=sem_d).exists():
+                    ta_d, sem_d = all_sems[0]['tahun_akademik'], all_sems[0]['semester']
+            else:
+                ta_d, sem_d = all_sems[0]['tahun_akademik'], all_sems[0]['semester']
+
+        # Semester terbaru DataMahasiswa yang cocok atau mendekati
+        all_sems_m = list(
+            DataMahasiswa.objects
+            .values('tahun_akademik', 'semester')
+            .distinct()
+            .annotate(so=sem_order)
+            .order_by('-tahun_akademik', '-so')
+        )
+        # Cari semester mahasiswa yang sama; fallback ke terbaru
+        mhs_match = next(
+            (s for s in all_sems_m if s['tahun_akademik'] == ta_d and s['semester'] == sem_d),
+            all_sems_m[0] if all_sems_m else None
+        )
+        ta_m  = mhs_match['tahun_akademik'] if mhs_match else ta_d
+        sem_m = mhs_match['semester']       if mhs_match else sem_d
+
+        # 2 semester lalu DataMahasiswa (untuk tren)
+        try:
+            idx_m = next(i for i, s in enumerate(all_sems_m)
+                         if s['tahun_akademik'] == ta_m and s['semester'] == sem_m)
+            prev_m = all_sems_m[idx_m + 2] if idx_m + 2 < len(all_sems_m) else None
+        except StopIteration:
+            prev_m = None
+
+        # DataDosen per PT (semester terbaru)
+        dosen_map = {}
+        for row in (DataDosen.objects
+            .filter(tahun_akademik=ta_d, semester=sem_d)
+            .values('perguruan_tinggi_id')
+            .annotate(
+                dosen_tetap=Sum('dosen_tetap'),
+                dosen_tidak_tetap=Sum('dosen_tidak_tetap'),
+                dosen_s3=Sum('dosen_s3'),
+            )
+        ):
+            dosen_map[row['perguruan_tinggi_id']] = row
+
+        # Filter PPG / Non-PPG untuk mahasiswa
+        jenis_mhs = request.query_params.get('jenis_mhs', 'semua')
+        PPG_Q = Q(program_studi__nama__icontains='Pendidikan Profesi Guru')
+
+        def _apply_jenis_mhs(qs):
+            if jenis_mhs == 'ppg':
+                return qs.filter(PPG_Q)
+            if jenis_mhs == 'non_ppg':
+                return qs.exclude(PPG_Q)
+            return qs
+
+        # DataMahasiswa per PT (semester terbaru)
+        mhs_map = {}
+        for row in (_apply_jenis_mhs(DataMahasiswa.objects
+            .filter(tahun_akademik=ta_m, semester=sem_m))
+            .values('perguruan_tinggi_id')
+            .annotate(mhs_aktif=Sum('mahasiswa_aktif'))
+        ):
+            mhs_map[row['perguruan_tinggi_id']] = row
+
+        # DataMahasiswa 2 semester lalu (tren)
+        mhs_prev_map = {}
+        if prev_m:
+            for row in (_apply_jenis_mhs(DataMahasiswa.objects
+                .filter(tahun_akademik=prev_m['tahun_akademik'], semester=prev_m['semester']))
+                .values('perguruan_tinggi_id')
+                .annotate(mhs_aktif=Sum('mahasiswa_aktif'))
+            ):
+                mhs_prev_map[row['perguruan_tinggi_id']] = row
+
+        # DosenSemester per PT: jumlah Profesor (semester terbaru DataDosen)
+        profesor_map = {}
+        for row in (DosenSemester.objects
+            .filter(tahun_akademik=ta_d, semester=sem_d)
+            .values('profil_dosen__perguruan_tinggi_id')
+            .annotate(
+                total_profil=Count('profil_dosen_id', distinct=True),
+                jumlah_profesor=Count(
+                    'profil_dosen_id', distinct=True,
+                    filter=Q(profil_dosen__jabatan_fungsional='Profesor')
+                ),
+            )
+        ):
+            pt_id = row['profil_dosen__perguruan_tinggi_id']
+            profesor_map[pt_id] = row
+
+        # Akreditasi skor
+        AKRED_SKOR = {'unggul': 100, 'baik_sekali': 75, 'baik': 50, 'belum': 0}
+
+        rows = []
+        for pt in (PerguruanTinggi.objects
+            .filter(id__in=dosen_map.keys())
+            .select_related('wilayah')
+        ):
+            pt_id = pt.id
+            dd = dosen_map[pt_id]
+            md = mhs_map.get(pt_id, {})
+            mp = mhs_prev_map.get(pt_id, {})
+            ps = profesor_map.get(pt_id, {})
+
+            dosen_tetap = dd.get('dosen_tetap') or 0
+            dosen_tdk_tetap = dd.get('dosen_tidak_tetap') or 0
+            dosen_s3 = dd.get('dosen_s3') or 0
+            total_dosen = dosen_tetap + dosen_tdk_tetap
+            mhs_aktif = md.get('mhs_aktif') or 0
+            mhs_prev = mp.get('mhs_aktif') or 0
+            total_profil = ps.get('total_profil') or 0
+            jumlah_profesor = ps.get('jumlah_profesor') or 0
+
+            pct_s3 = round(dosen_s3 / total_dosen * 100, 1) if total_dosen > 0 else 0.0
+            pct_profesor = round(jumlah_profesor / total_profil * 100, 1) if total_profil > 0 else 0.0
+            rasio_dosen_mhs = round(dosen_tetap / mhs_aktif * 100, 2) if mhs_aktif > 0 else 0.0
+            tren_mhs = round((mhs_aktif - mhs_prev) / mhs_prev * 100, 1) if mhs_prev > 0 else 0.0
+            akreditasi_skor = AKRED_SKOR.get(pt.akreditasi_institusi, 0)
+
+            rows.append({
+                'pt_id': pt_id,
+                'pt_nama': pt.nama,
+                'pt_singkatan': pt.singkatan or pt.nama,
+                'pt_wilayah': pt.wilayah.nama if pt.wilayah else '',
+                'akreditasi': pt.akreditasi_institusi,
+                'dosen_tetap': dosen_tetap,
+                'mhs_aktif': mhs_aktif,
+                'pct_s3': pct_s3,
+                'pct_profesor': pct_profesor,
+                'rasio_dosen_mhs': rasio_dosen_mhs,
+                'tren_mhs': tren_mhs,
+                'akreditasi_skor': akreditasi_skor,
+            })
+
+        if not rows:
+            return Response({'error': 'Tidak ada data'}, status=404)
+
+        # Min-max normalisasi per indikator → skor 0-100
+        INDIKATOR = ['pct_s3', 'pct_profesor', 'rasio_dosen_mhs', 'tren_mhs', 'akreditasi_skor']
+        BOBOT = {'pct_s3': 0.30, 'pct_profesor': 0.20, 'rasio_dosen_mhs': 0.25, 'tren_mhs': 0.15, 'akreditasi_skor': 0.10}
+
+        norm_maps = {}
+        for k in INDIKATOR:
+            vals = [r[k] for r in rows]
+            mn, mx = min(vals), max(vals)
+            if mx == mn:
+                norm_maps[k] = {r['pt_id']: 50.0 for r in rows}
+            else:
+                norm_maps[k] = {r['pt_id']: (r[k] - mn) / (mx - mn) * 100 for r in rows}
+
+        for r in rows:
+            r['skor'] = round(sum(BOBOT[k] * norm_maps[k][r['pt_id']] for k in INDIKATOR), 1)
+
+        rows.sort(key=lambda r: -r['skor'])
+        for i, r in enumerate(rows):
+            r['rank'] = i + 1
+
+        # Rank per indikator
+        for k in INDIKATOR + ['dosen_tetap', 'mhs_aktif']:
+            sorted_ids = [r['pt_id'] for r in sorted(rows, key=lambda r: -r[k])]
+            rmap = {pt_id: idx + 1 for idx, pt_id in enumerate(sorted_ids)}
+            for r in rows:
+                r[f'rank_{k}'] = rmap[r['pt_id']]
+
+        return Response({
+            'tahun_akademik': ta_d,
+            'semester': sem_d,
+            'semester_dosen': f"{ta_d} {sem_d.capitalize()}",
+            'semester_mhs': f"{ta_m} {sem_m.capitalize()}",
+            'jenis_mhs': jenis_mhs,
+            'bobot': BOBOT,
+            'total': len(rows),
+            'available_semesters': available_semesters,
+            'rankings': rows,
+        })
+
+    @action(detail=False, methods=['get'])
+    def tren_prodi(self, request):
+        """
+        Tren jumlah program studi per semester (gabung / perbandingan).
+        Params:
+          mode    - 'gabung' (default) | 'perbandingan'
+          pt_id[] - filter/bandingkan PT tertentu (opsional)
+          n       - jumlah semester terakhir (default 10)
+        """
+        mode   = request.query_params.get('mode', 'gabung')
+        pt_ids = [int(i) for i in request.query_params.getlist('pt_id') if str(i).isdigit()]
+        n      = min(int(request.query_params.get('n', 10)), 20)
+
+        sem_order = Case(
+            When(semester='ganjil', then=Value(1)),
+            When(semester='genap',  then=Value(2)),
+            default=Value(3), output_field=IntegerField(),
+        )
+
+        all_sems = list(
+            DataMahasiswa.objects
+            .values('tahun_akademik', 'semester')
+            .distinct()
+            .annotate(so=sem_order)
+            .order_by('-tahun_akademik', '-so')[:n]
+        )
+        all_sems.reverse()
+
+        def sem_label(s):
+            sem = 'Ganjil' if s['semester'] == 'ganjil' else 'Genap'
+            return f"{sem} {s['tahun_akademik']}"
+
+        labels = [sem_label(s) for s in all_sems]
+
+        COLORS = [
+            '#6366f1', '#0891b2', '#22c55e', '#f59e0b',
+            '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6',
+            '#f97316', '#84cc16',
+        ]
+
+        datasets = []
+
+        if mode == 'gabung':
+            qs = DataMahasiswa.objects.all()
+            if pt_ids:
+                qs = qs.filter(perguruan_tinggi_id__in=pt_ids)
+            counts = (
+                qs
+                .filter(
+                    tahun_akademik__in=[s['tahun_akademik'] for s in all_sems],
+                    semester__in=[s['semester'] for s in all_sems],
+                )
+                .values('tahun_akademik', 'semester')
+                .annotate(n_prodi=Count('program_studi_id', distinct=True))
+            )
+            count_map = {(c['tahun_akademik'], c['semester']): c['n_prodi'] for c in counts}
+            data = [count_map.get((s['tahun_akademik'], s['semester']), 0) for s in all_sems]
+            label_name = 'PT Terpilih' if pt_ids else 'Semua PTMA'
+            datasets.append({'label': label_name, 'data': data, 'color': COLORS[0]})
+
+        else:  # perbandingan
+            if not pt_ids:
+                latest = (
+                    DataMahasiswa.objects
+                    .values('tahun_akademik', 'semester')
+                    .distinct()
+                    .annotate(so=sem_order)
+                    .order_by('-tahun_akademik', '-so')
+                    .first()
+                )
+                if latest:
+                    top_qs = (
+                        DataMahasiswa.objects
+                        .filter(tahun_akademik=latest['tahun_akademik'], semester=latest['semester'])
+                        .values('perguruan_tinggi_id')
+                        .annotate(n=Count('program_studi_id', distinct=True))
+                        .order_by('-n')[:5]
+                    )
+                    pt_ids = [r['perguruan_tinggi_id'] for r in top_qs]
+
+            if pt_ids:
+                pts = list(PerguruanTinggi.objects.filter(id__in=pt_ids).values('id', 'nama', 'singkatan'))
+                pt_map = {p['id']: (p.get('singkatan') or p['nama'])[:22] for p in pts}
+
+                counts = (
+                    DataMahasiswa.objects
+                    .filter(
+                        tahun_akademik__in=[s['tahun_akademik'] for s in all_sems],
+                        semester__in=[s['semester'] for s in all_sems],
+                        perguruan_tinggi_id__in=pt_ids,
+                    )
+                    .values('perguruan_tinggi_id', 'tahun_akademik', 'semester')
+                    .annotate(n_prodi=Count('program_studi_id', distinct=True))
+                )
+                pt_count_map: dict = {}
+                for c in counts:
+                    pt_count_map.setdefault(c['perguruan_tinggi_id'], {})[
+                        (c['tahun_akademik'], c['semester'])
+                    ] = c['n_prodi']
+
+                for i, pt_id in enumerate(pt_ids):
+                    pt_data = pt_count_map.get(pt_id, {})
+                    data = [pt_data.get((s['tahun_akademik'], s['semester']), 0) for s in all_sems]
+                    datasets.append({
+                        'label': pt_map.get(pt_id, f'PT #{pt_id}'),
+                        'data': data,
+                        'color': COLORS[i % len(COLORS)],
+                    })
+
+        return Response({'labels': labels, 'datasets': datasets})
 
     @action(detail=False, methods=['get'])
     def estimasi_mahasiswa(self, request):
@@ -839,6 +1194,9 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         prodi_ids       = request.query_params.getlist('prodi_id')
         filter_by       = request.query_params.get('filter_by', 'pt')
         include_profesi = request.query_params.get('include_profesi', 'false').lower() == 'true'
+        jenis_mhs       = request.query_params.get('jenis_mhs', 'semua')
+
+        PPG_FILTER = Q(program_studi__nama__icontains='Pendidikan Profesi Guru')
 
         MASA_STUDI = MASA_STUDI_DENGAN_PROFESI if include_profesi else MASA_STUDI_TANPA_PROFESI
 
@@ -852,13 +1210,20 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             .order_by('tahun_akademik')
         )
 
+        def _apply_jenis_rks(qs):
+            if jenis_mhs == 'ppg':
+                return qs.filter(PPG_FILTER)
+            if jenis_mhs == 'non_ppg':
+                return qs.exclude(PPG_FILTER)
+            return qs
+
         def _base_filter(tahun):
             qs = DataMahasiswa.objects.filter(semester='ganjil', tahun_akademik=tahun)
             if pt_ids:
                 qs = qs.filter(perguruan_tinggi_id__in=pt_ids)
             if prodi_ids:
                 qs = qs.filter(program_studi_id__in=prodi_ids)
-            return qs
+            return _apply_jenis_rks(qs)
 
         def _aktif(tahun):
             return _base_filter(tahun).aggregate(total=Sum('mahasiswa_aktif'))['total'] or 0
