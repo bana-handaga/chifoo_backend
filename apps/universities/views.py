@@ -689,11 +689,12 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         """
         Perangkingan PTMA berdasarkan indikator akademik.
         Bobot skor gabungan:
-          - % Dosen S3     : 30%
-          - % Profesor     : 20%
+          - % Dosen S3     : 25%
           - Rasio Dosen/Mhs: 25%
-          - Tren Mahasiswa : 15%
+          - % Profesor     : 20%
+          - Tren Mahasiswa : 10%
           - Akreditasi     : 10%
+          - Skor SINTA     : 10%
         Params:
           tahun_akademik - misal '2025/2026' (default: periode pelaporan aktif)
           semester       - 'ganjil' | 'genap' (default: periode pelaporan aktif)
@@ -832,6 +833,14 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
         # Akreditasi skor
         AKRED_SKOR = {'unggul': 100, 'baik_sekali': 75, 'baik': 50, 'belum': 0}
 
+        # Skor SINTA per PT (sinta_score_overall)
+        sinta_map = {}
+        for row in (SintaAfiliasi.objects
+            .filter(perguruan_tinggi_id__in=dosen_map.keys())
+            .values('perguruan_tinggi_id', 'sinta_score_overall')
+        ):
+            sinta_map[row['perguruan_tinggi_id']] = row['sinta_score_overall'] or 0
+
         rows = []
         for pt in (PerguruanTinggi.objects
             .filter(id__in=dosen_map.keys())
@@ -857,6 +866,7 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             rasio_dosen_mhs = round(dosen_tetap / mhs_aktif * 100, 2) if mhs_aktif > 0 else 0.0
             tren_mhs = round((mhs_aktif - mhs_prev) / mhs_prev * 100, 1) if mhs_prev > 0 else 0.0
             akreditasi_skor = AKRED_SKOR.get(pt.akreditasi_institusi, 0)
+            sinta_score = sinta_map.get(pt_id, 0)
 
             rows.append({
                 'pt_id': pt_id,
@@ -871,14 +881,15 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
                 'rasio_dosen_mhs': rasio_dosen_mhs,
                 'tren_mhs': tren_mhs,
                 'akreditasi_skor': akreditasi_skor,
+                'sinta_score': sinta_score,
             })
 
         if not rows:
             return Response({'error': 'Tidak ada data'}, status=404)
 
         # Min-max normalisasi per indikator → skor 0-100
-        INDIKATOR = ['pct_s3', 'pct_profesor', 'rasio_dosen_mhs', 'tren_mhs', 'akreditasi_skor']
-        BOBOT = {'pct_s3': 0.30, 'pct_profesor': 0.20, 'rasio_dosen_mhs': 0.25, 'tren_mhs': 0.15, 'akreditasi_skor': 0.10}
+        INDIKATOR = ['pct_s3', 'pct_profesor', 'rasio_dosen_mhs', 'tren_mhs', 'akreditasi_skor', 'sinta_score']
+        BOBOT = {'pct_s3': 0.25, 'pct_profesor': 0.20, 'rasio_dosen_mhs': 0.25, 'tren_mhs': 0.10, 'akreditasi_skor': 0.10, 'sinta_score': 0.10}
 
         norm_maps = {}
         for k in INDIKATOR:

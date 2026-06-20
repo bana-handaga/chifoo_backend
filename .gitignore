@@ -22,3 +22,5 @@ venv/
 public/media/
 public/static/browser/*.map
 utils/
+ptma_frontend/
+static/
