@@ -37,6 +37,7 @@ class PerguruanTinggi(models.Model):
         UNGGUL = 'unggul', _('Unggul')
         BAIK_SEKALI = 'baik_sekali', _('Baik Sekali')
         BAIK = 'baik', _('Baik')
+        TERAKREDITASI = 'terakreditasi', _('Terakreditasi')
         BELUM = 'belum', _('Belum Terakreditasi')
 
     # Identitas

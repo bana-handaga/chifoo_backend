@@ -831,7 +831,9 @@ class PerguruanTinggiViewSet(PublicReadAdminWriteMixin, viewsets.ModelViewSet):
             profesor_map[pt_id] = row
 
         # Akreditasi skor
-        AKRED_SKOR = {'unggul': 100, 'baik_sekali': 75, 'baik': 50, 'belum': 0}
+        # 'terakreditasi': status generik BAN-PT tanpa peringkat spesifik,
+        # diskor setara 'baik' (bukan 'belum') karena institusinya tetap terakreditasi aktif.
+        AKRED_SKOR = {'unggul': 100, 'baik_sekali': 75, 'baik': 50, 'terakreditasi': 50, 'belum': 0}
 
         # Skor SINTA per PT (sinta_score_overall)
         sinta_map = {}

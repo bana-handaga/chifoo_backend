@@ -189,8 +189,12 @@ def load_data_to_db(START=0,END=1):
                 r.akreditasi_institusi = r.StatusAkreditasi.UNGGUL     
             if f['akreditasi']=='Baik Sekali':
                 r.akreditasi_institusi = r.StatusAkreditasi.BAIK_SEKALI
-            if f['akreditasi'] in ['Baik', 'Terakreditasi','B']:
+            if f['akreditasi'] == 'Baik':
                 r.akreditasi_institusi = r.StatusAkreditasi.BAIK
+            if f['akreditasi'] == 'B':
+                r.akreditasi_institusi = r.StatusAkreditasi.BAIK_SEKALI  # konversi resmi BAN-PT: grade huruf lama B = Baik Sekali
+            if f['akreditasi'] == 'Terakreditasi':
+                r.akreditasi_institusi = r.StatusAkreditasi.TERAKREDITASI
             if f['akreditasi'] == 'Tidak Terakreditasi':
                 r.akreditasi_institusi = r.StatusAkreditasi.BELUM
 

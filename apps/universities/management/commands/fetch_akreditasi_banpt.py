@@ -76,9 +76,9 @@ PERINGKAT_MAP = {
     "unggul": "unggul",
     "baik sekali": "baik_sekali",
     "baik": "baik",
-    "terakreditasi": "baik",   # fallback
-    "b": "baik",
-    "a": "baik_sekali",
+    "terakreditasi": "terakreditasi",  # status generik BAN-PT tanpa peringkat spesifik
+    "b": "baik_sekali",  # grade huruf lama: konversi resmi BAN-PT B = Baik Sekali
+    "a": "unggul",        # grade huruf lama: konversi resmi BAN-PT A = Unggul
 }
 
 # Prefiks yang diabaikan saat matching nama
