@@ -110,6 +110,7 @@ class ProgramStudi(models.Model):
         BAIK_SEKALI = 'baik_sekali', 'Baik Sekali'
         BAIK = 'baik', 'Baik'
         C = 'c', 'C'
+        TERAKREDITASI = 'terakreditasi', 'Terakreditasi'
         BELUM = 'belum', 'Belum Terakreditasi'
 
     perguruan_tinggi = models.ForeignKey(
